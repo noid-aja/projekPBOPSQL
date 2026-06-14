@@ -1,4 +1,4 @@
-﻿using Npgsql;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,16 +17,16 @@ namespace WinFormsApp1.Models
                 conn.Open();
 
                 using var cmd = new NpgsqlCommand(@"
-                    select p.id_produk, p.id_petani, p.id_jenis, p.nama_produk, p.berat_kg, p.harga_pengajuan, p.deskripsi, p.status 
+                    select p.id_produk, p.id_petani, p.id_jenis, p.nama_produk, p.berat_kg, p.harga_pengajuan, p.deskripsi, p.status_produk 
                     from kapten.produk_kopi p
-                    where p.status = 'LolosQc'
+                    where p.status_produk = 'lolos_qc'
                     order by p.id_produk asc", conn);
 
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
                     string statusStr = reader.GetString(7);
-                    Enum.StatusProduk statusEnum = (Enum.StatusProduk)System.Enum.Parse(typeof(Enum.StatusProduk), statusStr);
+                    Enum.StatusProduk statusEnum = Enum.ParseStatusProduk(statusStr);
 
                     list.Add(new ProdukKopi(
                         reader.GetInt32(0),
@@ -54,7 +54,7 @@ namespace WinFormsApp1.Models
             try
             {
                 using var cmdCekStatus = new NpgsqlCommand(@"
-            select status from kapten.produk_kopi 
+            select status_produk from kapten.produk_kopi 
             where id_produk = @idProduk", conn, trans);
                 cmdCekStatus.Parameters.AddWithValue("idProduk", idProduk);
 
@@ -65,7 +65,7 @@ namespace WinFormsApp1.Models
                 }
 
                 string statusProduk = statusRes.ToString() ?? string.Empty;
-                if (statusProduk != "LolosQc")
+                if (statusProduk != "lolos_qc")
                 {
                     throw new Exception($"Produk tidak bisa dilelang! Status saat ini adalah '{statusProduk}'");
                 }
@@ -86,8 +86,8 @@ namespace WinFormsApp1.Models
                 DateTime tglAkhir = tglMulai.AddMinutes(3);
 
                 using var cmdLelang = new NpgsqlCommand(@"
-                    insert into kapten.lelang (id_produk, bid_minimum, tgl_mulai, tgl_akhir, lokasi_lelang, status) 
-                    values (@idProduk, @bidMin, @tglMulai, @tglAkhir, @lokasi, 'Berlangsung')", conn);
+                    insert into kapten.lelang (id_produk, bid_minimum, tgl_mulai, tgl_akhir, lokasi_lelang, status_lelang) 
+                    values (@idProduk, @bidMin, @tglMulai, @tglAkhir, @lokasi, 'berlangsung')", conn);
 
                 cmdLelang.Parameters.AddWithValue("idProduk", idProduk);
                 cmdLelang.Parameters.AddWithValue("bidMin", bidMinimum);
@@ -99,7 +99,7 @@ namespace WinFormsApp1.Models
 
                 using var cmdProduk = new NpgsqlCommand(@"
                     update kapten.produk_kopi 
-                    set status = 'Berlangsung' 
+                    set status_produk = 'berlangsung' 
                     where id_produk = @idProduk", conn);
                 cmdProduk.Parameters.AddWithValue("idProduk", idProduk);
                 cmdProduk.ExecuteNonQuery();

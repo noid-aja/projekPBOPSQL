@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
@@ -214,31 +214,88 @@ namespace WinFormsApp1.Forms.AdminForm
         {
             if (sender is not Button btn || btn.Tag == null) return;
             string menu = btn.Tag.ToString().Trim().ToLower();
+            int idUser = UserContext.IsLoggedIn() ? UserContext.CurrentUser.IdUser : 0;
 
-            switch (menu)
+            try
             {
-                case "beranda":
-                    if (activeForm != null)
-                    {
-                        activeForm.Close();
-                        activeForm = null;
-                    }
-                    ShowDashboardComponents();
-                    break;
-                case "kelola user":
-                    openChildForm(new KelolaUser());
-                    break;
-                case "jenis kopi":
-                    openChildForm(new jeniskopi());
-                    break;
-                case "input inspeksi":
-                case "produk pending":
-                    // SINKRONISASI: Menyebut nama form secara eksplisit agar tidak tabrakan namespace
-                    openChildForm(new WinFormsApp1.Forms.AdminForm.Inspeksi());
-                    break;
-                default:
-                    MessageBox.Show("Menu dipilih: " + btn.Tag.ToString());
-                    break;
+                switch (menu)
+                {
+                    // ── Beranda ──────────────────────────────────────────
+                    case "beranda":
+                        if (activeForm != null) { activeForm.Close(); activeForm = null; }
+                        ShowDashboardComponents();
+                        break;
+
+                    // ── ADMIN ─────────────────────────────────────────────
+                    case "kelola user":
+                        openChildForm(new KelolaUser());
+                        break;
+                    case "jenis kopi":
+                        openChildForm(new jeniskopi());
+                        break;
+                    case "produk kopi":
+                        openChildForm(new ProdukKopi());
+                        break;
+                    case "lelang":
+                        openChildForm(new FormLelang());
+                        break;
+                    case "transaksi":
+                        openChildForm(new FormTransaksi(roleAktif, idUser));
+                        break;
+                    case "laporan":
+                        openChildForm(new FormRiwayatInspeksi()); // Laporan QC semua
+                        break;
+
+                    // ── PETANI ────────────────────────────────────────────
+                    case "input produk":
+                        openChildForm(new FormInputProduk(idUser));
+                        break;
+                    case "produk saya":
+                        openChildForm(new ProdukKopiPetani(idUser));
+                        break;
+                    case "hasil qc":
+                        openChildForm(new FormHasilQC(idUser));
+                        break;
+                    case "jadwal lelang":
+                        openChildForm(new FormJadwalLelang());
+                        break;
+
+                    // ── PEMBELI ───────────────────────────────────────────
+                    case "lihat lelang":
+                        openChildForm(new FormIkutBid(idUser));
+                        break;
+                    case "ikut bid":
+                        openChildForm(new FormIkutBid(idUser));
+                        break;
+                    case "riwayat bid":
+                        var bidForm = new FormIkutBid(idUser);
+                        openChildForm(bidForm);
+                        break;
+                    case "transaksi saya":
+                        openChildForm(new FormTransaksi("pembeli", idUser));
+                        break;
+
+                    // ── INSPEKTOR ─────────────────────────────────────────
+                    case "produk pending":
+                    case "input inspeksi":
+                        openChildForm(new WinFormsApp1.Forms.AdminForm.Inspeksi());
+                        break;
+                    case "riwayat inspeksi":
+                        openChildForm(new FormRiwayatInspeksi(idUser));
+                        break;
+                    case "laporan qc":
+                        openChildForm(new FormRiwayatInspeksi(idUser));
+                        break;
+
+                    default:
+                        MessageBox.Show("Menu belum tersedia: " + btn.Tag.ToString(), "Info",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        break;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal membuka menu: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

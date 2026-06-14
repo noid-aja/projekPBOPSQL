@@ -1,4 +1,4 @@
-﻿using Npgsql;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,8 +17,16 @@ namespace WinFormsApp1.Models
             try
             {
                 using var cmdInspeksi = new NpgsqlCommand(@"
-                    insert into kapten.inspeksi (id_produk, id_inspektor, tgl_inspeksi, nilai, grade, harga_rekomendasi, catatan, is_lolos_qc) 
-                    values (@idProduk, @idInspektor, @tgl, @nilai, @grade, @hargaRekomendasi, @catatan, @isLolos)", conn);
+                    insert into kapten.inspeksi (id_produk, id_inspektor, tgl_inspeksi, nilai, grade, harga_rekomendasi, catatan, status_inspeksi) 
+                    values (@idProduk, @idInspektor, @tgl, @nilai, @grade, @hargaRekomendasi, @catatan, @statusInspeksi)
+                    on conflict (id_produk) do update
+                    set id_inspektor = excluded.id_inspektor,
+                        tgl_inspeksi = excluded.tgl_inspeksi,
+                        nilai = excluded.nilai,
+                        grade = excluded.grade,
+                        harga_rekomendasi = excluded.harga_rekomendasi,
+                        catatan = excluded.catatan,
+                        status_inspeksi = excluded.status_inspeksi", conn);
 
                 cmdInspeksi.Parameters.AddWithValue("idProduk", idProduk);
                 cmdInspeksi.Parameters.AddWithValue("idInspektor", idInspektor);
@@ -27,14 +35,14 @@ namespace WinFormsApp1.Models
                 cmdInspeksi.Parameters.AddWithValue("grade", grade);
                 cmdInspeksi.Parameters.AddWithValue("hargaRekomendasi", hargaRekomendasi);
                 cmdInspeksi.Parameters.AddWithValue("catatan", (object?)catatan?.Trim() ?? DBNull.Value);
-                cmdInspeksi.Parameters.AddWithValue("isLolos", isLolos);
+                cmdInspeksi.Parameters.AddWithValue("statusInspeksi", isLolos ? "lolos_qc" : "ditolak_qc");
                 cmdInspeksi.ExecuteNonQuery();
 
-                string statusBaru = isLolos ? "LolosQc" : "DitolakQc";
+                string statusBaru = isLolos ? "lolos_qc" : "ditolak_qc";
 
                 using var cmdProduk = new NpgsqlCommand(@"
                     update kapten.produk_kopi 
-                    set status = @status 
+                    set status_produk = @status 
                     where id_produk = @idProduk", conn);
 
                 cmdProduk.Parameters.AddWithValue("status", statusBaru);

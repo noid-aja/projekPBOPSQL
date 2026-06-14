@@ -1,4 +1,4 @@
-﻿using Npgsql;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,8 +17,8 @@ namespace WinFormsApp1.Models
                 conn.Open();
 
                 using var cmd = new NpgsqlCommand(@"
-                    insert into kapten.produk_kopi (id_petani, id_jenis, nama_produk, berat_kg, harga_pengajuan, deskripsi, status) 
-                    values (@idPetani, @idJenis, @nama, @berat, @harga, @deskripsi, 'PendingInspeksi')", conn);
+                    insert into kapten.produk_kopi (id_petani, id_jenis, nama_produk, berat_kg, harga_pengajuan, deskripsi, status_produk) 
+                    values (@idPetani, @idJenis, @nama, @berat, @harga, @deskripsi, 'pending_inspeksi')", conn);
 
                 cmd.Parameters.AddWithValue("idPetani", idPetani);
                 cmd.Parameters.AddWithValue("idJenis", idJenis);
@@ -46,16 +46,16 @@ namespace WinFormsApp1.Models
                 conn.Open();
 
                 using var cmd = new NpgsqlCommand(@"
-                    select id_produk, id_petani, id_jenis, nama_produk, berat_kg, harga_pengajuan, deskripsi, status 
+                    select id_produk, id_petani, id_jenis, nama_produk, berat_kg, harga_pengajuan, deskripsi, status_produk 
                     from kapten.produk_kopi 
-                    where status = 'PendingInspeksi'
+                    where status_produk = 'pending_inspeksi'
                     order by id_produk ASC", conn);
 
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
                     string statusStr = reader.GetString(7);
-                    Enum.StatusProduk statusEnum = (Enum.StatusProduk)System.Enum.Parse(typeof(Enum.StatusProduk), statusStr);
+                    Enum.StatusProduk statusEnum = Enum.ParseStatusProduk(statusStr);
 
                     list.Add(new ProdukKopi(
                         reader.GetInt32(0),

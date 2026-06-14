@@ -1,4 +1,4 @@
-﻿using Npgsql;
+using Npgsql;
 using NpgsqlTypes;
 using System.Data;
 using WinFormsApp1.Helpers;
@@ -36,6 +36,24 @@ namespace WinFormsApp1.Repositories
             return table;
         }
 
+        private string MapStatus(string status)
+        {
+            if (string.IsNullOrWhiteSpace(status)) return status;
+            switch (status.ToLower().Trim())
+            {
+                case "pendinginspeksi": return "pending_inspeksi";
+                case "lolosqc": return "lolos_qc";
+                case "ditolakqc": return "ditolak_qc";
+                case "dijadwalkanlelang": return "dijadwalkan_lelang";
+                case "berlangsung": return "berlangsung";
+                case "terjual": return "terjual";
+                case "dibatalkan": return "dibatalkan";
+                case "belumbayar": return "belum_bayar";
+                case "lunas": return "lunas";
+                default: return status.ToLower();
+            }
+        }
+
         public int CountTotalUser()
         {
             return ExecuteScalarInt("SELECT COUNT(*) FROM kapten.users;");
@@ -45,14 +63,14 @@ namespace WinFormsApp1.Repositories
         {
             return ExecuteScalarInt(
                 "SELECT COUNT(*) FROM kapten.produk_kopi WHERE status_produk = @status;",
-                new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = status });
+                new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = MapStatus(status) });
         }
 
         public int CountLelangByStatus(string status)
         {
             return ExecuteScalarInt(
                 "SELECT COUNT(*) FROM kapten.lelang WHERE status_lelang = @status;",
-                new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = status });
+                new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = MapStatus(status) });
         }
 
         public int CountProdukPetani(int idPetani)
@@ -72,7 +90,7 @@ namespace WinFormsApp1.Repositories
                   AND status_produk = @status;
                 """,
                 new NpgsqlParameter("id_petani", NpgsqlDbType.Integer) { Value = idPetani },
-                new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = status });
+                new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = MapStatus(status) });
         }
 
         public int CountBidPembeli(int idPembeli)
@@ -106,7 +124,7 @@ namespace WinFormsApp1.Repositories
                   AND t.status_bayar = @status_bayar;
                 """,
                 new NpgsqlParameter("id_pembeli", NpgsqlDbType.Integer) { Value = idPembeli },
-                new NpgsqlParameter("status_bayar", NpgsqlDbType.Varchar) { Value = statusBayar });
+                new NpgsqlParameter("status_bayar", NpgsqlDbType.Varchar) { Value = MapStatus(statusBayar) });
         }
 
         public int CountInspeksiByInspektor(int idInspektor)
@@ -126,7 +144,7 @@ namespace WinFormsApp1.Repositories
                   AND status_inspeksi = @status_inspeksi;
                 """,
                 new NpgsqlParameter("id_inspektor", NpgsqlDbType.Integer) { Value = idInspektor },
-                new NpgsqlParameter("status_inspeksi", NpgsqlDbType.Varchar) { Value = statusInspeksi });
+                new NpgsqlParameter("status_inspeksi", NpgsqlDbType.Varchar) { Value = MapStatus(statusInspeksi) });
         }
 
         public DataTable GetProdukAdmin()

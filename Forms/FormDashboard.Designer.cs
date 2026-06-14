@@ -1,4 +1,4 @@
-﻿namespace WinFormsApp1.Forms.AdminForm
+namespace WinFormsApp1.Forms.AdminForm
 {
     partial class FormDashboard
     {
@@ -70,10 +70,10 @@
             lblSidebarTitle.AutoSize = true;
             lblSidebarTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             lblSidebarTitle.ForeColor = Color.White;
-            lblSidebarTitle.Location = new Point(36, 185);
+            lblSidebarTitle.Location = new Point(32, 139);
             lblSidebarTitle.Margin = new Padding(2, 0, 2, 0);
             lblSidebarTitle.Name = "lblSidebarTitle";
-            lblSidebarTitle.Size = new Size(184, 28);
+            lblSidebarTitle.Size = new Size(144, 21);
             lblSidebarTitle.TabIndex = 3;
             lblSidebarTitle.Text = "Dashboard Admin";
             lblSidebarTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -84,10 +84,10 @@
             panel4.BackColor = Color.FromArgb(253, 253, 253);
             panel4.Controls.Add(lblCardValue1);
             panel4.Controls.Add(lblCardTitle1);
-            panel4.Location = new Point(268, 204);
+            panel4.Location = new Point(234, 153);
             panel4.Margin = new Padding(2);
             panel4.Name = "panel4";
-            panel4.Size = new Size(216, 141);
+            panel4.Size = new Size(189, 106);
             panel4.TabIndex = 4;
             panel4.Paint += panel4_Paint;
             // 
@@ -100,7 +100,7 @@
             lblCardValue1.Location = new Point(0, 0);
             lblCardValue1.Margin = new Padding(2, 0, 2, 0);
             lblCardValue1.Name = "lblCardValue1";
-            lblCardValue1.Size = new Size(117, 46);
+            lblCardValue1.Size = new Size(96, 37);
             lblCardValue1.TabIndex = 1;
             lblCardValue1.Text = "label1";
             lblCardValue1.TextAlign = ContentAlignment.MiddleCenter;
@@ -110,10 +110,10 @@
             // 
             lblCardTitle1.AutoSize = true;
             lblCardTitle1.Dock = DockStyle.Bottom;
-            lblCardTitle1.Location = new Point(0, 121);
+            lblCardTitle1.Location = new Point(0, 91);
             lblCardTitle1.Margin = new Padding(2, 0, 2, 0);
             lblCardTitle1.Name = "lblCardTitle1";
-            lblCardTitle1.Size = new Size(50, 20);
+            lblCardTitle1.Size = new Size(38, 15);
             lblCardTitle1.TabIndex = 0;
             lblCardTitle1.Text = "label3";
             lblCardTitle1.TextAlign = ContentAlignment.MiddleCenter;
@@ -123,10 +123,10 @@
             panel5.BackColor = Color.FromArgb(253, 253, 253);
             panel5.Controls.Add(lblCardValue2);
             panel5.Controls.Add(lblCardTitle2);
-            panel5.Location = new Point(522, 204);
+            panel5.Location = new Point(457, 153);
             panel5.Margin = new Padding(2);
             panel5.Name = "panel5";
-            panel5.Size = new Size(217, 141);
+            panel5.Size = new Size(190, 106);
             panel5.TabIndex = 5;
             panel5.Paint += panel5_Paint;
             // 
@@ -138,7 +138,7 @@
             lblCardValue2.Location = new Point(0, 0);
             lblCardValue2.Margin = new Padding(2, 0, 2, 0);
             lblCardValue2.Name = "lblCardValue2";
-            lblCardValue2.Size = new Size(117, 46);
+            lblCardValue2.Size = new Size(96, 37);
             lblCardValue2.TabIndex = 2;
             lblCardValue2.Text = "label2";
             // 
@@ -146,10 +146,10 @@
             // 
             lblCardTitle2.AutoSize = true;
             lblCardTitle2.Dock = DockStyle.Bottom;
-            lblCardTitle2.Location = new Point(0, 121);
+            lblCardTitle2.Location = new Point(0, 91);
             lblCardTitle2.Margin = new Padding(2, 0, 2, 0);
             lblCardTitle2.Name = "lblCardTitle2";
-            lblCardTitle2.Size = new Size(50, 20);
+            lblCardTitle2.Size = new Size(38, 15);
             lblCardTitle2.TabIndex = 1;
             lblCardTitle2.Text = "label4";
             lblCardTitle2.TextAlign = ContentAlignment.MiddleCenter;
@@ -159,10 +159,10 @@
             panel6.BackColor = Color.FromArgb(253, 253, 253);
             panel6.Controls.Add(lblCardValue3);
             panel6.Controls.Add(lblCardTitle3);
-            panel6.Location = new Point(775, 204);
+            panel6.Location = new Point(678, 153);
             panel6.Margin = new Padding(2);
             panel6.Name = "panel6";
-            panel6.Size = new Size(217, 141);
+            panel6.Size = new Size(190, 106);
             panel6.TabIndex = 5;
             panel6.Paint += panel6_Paint;
             // 
@@ -174,7 +174,7 @@
             lblCardValue3.Location = new Point(0, 0);
             lblCardValue3.Margin = new Padding(2, 0, 2, 0);
             lblCardValue3.Name = "lblCardValue3";
-            lblCardValue3.Size = new Size(117, 46);
+            lblCardValue3.Size = new Size(96, 37);
             lblCardValue3.TabIndex = 3;
             lblCardValue3.Text = "label7";
             // 
@@ -182,10 +182,10 @@
             // 
             lblCardTitle3.AutoSize = true;
             lblCardTitle3.Dock = DockStyle.Bottom;
-            lblCardTitle3.Location = new Point(0, 121);
+            lblCardTitle3.Location = new Point(0, 91);
             lblCardTitle3.Margin = new Padding(2, 0, 2, 0);
             lblCardTitle3.Name = "lblCardTitle3";
-            lblCardTitle3.Size = new Size(50, 20);
+            lblCardTitle3.Size = new Size(38, 15);
             lblCardTitle3.TabIndex = 2;
             lblCardTitle3.Text = "label5";
             lblCardTitle3.TextAlign = ContentAlignment.MiddleCenter;
@@ -195,10 +195,10 @@
             panel7.BackColor = Color.FromArgb(253, 253, 253);
             panel7.Controls.Add(lblCardValue4);
             panel7.Controls.Add(lblCardTitle4);
-            panel7.Location = new Point(1028, 204);
+            panel7.Location = new Point(900, 153);
             panel7.Margin = new Padding(2);
             panel7.Name = "panel7";
-            panel7.Size = new Size(217, 141);
+            panel7.Size = new Size(190, 106);
             panel7.TabIndex = 5;
             // 
             // lblCardValue4
@@ -209,7 +209,7 @@
             lblCardValue4.Location = new Point(0, 0);
             lblCardValue4.Margin = new Padding(2, 0, 2, 0);
             lblCardValue4.Name = "lblCardValue4";
-            lblCardValue4.Size = new Size(117, 46);
+            lblCardValue4.Size = new Size(96, 37);
             lblCardValue4.TabIndex = 4;
             lblCardValue4.Text = "label8";
             // 
@@ -217,10 +217,10 @@
             // 
             lblCardTitle4.AutoSize = true;
             lblCardTitle4.Dock = DockStyle.Bottom;
-            lblCardTitle4.Location = new Point(0, 121);
+            lblCardTitle4.Location = new Point(0, 91);
             lblCardTitle4.Margin = new Padding(2, 0, 2, 0);
             lblCardTitle4.Name = "lblCardTitle4";
-            lblCardTitle4.Size = new Size(50, 20);
+            lblCardTitle4.Size = new Size(38, 15);
             lblCardTitle4.TabIndex = 3;
             lblCardTitle4.Text = "label6";
             lblCardTitle4.TextAlign = ContentAlignment.MiddleCenter;
@@ -228,10 +228,10 @@
             // lblTableTitle
             // 
             lblTableTitle.AutoSize = true;
-            lblTableTitle.Location = new Point(2, 6);
+            lblTableTitle.Location = new Point(2, 4);
             lblTableTitle.Margin = new Padding(2, 0, 2, 0);
             lblTableTitle.Name = "lblTableTitle";
-            lblTableTitle.Size = new Size(126, 20);
+            lblTableTitle.Size = new Size(99, 15);
             lblTableTitle.TabIndex = 0;
             lblTableTitle.Text = "Data Produk Kopi";
             // 
@@ -242,13 +242,13 @@
             dgvDashboard.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvDashboard.BackgroundColor = Color.White;
             dgvDashboard.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvDashboard.Location = new Point(0, 28);
+            dgvDashboard.Location = new Point(0, 21);
             dgvDashboard.Margin = new Padding(2);
             dgvDashboard.Name = "dgvDashboard";
             dgvDashboard.ReadOnly = true;
             dgvDashboard.RowHeadersWidth = 82;
             dgvDashboard.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvDashboard.Size = new Size(980, 481);
+            dgvDashboard.Size = new Size(858, 361);
             dgvDashboard.TabIndex = 1;
             dgvDashboard.CellContentClick += dgvDashboard_CellContentClick;
             // 
@@ -257,10 +257,10 @@
             panel8.BackColor = Color.White;
             panel8.Controls.Add(dgvDashboard);
             panel8.Controls.Add(lblTableTitle);
-            panel8.Location = new Point(268, 392);
+            panel8.Location = new Point(234, 294);
             panel8.Margin = new Padding(2);
             panel8.Name = "panel8";
-            panel8.Size = new Size(982, 509);
+            panel8.Size = new Size(859, 382);
             panel8.TabIndex = 6;
             panel8.Paint += panel8_Paint;
             // 
@@ -269,10 +269,10 @@
             btnMenu1.BackColor = Color.DarkGreen;
             btnMenu1.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu1.ForeColor = Color.White;
-            btnMenu1.Location = new Point(31, 237);
+            btnMenu1.Location = new Point(27, 178);
             btnMenu1.Margin = new Padding(2);
             btnMenu1.Name = "btnMenu1";
-            btnMenu1.Size = new Size(194, 42);
+            btnMenu1.Size = new Size(170, 32);
             btnMenu1.TabIndex = 3;
             btnMenu1.Text = "Beranda";
             btnMenu1.UseVisualStyleBackColor = false;
@@ -282,10 +282,10 @@
             btnMenu2.BackColor = Color.DarkGreen;
             btnMenu2.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu2.ForeColor = Color.White;
-            btnMenu2.Location = new Point(31, 283);
+            btnMenu2.Location = new Point(27, 212);
             btnMenu2.Margin = new Padding(2);
             btnMenu2.Name = "btnMenu2";
-            btnMenu2.Size = new Size(194, 42);
+            btnMenu2.Size = new Size(170, 32);
             btnMenu2.TabIndex = 4;
             btnMenu2.Text = "Kelola User";
             btnMenu2.UseVisualStyleBackColor = false;
@@ -296,10 +296,10 @@
             btnMenu3.BackColor = Color.DarkGreen;
             btnMenu3.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu3.ForeColor = Color.White;
-            btnMenu3.Location = new Point(31, 328);
+            btnMenu3.Location = new Point(27, 246);
             btnMenu3.Margin = new Padding(2);
             btnMenu3.Name = "btnMenu3";
-            btnMenu3.Size = new Size(194, 42);
+            btnMenu3.Size = new Size(170, 32);
             btnMenu3.TabIndex = 5;
             btnMenu3.Text = "Jenis Kopi";
             btnMenu3.UseVisualStyleBackColor = false;
@@ -310,10 +310,10 @@
             btnMenu4.BackColor = Color.DarkGreen;
             btnMenu4.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu4.ForeColor = Color.White;
-            btnMenu4.Location = new Point(31, 374);
+            btnMenu4.Location = new Point(27, 280);
             btnMenu4.Margin = new Padding(2);
             btnMenu4.Name = "btnMenu4";
-            btnMenu4.Size = new Size(194, 42);
+            btnMenu4.Size = new Size(170, 32);
             btnMenu4.TabIndex = 6;
             btnMenu4.Text = "Produk Kopi";
             btnMenu4.UseVisualStyleBackColor = false;
@@ -323,10 +323,10 @@
             btnMenu5.BackColor = Color.DarkGreen;
             btnMenu5.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu5.ForeColor = Color.White;
-            btnMenu5.Location = new Point(31, 420);
+            btnMenu5.Location = new Point(27, 315);
             btnMenu5.Margin = new Padding(2);
             btnMenu5.Name = "btnMenu5";
-            btnMenu5.Size = new Size(194, 42);
+            btnMenu5.Size = new Size(170, 32);
             btnMenu5.TabIndex = 7;
             btnMenu5.Text = "Lelang";
             btnMenu5.UseVisualStyleBackColor = false;
@@ -336,10 +336,10 @@
             btnLogout.BackColor = Color.DarkRed;
             btnLogout.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnLogout.ForeColor = Color.White;
-            btnLogout.Location = new Point(36, 819);
+            btnLogout.Location = new Point(32, 614);
             btnLogout.Margin = new Padding(2);
             btnLogout.Name = "btnLogout";
-            btnLogout.Size = new Size(189, 47);
+            btnLogout.Size = new Size(165, 35);
             btnLogout.TabIndex = 8;
             btnLogout.Text = "Logout";
             btnLogout.UseVisualStyleBackColor = false;
@@ -350,10 +350,10 @@
             btnMenu6.BackColor = Color.DarkGreen;
             btnMenu6.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu6.ForeColor = Color.White;
-            btnMenu6.Location = new Point(31, 465);
+            btnMenu6.Location = new Point(27, 349);
             btnMenu6.Margin = new Padding(2);
             btnMenu6.Name = "btnMenu6";
-            btnMenu6.Size = new Size(194, 42);
+            btnMenu6.Size = new Size(170, 32);
             btnMenu6.TabIndex = 9;
             btnMenu6.Text = "Transaksi";
             btnMenu6.UseVisualStyleBackColor = false;
@@ -363,10 +363,10 @@
             btnMenu7.BackColor = Color.DarkGreen;
             btnMenu7.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu7.ForeColor = Color.White;
-            btnMenu7.Location = new Point(31, 510);
+            btnMenu7.Location = new Point(27, 382);
             btnMenu7.Margin = new Padding(2);
             btnMenu7.Name = "btnMenu7";
-            btnMenu7.Size = new Size(194, 42);
+            btnMenu7.Size = new Size(170, 32);
             btnMenu7.TabIndex = 10;
             btnMenu7.Text = "Laporan";
             btnMenu7.UseVisualStyleBackColor = false;
@@ -389,15 +389,16 @@
             panel2.Location = new Point(0, 0);
             panel2.Margin = new Padding(2);
             panel2.Name = "panel2";
-            panel2.Size = new Size(262, 932);
+            panel2.Size = new Size(229, 562);
             panel2.TabIndex = 1;
             // 
             // pictureBox1
             // 
-            pictureBox1.Image = Properties.Resources.Gemini_Generated_Image_kab6fikab6fikab6_1__1_;
-            pictureBox1.Location = new Point(61, 45);
+            pictureBox1.Image = Properties.Resources.LogoKapten;
+            pictureBox1.Location = new Point(53, 34);
+            pictureBox1.Margin = new Padding(3, 2, 3, 2);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(134, 137);
+            pictureBox1.Size = new Size(117, 103);
             pictureBox1.TabIndex = 0;
             pictureBox1.TabStop = false;
             // 
@@ -405,18 +406,19 @@
             // 
             panel1.BackgroundImage = Properties.Resources.Group_12;
             panel1.Dock = DockStyle.Right;
-            panel1.Location = new Point(225, 0);
+            panel1.Location = new Point(197, 0);
+            panel1.Margin = new Padding(3, 2, 3, 2);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1058, 932);
+            panel1.Size = new Size(926, 562);
             panel1.TabIndex = 7;
             panel1.Paint += panel1_Paint;
             // 
             // FormDashboard
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(235, 235, 235);
-            ClientSize = new Size(1283, 932);
+            ClientSize = new Size(1123, 562);
             Controls.Add(panel2);
             Controls.Add(panel8);
             Controls.Add(panel6);

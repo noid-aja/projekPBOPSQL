@@ -1,4 +1,4 @@
-﻿using Npgsql;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -17,7 +17,7 @@ namespace WinFormsApp1.Models
             try
             {
                 using var cmdLelang = new NpgsqlCommand(@"
-                    select bid_minimum, tgl_akhir, status 
+                    select bid_minimum, tgl_akhir, status_lelang 
                     from kapten.lelang 
                     where id_lelang = @idLelang for update", conn); 
                 cmdLelang.Parameters.AddWithValue("idLelang", idLelang);
@@ -30,7 +30,7 @@ namespace WinFormsApp1.Models
                 string statusLelang = reader.GetString(2);
                 reader.Close();
 
-                if (statusLelang != "Berlangsung")
+                if (statusLelang != "berlangsung")
                     throw new Exception("Lelang telah selesai!");
 
                 if (DateTime.Now > tglAkhir)
