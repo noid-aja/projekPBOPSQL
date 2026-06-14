@@ -1,14 +1,18 @@
-using Npgsql;
 using System;
 using System.Data;
 using System.Globalization;
 using System.Windows.Forms;
+using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
+using Npgsql;
 
 namespace WinFormsApp1.Forms.AdminForm
 {
     public partial class Inspeksi : Form
     {
+        // [Encapsulation] Aksi inspeksi dikelola controller, bukan langsung oleh Form
+        private readonly InspeksiController _inspeksiController = new InspeksiController();
+
         public Inspeksi()
         {
             InitializeComponent();
@@ -39,8 +43,6 @@ namespace WinFormsApp1.Forms.AdminForm
         private void dgvPending_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
-            var row = dgvPending.Rows[e.RowIndex];
-            // ensure selected product id is available
             nudNilai.Value = 0;
             tbHargaRekomendasi.Text = string.Empty;
             tbCatatan.Text = string.Empty;
@@ -54,16 +56,15 @@ namespace WinFormsApp1.Forms.AdminForm
             return "D";
         }
 
-        private string ComputeStatus(int nilai)
-        {
-            return (nilai >= 80) ? "lolos_qc" : "ditolak_qc";
-        }
-
         private void btnRefresh_Click(object sender, EventArgs e)
         {
             LoadPendingProducts();
         }
 
+        /// <summary>
+        /// [Encapsulation] Submit QC tidak lagi berisi SQL langsung.
+        /// Semua business logic (grade, status, update DB) ada di InspeksiController.
+        /// </summary>
         private void btnSubmit_Click(object sender, EventArgs e)
         {
             if (dgvPending.SelectedRows.Count == 0)
@@ -74,69 +75,32 @@ namespace WinFormsApp1.Forms.AdminForm
 
             int idProduk = Convert.ToInt32(dgvPending.SelectedRows[0].Cells["id_produk"].Value);
 
-            if (!UserContext.IsLoggedIn())
-            {
-                MessageBox.Show("Sesi inspektor habis. Silakan login kembali.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            int idInspektor = UserContext.CurrentUser != null ? UserContext.CurrentUser.IdUser : 0;
-            if (idInspektor <= 0)
-            {
-                MessageBox.Show("Gagal membaca ID Inspektor yang sedang aktif.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
             int nilai = (int)nudNilai.Value;
-            decimal? harga = null;
+            decimal hargaRekomendasi = 0m;
             if (!string.IsNullOrWhiteSpace(tbHargaRekomendasi.Text))
             {
-                if (decimal.TryParse(tbHargaRekomendasi.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out var v))
-                    harga = v;
-                else
+                if (!decimal.TryParse(tbHargaRekomendasi.Text, NumberStyles.Any,
+                    CultureInfo.InvariantCulture, out hargaRekomendasi))
                 {
-                    MessageBox.Show("Harga rekomendasi tidak valid", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Harga rekomendasi tidak valid", "Validasi",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     tbHargaRekomendasi.Focus();
                     return;
                 }
             }
 
-            string catatan = string.IsNullOrWhiteSpace(tbCatatan.Text) ? null : tbCatatan.Text.Trim();
+            string? catatan = string.IsNullOrWhiteSpace(tbCatatan.Text) ? null : tbCatatan.Text.Trim();
+            bool isLolos = nilai >= 80;
 
-            try
+            // [Encapsulation] Delegasikan ke InspeksiController
+            bool sukses = _inspeksiController.KirimHasilQc(idProduk, nilai, hargaRekomendasi, catatan, isLolos);
+            if (sukses)
             {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
-                using var cmd = new NpgsqlCommand(@"INSERT INTO kapten.inspeksi(id_produk, id_inspektor, nilai, harga_rekomendasi, catatan)
-                    VALUES(@idproduk, @idinspektor, @nilai, @harga, @cat)
-                    ON CONFLICT (id_produk) DO UPDATE
-                    SET id_inspektor = EXCLUDED.id_inspektor,
-                    nilai = EXCLUDED.nilai,
-                    harga_rekomendasi = EXCLUDED.harga_rekomendasi,
-                    catatan = EXCLUDED.catatan,
-                    tgl_inspeksi = CURRENT_DATE;", conn);
-
-                cmd.Parameters.AddWithValue("@idproduk", idProduk);
-                cmd.Parameters.AddWithValue("@idinspektor", idInspektor);
-                cmd.Parameters.AddWithValue("@nilai", nilai);
-                if (harga.HasValue)
-                    cmd.Parameters.AddWithValue("@harga", harga.Value);
-                else
-                    cmd.Parameters.AddWithValue("@harga", DBNull.Value);
-                if (catatan != null)
-                    cmd.Parameters.AddWithValue("@cat", catatan);
-                else
-                    cmd.Parameters.AddWithValue("@cat", DBNull.Value);
-
-                cmd.ExecuteNonQuery();
-                var grade = ComputeGrade(nilai);
-                var status = ComputeStatus(nilai);
-                MessageBox.Show($"Inspeksi disimpan. Grade: {grade}, Status: {status}", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                string grade = ComputeGrade(nilai);
+                string status = isLolos ? "lolos_qc" : "ditolak_qc";
+                MessageBox.Show($"Inspeksi berhasil disimpan!\nGrade: {grade} | Status: {status}",
+                    "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadPendingProducts();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Gagal menyimpan inspeksi: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

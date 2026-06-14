@@ -128,16 +128,13 @@ namespace WinFormsApp1.Forms.AdminForm
             string metode = cmbMetode.SelectedItem?.ToString() ?? "Transfer";
             try
             {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
-                using var cmd = new NpgsqlCommand(@"
-                    update kapten.transaksi
-                    set status_bayar = 'lunas', tgl_transaksi = NOW()
-                    where id_transaksi = @id", conn);
-                cmd.Parameters.AddWithValue("@id", idTransaksi);
-                cmd.ExecuteNonQuery();
-                MessageBox.Show("Pembayaran berhasil dikonfirmasi!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadTransaksi();
+                var controller = new WinFormsApp1.Controllers.TransaksiController();
+                bool sukses = controller.BayarTransaksi(idTransaksi);
+                if (sukses)
+                {
+                    MessageBox.Show("Pembayaran berhasil dikonfirmasi!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    LoadTransaksi();
+                }
             }
             catch (Exception ex)
             {

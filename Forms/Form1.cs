@@ -13,10 +13,13 @@ namespace WinFormsApp1
     {
         private readonly AuthController _authController;
 
+        public static Form1 Instance { get; private set; } = null!;
+
         public Form1()
         {
             InitializeComponent();
             _authController = new AuthController();
+            Instance = this;
         }
 
         private void btnlogin_Click(object sender, EventArgs e)
@@ -40,6 +43,9 @@ namespace WinFormsApp1
                 string roleUtama = (user.Roles != null && user.Roles.Count > 0)
                                     ? user.Roles[0].NamaRole
                                     : "pembeli";
+
+                tbusr.Clear();
+                tbpw.Clear();
 
                 FormDashboard dashboard = new FormDashboard(roleUtama);
                 dashboard.Show();
@@ -88,6 +94,14 @@ namespace WinFormsApp1
             FormRegister registerForm = new FormRegister();
             registerForm.Show();
             Hide();
+        }
+
+        public void TampilkanKembali()
+        {
+            tbusr.Clear();
+            tbpw.Clear();
+            Show();
+            BringToFront();
         }
 
         private void Form1_Load(object sender, EventArgs e)

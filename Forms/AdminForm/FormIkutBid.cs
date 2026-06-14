@@ -1,9 +1,10 @@
-using Npgsql;
 using System;
 using System.Data;
 using System.Windows.Forms;
+using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models;
+using Npgsql;
 
 namespace WinFormsApp1.Forms.AdminForm
 {
@@ -11,6 +12,9 @@ namespace WinFormsApp1.Forms.AdminForm
     {
         private readonly int _idPembeli;
         private System.Windows.Forms.Timer _timerCountdown = new System.Windows.Forms.Timer();
+
+        // [Encapsulation] Bid action lewat controller, bukan direct BidContext
+        private readonly BidController _bidController = new BidController();
 
         public FormIkutBid(int idPembeli)
         {
@@ -68,6 +72,10 @@ namespace WinFormsApp1.Forms.AdminForm
             tbNominalBid.Text = (batas + 1000).ToString();
         }
 
+        /// <summary>
+        /// [Encapsulation] Bid tidak lagi direct ke BidContext.
+        /// Validasi dan eksekusi dikelola oleh BidController.
+        /// </summary>
         private void btnBid_Click(object sender, EventArgs e)
         {
             if (dgvLelang.SelectedRows.Count == 0)
@@ -77,7 +85,9 @@ namespace WinFormsApp1.Forms.AdminForm
             { MessageBox.Show("Nominal bid tidak valid!", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning); tbNominalBid.Focus(); return; }
 
             int idLelang = Convert.ToInt32(dgvLelang.SelectedRows[0].Cells["id_lelang"].Value);
-            bool ok = BidContext.EksekusiBid(idLelang, _idPembeli, nominal);
+
+            // [Encapsulation] Gunakan BidController, bukan BidContext langsung
+            bool ok = _bidController.KirimBid(idLelang, nominal);
             if (ok)
             {
                 LoadLelangAktif();

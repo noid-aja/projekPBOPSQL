@@ -1,14 +1,18 @@
-using Npgsql;
 using System;
 using System.Data;
 using System.Windows.Forms;
+using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models;
+using Npgsql;
 
 namespace WinFormsApp1.Forms.AdminForm
 {
     public partial class FormLelang : Form
     {
+        // [Encapsulation] Operasi lelang lewat controller, bukan LelangContext langsung
+        private readonly LelangController _lelangController = new LelangController();
+
         public FormLelang()
         {
             InitializeComponent();
@@ -62,6 +66,10 @@ namespace WinFormsApp1.Forms.AdminForm
             }
         }
 
+        /// <summary>
+        /// [Encapsulation] Buka lelang tidak lagi direct ke LelangContext.
+        /// Validasi role (IsAdmin) dan eksekusi dikelola oleh LelangController.
+        /// </summary>
         private void btnBukaLelang_Click(object sender, EventArgs e)
         {
             if (cmbProduk.SelectedIndex <= 0 || cmbProduk.SelectedItem is not ProdukItem item)
@@ -70,7 +78,9 @@ namespace WinFormsApp1.Forms.AdminForm
                 return;
             }
             string? lokasi = string.IsNullOrWhiteSpace(tbLokasi.Text) ? null : tbLokasi.Text.Trim();
-            bool ok = LelangContext.EksekusiBukaLelang(item.IdProduk, lokasi);
+
+            // [Encapsulation] Gunakan LelangController, bukan LelangContext langsung
+            bool ok = _lelangController.ProsesBukaLelang(item.IdProduk, lokasi);
             if (ok)
             {
                 MessageBox.Show("Lelang berhasil dibuka! Durasi 3 menit.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using WinFormsApp1.Models;
@@ -12,6 +12,9 @@ namespace WinFormsApp1.Models.Roles
         public override string NamaRole => "pembeli";
 
         public override string JudulDashboard => "Dashboard Pembeli";
+
+        public override string GetDeskripsiRole() =>
+            "Pembeli dapat melihat lelang aktif, ikut bid, dan menyelesaikan transaksi pembelian kopi.";
 
         public override List<string> GetMenuAkses()
         {

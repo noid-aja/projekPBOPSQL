@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -17,11 +17,13 @@ namespace WinFormsApp1.Models
 
         public abstract string JudulDashboard { get; }
 
+        public abstract string GetDeskripsiRole();
+
         public abstract List<string> GetMenuAkses();
 
         public virtual bool BisaAksesMenu(string namaMenu)
         {
-            return GetMenuAkses().Contains(namaMenu);
+            return GetMenuAkses().Contains(namaMenu, StringComparer.OrdinalIgnoreCase);
         }
     }
 }

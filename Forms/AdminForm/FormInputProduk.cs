@@ -1,14 +1,18 @@
-using Npgsql;
 using System;
 using System.Data;
 using System.Windows.Forms;
+using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
+using Npgsql;
 
 namespace WinFormsApp1.Forms.AdminForm
 {
     public partial class FormInputProduk : Form
     {
         private readonly int _idPetani;
+
+        // [Encapsulation] Form hanya tahu controller, tidak tahu detail SQL
+        private readonly ProdukKopiController _produkController = new ProdukKopiController();
 
         public FormInputProduk(int idPetani)
         {
@@ -35,6 +39,10 @@ namespace WinFormsApp1.Forms.AdminForm
             }
         }
 
+        /// <summary>
+        /// [Encapsulation] Submit tidak lagi berisi SQL langsung.
+        /// Semua validasi dan persistensi dilakukan oleh ProdukKopiController.
+        /// </summary>
         private void btnSubmit_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(tbNamaProduk.Text))
@@ -50,29 +58,17 @@ namespace WinFormsApp1.Forms.AdminForm
             { MessageBox.Show("Harga pengajuan harus angka lebih dari 0.", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning); tbHarga.Focus(); return; }
 
             int idJenis = Convert.ToInt32(cmbJenis.SelectedValue);
-            string deskripsi = tbDeskripsi.Text.Trim();
+            string? deskripsi = string.IsNullOrWhiteSpace(tbDeskripsi.Text) ? null : tbDeskripsi.Text.Trim();
 
-            try
+            // [Encapsulation] Delegasikan ke controller — Form tidak tahu cara simpan ke DB
+            bool sukses = _produkController.KirimPengajuanProduk(
+                tbNamaProduk.Text.Trim(), idJenis, berat, harga, deskripsi);
+
+            if (sukses)
             {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
-                using var cmd = new NpgsqlCommand(@"
-                    insert into kapten.produk_kopi (id_petani, id_jenis, nama_produk, berat_kg, harga_pengajuan, deskripsi, status)
-                    values (@idPetani, @idJenis, @nama, @berat, @harga, @deskripsi, 'PendingInspeksi')", conn);
-                cmd.Parameters.AddWithValue("@idPetani", _idPetani);
-                cmd.Parameters.AddWithValue("@idJenis", idJenis);
-                cmd.Parameters.AddWithValue("@nama", tbNamaProduk.Text.Trim());
-                cmd.Parameters.AddWithValue("@berat", berat);
-                cmd.Parameters.AddWithValue("@harga", harga);
-                cmd.Parameters.AddWithValue("@deskripsi", string.IsNullOrWhiteSpace(deskripsi) ? (object)DBNull.Value : deskripsi);
-                cmd.ExecuteNonQuery();
-
-                MessageBox.Show("Produk berhasil diajukan! Status: Pending Inspeksi.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Produk berhasil diajukan! Status: Pending Inspeksi.", "Sukses",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
                 tbNamaProduk.Clear(); tbBerat.Clear(); tbHarga.Clear(); tbDeskripsi.Clear();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Gagal simpan produk: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

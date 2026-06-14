@@ -41,11 +41,11 @@
             tbusr.BorderStyle = BorderStyle.None;
             tbusr.Font = new Font("Segoe UI", 9F);
             tbusr.ForeColor = Color.WhiteSmoke;
-            tbusr.Location = new Point(276, 145);
-            tbusr.Margin = new Padding(4);
+            tbusr.Location = new Point(242, 109);
+            tbusr.Margin = new Padding(4, 3, 4, 3);
             tbusr.Name = "tbusr";
             tbusr.PlaceholderText = "Masukan Username";
-            tbusr.Size = new Size(254, 20);
+            tbusr.Size = new Size(222, 16);
             tbusr.TabIndex = 0;
             tbusr.TextChanged += tbusr_TextChanged;
             // 
@@ -56,12 +56,12 @@
             tbpw.BorderStyle = BorderStyle.None;
             tbpw.Font = new Font("Segoe UI", 9F);
             tbpw.ForeColor = Color.WhiteSmoke;
-            tbpw.Location = new Point(276, 211);
-            tbpw.Margin = new Padding(4);
+            tbpw.Location = new Point(242, 158);
+            tbpw.Margin = new Padding(4, 3, 4, 3);
             tbpw.Name = "tbpw";
             tbpw.PasswordChar = '*';
             tbpw.PlaceholderText = "Masukan Password";
-            tbpw.Size = new Size(254, 20);
+            tbpw.Size = new Size(222, 16);
             tbpw.TabIndex = 1;
             tbpw.UseSystemPasswordChar = true;
             tbpw.TextChanged += tbpw_TextChanged;
@@ -74,10 +74,10 @@
             btnlogin.FlatAppearance.MouseDownBackColor = Color.Transparent;
             btnlogin.FlatAppearance.MouseOverBackColor = Color.Transparent;
             btnlogin.FlatStyle = FlatStyle.Flat;
-            btnlogin.Location = new Point(273, 301);
-            btnlogin.Margin = new Padding(4);
+            btnlogin.Location = new Point(239, 226);
+            btnlogin.Margin = new Padding(4, 3, 4, 3);
             btnlogin.Name = "btnlogin";
-            btnlogin.Size = new Size(254, 38);
+            btnlogin.Size = new Size(222, 28);
             btnlogin.TabIndex = 0;
             btnlogin.UseVisualStyleBackColor = false;
             btnlogin.Click += btnlogin_Click;
@@ -89,9 +89,9 @@
             linkregister.BackColor = Color.Transparent;
             linkregister.Font = new Font("Segoe UI", 7F);
             linkregister.LinkColor = Color.White;
-            linkregister.Location = new Point(439, 345);
+            linkregister.Location = new Point(384, 259);
             linkregister.Name = "linkregister";
-            linkregister.Size = new Size(90, 15);
+            linkregister.Size = new Size(74, 12);
             linkregister.TabIndex = 6;
             linkregister.TabStop = true;
             linkregister.Text = "Daftar Sekarang";
@@ -99,15 +99,17 @@
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.loginnnn__1_;
-            ClientSize = new Size(799, 450);
+            BackgroundImageLayout = ImageLayout.Stretch;
+            ClientSize = new Size(699, 338);
             Controls.Add(linkregister);
             Controls.Add(btnlogin);
             Controls.Add(tbpw);
             Controls.Add(tbusr);
-            Margin = new Padding(4);
+            DoubleBuffered = true;
+            Margin = new Padding(4, 3, 4, 3);
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;

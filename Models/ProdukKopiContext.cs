@@ -75,5 +75,63 @@ namespace WinFormsApp1.Models
             }
             return list;
         }
+        /// <summary>[Abstraction] Digunakan oleh ProdukKopiController yang implements ISearch.</summary>
+        public static ProdukKopi? AmbilById(int idProduk)
+        {
+            try
+            {
+                using var conn = ConnectDB.GetConnection();
+                conn.Open();
+                using var cmd = new NpgsqlCommand(@"
+                    select id_produk, id_petani, id_jenis, nama_produk, berat_kg, harga_pengajuan, deskripsi, status_produk
+                    from kapten.produk_kopi
+                    where id_produk = @idProduk", conn);
+                cmd.Parameters.AddWithValue("idProduk", idProduk);
+                using var reader = cmd.ExecuteReader();
+                if (!reader.Read()) return null;
+                string statusStr = reader.GetString(7);
+                return new ProdukKopi(
+                    reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2),
+                    reader.GetString(3), reader.GetDecimal(4), reader.GetDecimal(5),
+                    reader.IsDBNull(6) ? null : reader.GetString(6),
+                    Enum.ParseStatusProduk(statusStr));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal mengambil produk: " + ex.Message, "Error SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return null;
+            }
+        }
+
+        /// <summary>[Abstraction] Digunakan oleh ProdukKopiController yang implements ISearch.</summary>
+        public static List<ProdukKopi> CariByNama(string nama)
+        {
+            var list = new List<ProdukKopi>();
+            try
+            {
+                using var conn = ConnectDB.GetConnection();
+                conn.Open();
+                using var cmd = new NpgsqlCommand(@"
+                    select id_produk, id_petani, id_jenis, nama_produk, berat_kg, harga_pengajuan, deskripsi, status_produk
+                    from kapten.produk_kopi
+                    where lower(nama_produk) like lower(@nama)
+                    order by id_produk asc", conn);
+                cmd.Parameters.AddWithValue("nama", "%" + nama.Trim() + "%");
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    list.Add(new ProdukKopi(
+                        reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2),
+                        reader.GetString(3), reader.GetDecimal(4), reader.GetDecimal(5),
+                        reader.IsDBNull(6) ? null : reader.GetString(6),
+                        Enum.ParseStatusProduk(reader.GetString(7))));
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal mencari produk: " + ex.Message, "Error SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            return list;
+        }
     }
 }

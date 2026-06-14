@@ -289,7 +289,6 @@ namespace WinFormsApp1.Forms.AdminForm
             btnMenu2.TabIndex = 4;
             btnMenu2.Text = "Kelola User";
             btnMenu2.UseVisualStyleBackColor = false;
-            btnMenu2.Click += btnMenu2_Click;
             // 
             // btnMenu3
             // 
@@ -303,7 +302,6 @@ namespace WinFormsApp1.Forms.AdminForm
             btnMenu3.TabIndex = 5;
             btnMenu3.Text = "Jenis Kopi";
             btnMenu3.UseVisualStyleBackColor = false;
-            btnMenu3.Click += btnMenu3_Click;
             // 
             // btnMenu4
             // 
