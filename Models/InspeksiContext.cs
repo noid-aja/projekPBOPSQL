@@ -2,6 +2,7 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
 using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.Models
@@ -59,7 +60,7 @@ namespace WinFormsApp1.Models
                 return false;
             }
         }
-        /// <summary>[Abstraction] Digunakan oleh InspeksiController yang implements ISearch.</summary>
+
         public static Inspeksi? AmbilById(int idInspeksi)
         {
             try
@@ -88,7 +89,6 @@ namespace WinFormsApp1.Models
             }
         }
 
-        /// <summary>[Abstraction] Digunakan oleh InspeksiController yang implements ISearch.</summary>
         public static List<Inspeksi> CariByNamaProduk(string namaProduk)
         {
             var list = new List<Inspeksi>();
@@ -123,5 +123,4 @@ namespace WinFormsApp1.Models
             return list;
         }
     }
-    
 }

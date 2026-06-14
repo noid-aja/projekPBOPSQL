@@ -10,8 +10,6 @@ namespace WinFormsApp1.Forms.AdminForm
     public partial class FormInputProduk : Form
     {
         private readonly int _idPetani;
-
-        // [Encapsulation] Form hanya tahu controller, tidak tahu detail SQL
         private readonly ProdukKopiController _produkController = new ProdukKopiController();
 
         public FormInputProduk(int idPetani)
@@ -39,10 +37,6 @@ namespace WinFormsApp1.Forms.AdminForm
             }
         }
 
-        /// <summary>
-        /// [Encapsulation] Submit tidak lagi berisi SQL langsung.
-        /// Semua validasi dan persistensi dilakukan oleh ProdukKopiController.
-        /// </summary>
         private void btnSubmit_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrWhiteSpace(tbNamaProduk.Text))
@@ -60,7 +54,6 @@ namespace WinFormsApp1.Forms.AdminForm
             int idJenis = Convert.ToInt32(cmbJenis.SelectedValue);
             string? deskripsi = string.IsNullOrWhiteSpace(tbDeskripsi.Text) ? null : tbDeskripsi.Text.Trim();
 
-            // [Encapsulation] Delegasikan ke controller — Form tidak tahu cara simpan ke DB
             bool sukses = _produkController.KirimPengajuanProduk(
                 tbNamaProduk.Text.Trim(), idJenis, berat, harga, deskripsi);
 

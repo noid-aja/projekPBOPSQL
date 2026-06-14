@@ -91,5 +91,16 @@ namespace WinFormsApp1.Controllers
                 return false;
             }
         }
+
+        public bool TutupLelangManual(int idLelang)
+        {
+            if (!UserContext.IsLoggedIn() || !UserContext.IsAdmin())
+            {
+                MessageBox.Show("Hanya Admin yang bisa menutup lelang.", "Akses Ditolak",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            return TransaksiContext.TutupLelang(idLelang);
+        }
     }
 }

@@ -341,7 +341,7 @@ namespace WinFormsApp1.Forms.AdminForm
             btnLogout.TabIndex = 8;
             btnLogout.Text = "Logout";
             btnLogout.UseVisualStyleBackColor = false;
-            btnLogout.Click += btnLogout_Click_1;
+            btnLogout.Click += btnLogout_Click;
             // 
             // btnMenu6
             // 

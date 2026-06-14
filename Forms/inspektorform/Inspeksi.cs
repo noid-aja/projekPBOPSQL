@@ -10,7 +10,6 @@ namespace WinFormsApp1.Forms.AdminForm
 {
     public partial class Inspeksi : Form
     {
-        // [Encapsulation] Aksi inspeksi dikelola controller, bukan langsung oleh Form
         private readonly InspeksiController _inspeksiController = new InspeksiController();
 
         public Inspeksi()
@@ -61,10 +60,6 @@ namespace WinFormsApp1.Forms.AdminForm
             LoadPendingProducts();
         }
 
-        /// <summary>
-        /// [Encapsulation] Submit QC tidak lagi berisi SQL langsung.
-        /// Semua business logic (grade, status, update DB) ada di InspeksiController.
-        /// </summary>
         private void btnSubmit_Click(object sender, EventArgs e)
         {
             if (dgvPending.SelectedRows.Count == 0)
@@ -92,7 +87,6 @@ namespace WinFormsApp1.Forms.AdminForm
             string? catatan = string.IsNullOrWhiteSpace(tbCatatan.Text) ? null : tbCatatan.Text.Trim();
             bool isLolos = nilai >= 80;
 
-            // [Encapsulation] Delegasikan ke InspeksiController
             bool sukses = _inspeksiController.KirimHasilQc(idProduk, nilai, hargaRekomendasi, catatan, isLolos);
             if (sukses)
             {

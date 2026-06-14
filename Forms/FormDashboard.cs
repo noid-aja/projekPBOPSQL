@@ -17,8 +17,6 @@ namespace WinFormsApp1.Forms.AdminForm
         {
             InitializeComponent();
             this.DoubleBuffered = true;
-            btnLogout.Click -= btnLogout_Click;
-            btnLogout.Click += btnLogout_Click;
         }
 
         public FormDashboard(string role)
@@ -26,8 +24,6 @@ namespace WinFormsApp1.Forms.AdminForm
             InitializeComponent();
             roleAktif = role?.Trim().ToLower() ?? string.Empty;
             this.DoubleBuffered = true;
-            btnLogout.Click -= btnLogout_Click;
-            btnLogout.Click += btnLogout_Click;
         }
 
         private void FormDashboard_Load(object sender, EventArgs e)
@@ -195,20 +191,26 @@ namespace WinFormsApp1.Forms.AdminForm
                         break;
 
                     case "kelola user":
+                    case "kelola role":
                         openChildForm(new KelolaUser());
                         break;
+                    case "kelola jenis kopi":
                     case "jenis kopi":
                         openChildForm(new jeniskopi());
                         break;
+                    case "lihat semua produk":
                     case "produk kopi":
                         openChildForm(new ProdukKopi());
                         break;
+                    case "kelola lelang":
                     case "lelang":
                         openChildForm(new FormLelang());
                         break;
+                    case "kelola transaksi":
                     case "transaksi":
                         openChildForm(new FormTransaksi(roleAktif, idUser));
                         break;
+                    case "lihat laporan":
                     case "laporan":
                         openChildForm(new FormRiwayatInspeksi());
                         break;
@@ -385,10 +387,7 @@ namespace WinFormsApp1.Forms.AdminForm
         {
         }
 
-        private void btnLogout_Click_1(object sender, EventArgs e)
-        {
-            btnLogout_Click(sender, e);
-        }
+
 
         private void panel1_Paint(object sender, PaintEventArgs e)
         {

@@ -6,9 +6,6 @@ using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.Forms.AdminForm
 {
-    /// <summary>
-    /// Form Transaksi — bisa dipakai Admin (semua), Petani (produknya), Pembeli (transaksinya).
-    /// </summary>
     public partial class FormTransaksi : Form
     {
         private readonly string _role;

@@ -10,7 +10,6 @@ namespace WinFormsApp1.Forms.AdminForm
 {
     public partial class FormLelang : Form
     {
-        // [Encapsulation] Operasi lelang lewat controller, bukan LelangContext langsung
         private readonly LelangController _lelangController = new LelangController();
 
         public FormLelang()
@@ -66,10 +65,6 @@ namespace WinFormsApp1.Forms.AdminForm
             }
         }
 
-        /// <summary>
-        /// [Encapsulation] Buka lelang tidak lagi direct ke LelangContext.
-        /// Validasi role (IsAdmin) dan eksekusi dikelola oleh LelangController.
-        /// </summary>
         private void btnBukaLelang_Click(object sender, EventArgs e)
         {
             if (cmbProduk.SelectedIndex <= 0 || cmbProduk.SelectedItem is not ProdukItem item)
@@ -79,7 +74,6 @@ namespace WinFormsApp1.Forms.AdminForm
             }
             string? lokasi = string.IsNullOrWhiteSpace(tbLokasi.Text) ? null : tbLokasi.Text.Trim();
 
-            // [Encapsulation] Gunakan LelangController, bukan LelangContext langsung
             bool ok = _lelangController.ProsesBukaLelang(item.IdProduk, lokasi);
             if (ok)
             {
@@ -109,21 +103,12 @@ namespace WinFormsApp1.Forms.AdminForm
             if (MessageBox.Show("Yakin tutup lelang ini?", "Konfirmasi", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
                 return;
 
-            try
+            bool ok = _lelangController.TutupLelangManual(idLelang);
+            if (ok)
             {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
-                using var cmd = new NpgsqlCommand(@"
-                    update kapten.lelang set status_lelang = 'selesai', tgl_akhir = NOW()
-                    where id_lelang = @id", conn);
-                cmd.Parameters.AddWithValue("@id", idLelang);
-                cmd.ExecuteNonQuery();
                 MessageBox.Show("Lelang berhasil ditutup.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadLelang();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Gagal tutup lelang: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LoadProdukSiapLelang();
             }
         }
 

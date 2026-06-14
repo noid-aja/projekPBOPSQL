@@ -2,6 +2,7 @@ using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Windows.Forms;
 using WinFormsApp1.Helpers;
 using static WinFormsApp1.Models.Enum;
 
@@ -75,7 +76,7 @@ namespace WinFormsApp1.Models
             }
             return list;
         }
-        /// <summary>[Abstraction] Digunakan oleh ProdukKopiController yang implements ISearch.</summary>
+
         public static ProdukKopi? AmbilById(int idProduk)
         {
             try
@@ -103,7 +104,6 @@ namespace WinFormsApp1.Models
             }
         }
 
-        /// <summary>[Abstraction] Digunakan oleh ProdukKopiController yang implements ISearch.</summary>
         public static List<ProdukKopi> CariByNama(string nama)
         {
             var list = new List<ProdukKopi>();

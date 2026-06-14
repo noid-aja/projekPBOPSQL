@@ -24,6 +24,8 @@ namespace WinFormsApp1.Models.Roles
                 "Kelola Role",
                 "Kelola Jenis Kopi",
                 "Lihat Semua Produk",
+                "Kelola Lelang",
+                "Kelola Transaksi",
                 "Lihat Laporan"
             };
         }
