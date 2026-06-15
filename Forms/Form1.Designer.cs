@@ -28,91 +28,88 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             tbusr = new TextBox();
             tbpw = new TextBox();
             btnlogin = new Button();
-            label1 = new Label();
-            label2 = new Label();
-            btnregister = new Button();
+            linkregister = new LinkLabel();
             SuspendLayout();
             // 
             // tbusr
             // 
-            tbusr.Location = new Point(217, 179);
-            tbusr.Margin = new Padding(6, 6, 6, 6);
+            tbusr.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tbusr.BackColor = Color.FromArgb(17, 37, 0);
+            tbusr.BorderStyle = BorderStyle.None;
+            tbusr.Font = new Font("Segoe UI", 9F);
+            tbusr.ForeColor = Color.WhiteSmoke;
+            tbusr.Location = new Point(242, 109);
+            tbusr.Margin = new Padding(4, 3, 4, 3);
             tbusr.Name = "tbusr";
-            tbusr.Size = new Size(238, 39);
+            tbusr.PlaceholderText = "Masukan Username";
+            tbusr.Size = new Size(222, 16);
             tbusr.TabIndex = 0;
             tbusr.TextChanged += tbusr_TextChanged;
             // 
             // tbpw
             // 
-            tbpw.Location = new Point(217, 437);
-            tbpw.Margin = new Padding(6, 6, 6, 6);
+            tbpw.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            tbpw.BackColor = Color.FromArgb(17, 37, 0);
+            tbpw.BorderStyle = BorderStyle.None;
+            tbpw.Font = new Font("Segoe UI", 9F);
+            tbpw.ForeColor = Color.WhiteSmoke;
+            tbpw.Location = new Point(242, 158);
+            tbpw.Margin = new Padding(4, 3, 4, 3);
             tbpw.Name = "tbpw";
-            tbpw.Size = new Size(238, 39);
+            tbpw.PasswordChar = '*';
+            tbpw.PlaceholderText = "Masukan Password";
+            tbpw.Size = new Size(222, 16);
             tbpw.TabIndex = 1;
+            tbpw.UseSystemPasswordChar = true;
             tbpw.TextChanged += tbpw_TextChanged;
             // 
             // btnlogin
             // 
-            btnlogin.Location = new Point(260, 572);
-            btnlogin.Margin = new Padding(6, 6, 6, 6);
+            btnlogin.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            btnlogin.BackColor = Color.Transparent;
+            btnlogin.FlatAppearance.BorderSize = 0;
+            btnlogin.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            btnlogin.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            btnlogin.FlatStyle = FlatStyle.Flat;
+            btnlogin.Location = new Point(239, 226);
+            btnlogin.Margin = new Padding(4, 3, 4, 3);
             btnlogin.Name = "btnlogin";
-            btnlogin.Size = new Size(139, 49);
+            btnlogin.Size = new Size(222, 28);
             btnlogin.TabIndex = 0;
-            btnlogin.Text = "Login";
-            btnlogin.UseVisualStyleBackColor = true;
+            btnlogin.UseVisualStyleBackColor = false;
             btnlogin.Click += btnlogin_Click;
             // 
-            // label1
+            // linkregister
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(186, 111);
-            label1.Margin = new Padding(6, 0, 6, 0);
-            label1.Name = "label1";
-            label1.Size = new Size(296, 32);
-            label1.TabIndex = 2;
-            label1.Text = "Masukkan username Anda";
-            label1.Click += label1_Click;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(186, 363);
-            label2.Margin = new Padding(6, 0, 6, 0);
-            label2.Name = "label2";
-            label2.Size = new Size(290, 32);
-            label2.TabIndex = 3;
-            label2.Text = "Masukkan password Anda";
-            label2.Click += label2_Click;
-            // 
-            // btnregister
-            // 
-            btnregister.Location = new Point(260, 640);
-            btnregister.Margin = new Padding(6, 6, 6, 6);
-            btnregister.Name = "btnregister";
-            btnregister.Size = new Size(139, 49);
-            btnregister.TabIndex = 5;
-            btnregister.Text = "Daftar";
-            btnregister.UseVisualStyleBackColor = true;
-            btnregister.Click += btnregister_Click;
+            linkregister.ActiveLinkColor = Color.ForestGreen;
+            linkregister.AutoSize = true;
+            linkregister.BackColor = Color.Transparent;
+            linkregister.Font = new Font("Segoe UI", 7F);
+            linkregister.LinkColor = Color.White;
+            linkregister.Location = new Point(384, 259);
+            linkregister.Name = "linkregister";
+            linkregister.Size = new Size(74, 12);
+            linkregister.TabIndex = 6;
+            linkregister.TabStop = true;
+            linkregister.Text = "Daftar Sekarang";
+            linkregister.LinkClicked += linkregister_LinkClicked;
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(13F, 32F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            BackgroundImage = (Image)resources.GetObject("$this.BackgroundImage");
+            BackgroundImage = Properties.Resources.loginnnn__1_;
             BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(643, 960);
-            Controls.Add(label2);
-            Controls.Add(label1);
+            ClientSize = new Size(699, 338);
+            Controls.Add(linkregister);
             Controls.Add(btnlogin);
             Controls.Add(tbpw);
             Controls.Add(tbusr);
-            Controls.Add(btnregister);
-            Margin = new Padding(6, 6, 6, 6);
+            DoubleBuffered = true;
+            Margin = new Padding(4, 3, 4, 3);
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
@@ -125,8 +122,6 @@
         private TextBox tbusr;
         private TextBox tbpw;
         private Button btnlogin;
-        private Label label1;
-        private Label label2;
-        private Button btnregister;
+        private LinkLabel linkregister;
     }
 }
