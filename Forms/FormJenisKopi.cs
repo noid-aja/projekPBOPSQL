@@ -2,6 +2,7 @@ using Npgsql;
 using System;
 using System.Data;
 using System.Windows.Forms;
+using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1
 {
@@ -24,7 +25,7 @@ namespace WinFormsApp1
 
             try
             {
-                using (NpgsqlConnection conn = ConnectDB.GetConn())
+                using (NpgsqlConnection conn = ConnectDB.GetConnection())
                 {
                     string query = "insert into kapten.jenis_kopi(nama, deskripsi) values(@nama, @deskripsi)";
                     using (NpgsqlCommand cmd = new NpgsqlCommand(query, conn))
@@ -46,7 +47,7 @@ namespace WinFormsApp1
 
         private void LoadJenisKopi()
         {
-            using (NpgsqlConnection conn = ConnectDB.GetConn())
+            using (NpgsqlConnection conn = ConnectDB.GetConnection())
             {
                 string query = "select * from kapten.jenis_kopi";
                 NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, conn);
@@ -75,7 +76,7 @@ namespace WinFormsApp1
 
             try
             {
-                using (NpgsqlConnection conn = ConnectDB.GetConn())
+                using (NpgsqlConnection conn = ConnectDB.GetConnection())
                 {
                     string query = "update kapten.jenis_kopi set nama=@nama, deskripsi=@deskripsi where jenis_kopi_id=@id";
                     using (NpgsqlCommand cmd = new NpgsqlCommand(query, conn))
@@ -111,7 +112,7 @@ namespace WinFormsApp1
 
             try
             {
-                using (NpgsqlConnection conn = ConnectDB.GetConn())
+                using (NpgsqlConnection conn = ConnectDB.GetConnection())
                 {
                     // Cek apakah jenis kopi digunakan di tabel produk
                     string checkQuery = "select count(*) from kapten.produk where jenis_kopi_id = @id";
