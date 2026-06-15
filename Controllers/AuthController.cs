@@ -1,17 +1,13 @@
 using System;
 using WinFormsApp1.Models;
 using WinFormsApp1.Helpers;
-using WinFormsApp1.Repositories;
 
 namespace WinFormsApp1.Controllers
 {
     public class AuthController
     {
-        private readonly UserRepository _userRepository;
-
         public AuthController()
         {
-            _userRepository = new UserRepository();
         }
 
         public void Register(
@@ -75,7 +71,7 @@ namespace WinFormsApp1.Controllers
                     : noTelp.Trim()
             };
 
-            _userRepository.Register(user, role);
+            UserContext.Register(user, role);
         }
 
         public User Login(string username, string password)
@@ -92,7 +88,7 @@ namespace WinFormsApp1.Controllers
                     "Password tidak boleh kosong.");
             }
 
-            User? user = _userRepository.Login(
+            User? user = UserContext.Authenticate(
                 username.Trim(),
                 password);
 

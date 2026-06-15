@@ -4,7 +4,7 @@ using System.Data;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
 
-namespace WinFormsApp1.Forms.AdminForm
+namespace WinFormsApp1.Forms.PetaniForm
 {
     // ─────────────────────────────────────────────────────────────────
     // Form: Produk Saya (untuk Petani)

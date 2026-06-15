@@ -1,19 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models;
-using WinFormsApp1.Repositories;
 
 namespace WinFormsApp1.Controllers
 {
     public class UserController
     {
-        private readonly UserRepository _userRepository;
-
         public UserController()
         {
-            _userRepository = new UserRepository();
         }
 
         public User GetProfilSaya()
@@ -46,7 +42,7 @@ namespace WinFormsApp1.Controllers
 
             try
             {
-                _userRepository.Register(user, "inspektor");
+                UserContext.Register(user, "inspektor");
             }
             catch
             {
@@ -61,7 +57,7 @@ namespace WinFormsApp1.Controllers
 
             int currentIdUser = UserContext.CurrentUser!.IdUser;
 
-            bool berhasil = _userRepository.SoftDeleteUser(currentIdUser);
+            bool berhasil = UserContext.SoftDeleteUser(currentIdUser);
 
             if (berhasil)
             {
@@ -87,13 +83,13 @@ namespace WinFormsApp1.Controllers
 
             if (!string.IsNullOrWhiteSpace(noTelp)
                 && noTelp != UserContext.CurrentUser!.NoTelp
-                && _userRepository.IsNoTelpTaken(noTelp))
+                && UserContext.IsNoTelpTaken(noTelp))
                 throw new ArgumentException("Nomor telepon sudah digunakan.");
 
             UserContext.CurrentUser!.NamaLengkap = namaLengkap.Trim();
             UserContext.CurrentUser!.NoTelp = noTelp?.Trim();
 
-            bool berhasil = _userRepository.UpdateProfile(UserContext.CurrentUser!);
+            bool berhasil = UserContext.UpdateProfile(UserContext.CurrentUser!);
             if (!berhasil)
                 throw new Exception("Gagal menyimpan perubahan profil.");
         }
@@ -121,7 +117,7 @@ namespace WinFormsApp1.Controllers
             if (passwordBaru != konfirmasiPassword)
                 throw new ArgumentException("Konfirmasi password tidak cocok.");
 
-            bool berhasil = _userRepository.UpdatePassword(UserContext.CurrentUser!.IdUser, passwordBaru);
+            bool berhasil = UserContext.UpdatePassword(UserContext.CurrentUser!.IdUser, passwordBaru);
 
             if (!berhasil)
                 throw new Exception("Gagal menyimpan password baru.");
@@ -140,7 +136,7 @@ namespace WinFormsApp1.Controllers
             if (UserContext.CurrentUser!.IsInRole(role))
                 throw new ArgumentException($"Kamu sudah memiliki role {role}.");
 
-            bool berhasil = _userRepository.AddRole(UserContext.CurrentUser!.IdUser, role);
+            bool berhasil = UserContext.AddRole(UserContext.CurrentUser!.IdUser, role);
 
             if (!berhasil)
                 throw new Exception("Gagal menambahkan role.");
@@ -163,7 +159,7 @@ namespace WinFormsApp1.Controllers
             if (UserContext.CurrentUser!.Roles.Count <= 1)
                 throw new ArgumentException("Kamu harus memiliki minimal 1 role aktif.");
 
-            bool berhasil = _userRepository.RemoveRole(UserContext.CurrentUser!.IdUser, role);
+            bool berhasil = UserContext.RemoveRole(UserContext.CurrentUser!.IdUser, role);
 
             if (!berhasil)
                 throw new Exception("Gagal menghapus role.");

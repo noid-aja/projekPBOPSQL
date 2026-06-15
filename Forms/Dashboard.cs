@@ -3,23 +3,26 @@ using System.Collections.Generic;
 using System.Data;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
-using WinFormsApp1.Repositories;
+using WinFormsApp1.Models;
+using WinFormsApp1.Forms.PetaniForm;
+using WinFormsApp1.Forms.PembeliForm;
+using WinFormsApp1.Forms.InspektorForm;
+using WinFormsApp1.Forms.AdminForm;
 
-namespace WinFormsApp1.Forms.AdminForm
+namespace WinFormsApp1.Forms
 {
-    public partial class FormDashboard : Form
+    public partial class Dashboard : Form
     {
-        private readonly DashboardRepository _dashboardRepository = new DashboardRepository();
         private string roleAktif = "admin";
         private bool _isLoggingOut = false;
 
-        public FormDashboard()
+        public Dashboard()
         {
             InitializeComponent();
             this.DoubleBuffered = true;
         }
 
-        public FormDashboard(string role)
+        public Dashboard(string role)
         {
             InitializeComponent();
             roleAktif = role?.Trim().ToLower() ?? string.Empty;
@@ -83,37 +86,37 @@ namespace WinFormsApp1.Forms.AdminForm
             if (roleObj.NamaRole == "admin")
             {
                 AturCard(
-                    _dashboardRepository.CountTotalUser().ToString(), "Total User",
-                    _dashboardRepository.CountProdukByStatus("PendingInspeksi").ToString(), "Pending QC",
-                    _dashboardRepository.CountProdukByStatus("LolosQc").ToString(), "Lolos QC",
-                    _dashboardRepository.CountLelangByStatus("Berlangsung").ToString(), "Lelang Aktif");
+                    DashboardContext.CountTotalUser().ToString(), "Total User",
+                    DashboardContext.CountProdukByStatus("PendingInspeksi").ToString(), "Pending QC",
+                    DashboardContext.CountProdukByStatus("LolosQc").ToString(), "Lolos QC",
+                    DashboardContext.CountLelangByStatus("Berlangsung").ToString(), "Lelang Aktif");
                 IsiTabelAdmin();
             }
             else if (roleObj.NamaRole == "petani")
             {
                 AturCard(
-                    _dashboardRepository.CountProdukPetani(currentIdUser).ToString(), "Produk Saya",
-                    _dashboardRepository.CountProdukPetaniByStatus(currentIdUser, "PendingInspeksi").ToString(), "Pending QC",
-                    _dashboardRepository.CountProdukPetaniByStatus(currentIdUser, "LolosQc").ToString(), "Lolos QC",
-                    _dashboardRepository.CountProdukPetaniByStatus(currentIdUser, "Terjual").ToString(), "Terjual");
+                    DashboardContext.CountProdukPetani(currentIdUser).ToString(), "Produk Saya",
+                    DashboardContext.CountProdukPetaniByStatus(currentIdUser, "PendingInspeksi").ToString(), "Pending QC",
+                    DashboardContext.CountProdukPetaniByStatus(currentIdUser, "LolosQc").ToString(), "Lolos QC",
+                    DashboardContext.CountProdukPetaniByStatus(currentIdUser, "Terjual").ToString(), "Terjual");
                 IsiTabelPetani(currentIdUser);
             }
             else if (roleObj.NamaRole == "pembeli")
             {
                 AturCard(
-                    _dashboardRepository.CountLelangByStatus("Berlangsung").ToString(), "Lelang Aktif",
-                    _dashboardRepository.CountBidPembeli(currentIdUser).ToString(), "Bid Saya",
-                    _dashboardRepository.CountMenangPembeli(currentIdUser).ToString(), "Menang",
-                    _dashboardRepository.CountTransaksiPembeliByStatus(currentIdUser, "BelumBayar").ToString(), "Belum Bayar");
+                    DashboardContext.CountLelangByStatus("Berlangsung").ToString(), "Lelang Aktif",
+                    DashboardContext.CountBidPembeli(currentIdUser).ToString(), "Bid Saya",
+                    DashboardContext.CountMenangPembeli(currentIdUser).ToString(), "Menang",
+                    DashboardContext.CountTransaksiPembeliByStatus(currentIdUser, "BelumBayar").ToString(), "Belum Bayar");
                 IsiTabelPembeli();
             }
             else if (roleObj.NamaRole == "inspektor")
             {
                 AturCard(
-                    _dashboardRepository.CountProdukByStatus("PendingInspeksi").ToString(), "Pending QC",
-                    _dashboardRepository.CountInspeksiByInspektor(currentIdUser).ToString(), "Sudah Dicek",
-                    _dashboardRepository.CountProdukByStatus("LolosQc").ToString(), "Lolos QC",
-                    _dashboardRepository.CountProdukByStatus("DitolakQc").ToString(), "Ditolak QC");
+                    DashboardContext.CountProdukByStatus("PendingInspeksi").ToString(), "Pending QC",
+                    DashboardContext.CountInspeksiByInspektor(currentIdUser).ToString(), "Sudah Dicek",
+                    DashboardContext.CountProdukByStatus("LolosQc").ToString(), "Lolos QC",
+                    DashboardContext.CountProdukByStatus("DitolakQc").ToString(), "Ditolak QC");
                 IsiTabelInspektor();
             }
         }
@@ -200,7 +203,7 @@ namespace WinFormsApp1.Forms.AdminForm
                         break;
                     case "lihat semua produk":
                     case "produk kopi":
-                        openChildForm(new ProdukKopi());
+                        openChildForm(new WinFormsApp1.Forms.AdminForm.ProdukKopi());
                         break;
                     case "kelola lelang":
                     case "lelang":
@@ -254,7 +257,7 @@ namespace WinFormsApp1.Forms.AdminForm
                     case "beri grade kopi":
                     case "set status qc":
                     case "input inspeksi":
-                        openChildForm(new WinFormsApp1.Forms.AdminForm.Inspeksi());
+                        openChildForm(new WinFormsApp1.Forms.InspektorForm.Inspeksi());
                         break;
                     case "riwayat inspeksi":
                     case "laporan qc":
@@ -282,10 +285,10 @@ namespace WinFormsApp1.Forms.AdminForm
             dgvDashboard.DataSource = table;
         }
 
-        private void IsiTabelAdmin() => SetTable(_dashboardRepository.GetProdukAdmin());
-        private void IsiTabelPetani(int idPetani) => SetTable(_dashboardRepository.GetProdukPetani(idPetani));
-        private void IsiTabelPembeli() => SetTable(_dashboardRepository.GetLelangPembeli());
-        private void IsiTabelInspektor() => SetTable(_dashboardRepository.GetProdukPendingInspeksi());
+        private void IsiTabelAdmin() => SetTable(DashboardContext.GetProdukAdmin());
+        private void IsiTabelPetani(int idPetani) => SetTable(DashboardContext.GetProdukPetani(idPetani));
+        private void IsiTabelPembeli() => SetTable(DashboardContext.GetLelangPembeli());
+        private void IsiTabelInspektor() => SetTable(DashboardContext.GetProdukPendingInspeksi());
 
         private void btnLogout_Click(object sender, EventArgs e)
         {

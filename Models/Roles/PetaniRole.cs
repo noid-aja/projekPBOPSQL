@@ -27,5 +27,8 @@ namespace WinFormsApp1.Models.Roles
                 "Lihat Status Transaksi"
             };
         }
+
+
+
     }
 }

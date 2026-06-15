@@ -5,7 +5,7 @@ using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
 using Npgsql;
 
-namespace WinFormsApp1.Forms.AdminForm
+namespace WinFormsApp1.Forms.PetaniForm
 {
     public partial class FormInputProduk : Form
     {

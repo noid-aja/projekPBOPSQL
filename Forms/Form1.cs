@@ -47,7 +47,7 @@ namespace WinFormsApp1
                 tbusr.Clear();
                 tbpw.Clear();
 
-                FormDashboard dashboard = new FormDashboard(roleUtama);
+                Dashboard dashboard = new Dashboard(roleUtama);
                 dashboard.Show();
                 Hide();
             }

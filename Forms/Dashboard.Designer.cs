@@ -1,6 +1,6 @@
-namespace WinFormsApp1.Forms.AdminForm
+namespace WinFormsApp1.Forms
 {
-    partial class FormDashboard
+    partial class Dashboard
     {
         /// <summary>
         /// Required designer variable.
@@ -425,7 +425,7 @@ namespace WinFormsApp1.Forms.AdminForm
             Controls.Add(panel4);
             Controls.Add(panel1);
             Margin = new Padding(2);
-            Name = "FormDashboard";
+            Name = "Dashboard";
             Text = "Dashboard Admin";
             Load += FormDashboard_Load;
             panel4.ResumeLayout(false);

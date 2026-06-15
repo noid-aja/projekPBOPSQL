@@ -6,7 +6,7 @@ using WinFormsApp1.Controllers;
 using WinFormsApp1.Helpers;
 using Npgsql;
 
-namespace WinFormsApp1.Forms.AdminForm
+namespace WinFormsApp1.Forms.InspektorForm
 {
     public partial class Inspeksi : Form
     {

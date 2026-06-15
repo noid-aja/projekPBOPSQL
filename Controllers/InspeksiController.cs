@@ -40,10 +40,18 @@ namespace WinFormsApp1.Controllers
                 return false;
             }
 
-            string gradeOtomatis = nilai >= 85 ? "A"
-                                 : nilai >= 70 ? "B"
-                                 : nilai >= 50 ? "C"
-                                 : "D";
+            string gradeOtomatis = nilai >= 95 ? "A+"
+                                 : nilai >= 90 ? "A"
+                                 : nilai >= 85 ? "A-"
+                                 : nilai >= 80 ? "B+"
+                                 : nilai >= 75 ? "B"
+                                 : nilai >= 70 ? "B-"
+                                 : nilai >= 65 ? "C+"
+                                 : nilai >= 60 ? "C"
+                                 : nilai >= 55 ? "C-"
+                                 : nilai >= 50 ? "D+"
+                                 : nilai >= 40 ? "D"
+                                 : "D-";
 
             try
             {

@@ -110,9 +110,65 @@ namespace WinFormsApp1.Models
             catch (Exception ex)
             {
                 trans.Rollback();
-                MessageBox.Show("Gagal membuka lelang di database: " + ex.Message, "Error SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                System.Windows.Forms.MessageBox.Show("Gagal membuka lelang di database: " + ex.Message, "Error SQL", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
                 return false;
             }
+        }
+
+        public static Lelang? AmbilLelangById(int id)
+        {
+            try
+            {
+                using var conn = ConnectDB.GetConnection();
+                conn.Open();
+                using var cmd = new NpgsqlCommand(@"
+                    select id_lelang, id_produk, bid_minimum, tgl_mulai, tgl_akhir, lokasi_lelang, status_lelang
+                    from kapten.lelang
+                    where id_lelang = @id", conn);
+                cmd.Parameters.AddWithValue("id", id);
+                using var reader = cmd.ExecuteReader();
+                if (!reader.Read()) return null;
+                return new Lelang(
+                    reader.GetInt32(0), reader.GetInt32(1), reader.GetDecimal(2),
+                    reader.GetDateTime(3), reader.GetDateTime(4),
+                    reader.IsDBNull(5) ? null : reader.GetString(5),
+                    Enum.ParseStatusLelang(reader.GetString(6)));
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Gagal mencari lelang: " + ex.Message, "Error SQL",
+                    System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                return null;
+            }
+        }
+
+        public static List<Lelang> CariLelangByLokasi(string namaLokasi)
+        {
+            var list = new List<Lelang>();
+            try
+            {
+                using var conn = ConnectDB.GetConnection();
+                conn.Open();
+                using var cmd = new NpgsqlCommand(@"
+                    select id_lelang, id_produk, bid_minimum, tgl_mulai, tgl_akhir, lokasi_lelang, status_lelang
+                    from kapten.lelang
+                    where lower(lokasi_lelang) like lower(@nama)
+                    order by id_lelang desc", conn);
+                cmd.Parameters.AddWithValue("nama", "%" + namaLokasi.Trim() + "%");
+                using var reader = cmd.ExecuteReader();
+                while (reader.Read())
+                    list.Add(new Lelang(
+                        reader.GetInt32(0), reader.GetInt32(1), reader.GetDecimal(2),
+                        reader.GetDateTime(3), reader.GetDateTime(4),
+                        reader.IsDBNull(5) ? null : reader.GetString(5),
+                        Enum.ParseStatusLelang(reader.GetString(6))));
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Gagal mencari lelang: " + ex.Message, "Error SQL",
+                    System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+            }
+            return list;
         }
     }
 }

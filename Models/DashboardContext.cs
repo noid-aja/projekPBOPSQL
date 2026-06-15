@@ -1,13 +1,14 @@
 using Npgsql;
 using NpgsqlTypes;
+using System;
 using System.Data;
 using WinFormsApp1.Helpers;
 
-namespace WinFormsApp1.Repositories
+namespace WinFormsApp1.Models
 {
-    public class DashboardRepository
+    public static class DashboardContext
     {
-        private int ExecuteScalarInt(string query, params NpgsqlParameter[] parameters)
+        private static int ExecuteScalarInt(string query, params NpgsqlParameter[] parameters)
         {
             using NpgsqlConnection conn = ConnectDB.GetConnection();
             conn.Open();
@@ -21,7 +22,7 @@ namespace WinFormsApp1.Repositories
                 : Convert.ToInt32(result);
         }
 
-        private DataTable GetDataTable(string query, params NpgsqlParameter[] parameters)
+        private static DataTable GetDataTable(string query, params NpgsqlParameter[] parameters)
         {
             using NpgsqlConnection conn = ConnectDB.GetConnection();
             conn.Open();
@@ -36,7 +37,7 @@ namespace WinFormsApp1.Repositories
             return table;
         }
 
-        private string MapStatus(string status)
+        private static string MapStatus(string status)
         {
             if (string.IsNullOrWhiteSpace(status)) return status;
             switch (status.ToLower().Trim())
@@ -54,33 +55,33 @@ namespace WinFormsApp1.Repositories
             }
         }
 
-        public int CountTotalUser()
+        public static int CountTotalUser()
         {
             return ExecuteScalarInt("SELECT COUNT(*) FROM kapten.users;");
         }
 
-        public int CountProdukByStatus(string status)
+        public static int CountProdukByStatus(string status)
         {
             return ExecuteScalarInt(
                 "SELECT COUNT(*) FROM kapten.produk_kopi WHERE status_produk = @status;",
                 new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = MapStatus(status) });
         }
 
-        public int CountLelangByStatus(string status)
+        public static int CountLelangByStatus(string status)
         {
             return ExecuteScalarInt(
                 "SELECT COUNT(*) FROM kapten.lelang WHERE status_lelang = @status;",
                 new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = MapStatus(status) });
         }
 
-        public int CountProdukPetani(int idPetani)
+        public static int CountProdukPetani(int idPetani)
         {
             return ExecuteScalarInt(
                 "SELECT COUNT(*) FROM kapten.produk_kopi WHERE id_petani = @id_petani;",
                 new NpgsqlParameter("id_petani", NpgsqlDbType.Integer) { Value = idPetani });
         }
 
-        public int CountProdukPetaniByStatus(int idPetani, string status)
+        public static int CountProdukPetaniByStatus(int idPetani, string status)
         {
             return ExecuteScalarInt(
                 """
@@ -93,14 +94,14 @@ namespace WinFormsApp1.Repositories
                 new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = MapStatus(status) });
         }
 
-        public int CountBidPembeli(int idPembeli)
+        public static int CountBidPembeli(int idPembeli)
         {
             return ExecuteScalarInt(
                 "SELECT COUNT(*) FROM kapten.bid WHERE id_pembeli = @id_pembeli;",
                 new NpgsqlParameter("id_pembeli", NpgsqlDbType.Integer) { Value = idPembeli });
         }
 
-        public int CountMenangPembeli(int idPembeli)
+        public static int CountMenangPembeli(int idPembeli)
         {
             return ExecuteScalarInt(
                 """
@@ -112,7 +113,7 @@ namespace WinFormsApp1.Repositories
                 new NpgsqlParameter("id_pembeli", NpgsqlDbType.Integer) { Value = idPembeli });
         }
 
-        public int CountTransaksiPembeliByStatus(int idPembeli, string statusBayar)
+        public static int CountTransaksiPembeliByStatus(int idPembeli, string statusBayar)
         {
             return ExecuteScalarInt(
                 """
@@ -127,14 +128,14 @@ namespace WinFormsApp1.Repositories
                 new NpgsqlParameter("status_bayar", NpgsqlDbType.Varchar) { Value = MapStatus(statusBayar) });
         }
 
-        public int CountInspeksiByInspektor(int idInspektor)
+        public static int CountInspeksiByInspektor(int idInspektor)
         {
             return ExecuteScalarInt(
                 "SELECT COUNT(*) FROM kapten.inspeksi WHERE id_inspektor = @id_inspektor;",
                 new NpgsqlParameter("id_inspektor", NpgsqlDbType.Integer) { Value = idInspektor });
         }
 
-        public int CountInspeksiByInspektorAndStatus(int idInspektor, string statusInspeksi)
+        public static int CountInspeksiByInspektorAndStatus(int idInspektor, string statusInspeksi)
         {
             return ExecuteScalarInt(
                 """
@@ -147,7 +148,7 @@ namespace WinFormsApp1.Repositories
                 new NpgsqlParameter("status_inspeksi", NpgsqlDbType.Varchar) { Value = MapStatus(statusInspeksi) });
         }
 
-        public DataTable GetProdukAdmin()
+        public static DataTable GetProdukAdmin()
         {
             return GetDataTable(
                 """
@@ -166,7 +167,7 @@ namespace WinFormsApp1.Repositories
                 """);
         }
 
-        public DataTable GetProdukPetani(int idPetani)
+        public static DataTable GetProdukPetani(int idPetani)
         {
             return GetDataTable(
                 """
@@ -186,7 +187,7 @@ namespace WinFormsApp1.Repositories
                 new NpgsqlParameter("id_petani", NpgsqlDbType.Integer) { Value = idPetani });
         }
 
-        public DataTable GetLelangPembeli()
+        public static DataTable GetLelangPembeli()
         {
             return GetDataTable(
                 """
@@ -205,7 +206,7 @@ namespace WinFormsApp1.Repositories
                 """);
         }
 
-        public DataTable GetProdukPendingInspeksi()
+        public static DataTable GetProdukPendingInspeksi()
         {
             return GetDataTable(
                 """

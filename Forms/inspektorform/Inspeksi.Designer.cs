@@ -1,4 +1,4 @@
-namespace WinFormsApp1.Forms.AdminForm
+namespace WinFormsApp1.Forms.InspektorForm
 {
     partial class Inspeksi
     {
