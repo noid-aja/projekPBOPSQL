@@ -213,7 +213,7 @@ namespace WinFormsApp1.Models
                 cmdTx.ExecuteNonQuery();
 
                 using var cmdGetProduk = new NpgsqlCommand(@"
-                    select l.id_produk FROM kapten.transaksi t
+                    select l.id_produk from kapten.transaksi t
                     join kapten.pemenang_lelang p on t.id_pemenang = p.id_pemenang
                     join kapten.lelang l on p.id_lelang = l.id_lelang
                     where t.id_transaksi = @id", conn);

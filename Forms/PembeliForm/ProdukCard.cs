@@ -2,157 +2,95 @@ using System;
 using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
+using WinFormsApp1.Controllers;
+using WinFormsApp1.Models;
 
 namespace WinFormsApp1.Forms.PembeliForm
 {
     public partial class ProdukCard : UserControl
     {
-        private decimal _hargaAwal;
-        private decimal _bidTertinggi;
-        private decimal _beratKg;
-
-        public event EventHandler? CardClick;
+        private Lelang _lelang;
+        private ProdukKopi _produkKopi;
+        private BidController _bidController;
+        private DateTime _waktuSelesaiLelang;
 
         public ProdukCard()
         {
             InitializeComponent();
-            
-            this.Click += (s, e) => OnCardClicked(e);
-            BindClickEvents(this);
+            _bidController = new BidController();
         }
 
-        private void BindClickEvents(Control parent)
+        public void SetDataLelang(Lelang lelang, ProdukKopi produk, decimal penawaranTertinggisaatIni)
         {
-            foreach (Control ctrl in parent.Controls)
+            _lelang = lelang;
+            _produkKopi = produk;
+            _waktuSelesaiLelang = lelang.TglAkhir; 
+
+            lblNamaKopi.Text = produk.NamaProduk;
+            lblBeratAtauGrade.Text = $"Berat: {produk.BeratKg} Kg | Status: {produk.Status}";
+
+            decimal hargaAcuan = penawaranTertinggisaatIni > 0 ? penawaranTertinggisaatIni : lelang.BidMinimum;
+            lblHargaSekarang.Text = $"Harga Saat Ini: Rp {hargaAcuan:N0}";
+
+            nudNominalBid.Minimum = hargaAcuan + 1000;
+            nudNominalBid.Value = hargaAcuan + 1000;
+
+            UpdateCountdownTampilan();
+            timerDetik.Start();
+        }
+
+        private void timerDetik_Tick(object sender, EventArgs e)
+        {
+            UpdateCountdownTampilan();
+        }
+
+        private void UpdateCountdownTampilan()
+        {
+            TimeSpan sisaWaktu = _waktuSelesaiLelang - DateTime.Now;
+
+            if (sisaWaktu.TotalSeconds <= 0)
             {
-                ctrl.Click += (s, e) => OnCardClicked(e);
-                if (ctrl.HasChildren)
-                {
-                    BindClickEvents(ctrl);
-                }
-            }
-        }
+                timerDetik.Stop();
+                lblTimerCountdown.Text = "LELANG SELESAI";
+                lblTimerCountdown.BackColor = Color.LightGray;
+                lblTimerCountdown.ForeColor = Color.Black;
 
-        protected virtual void OnCardClicked(EventArgs e)
-        {
-            CardClick?.Invoke(this, e);
-        }
-
-        [Browsable(true)]
-        [Category("Lelang Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public int IdLelang { get; set; }
-
-        [Browsable(true)]
-        [Category("Lelang Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public Image ProductImage
-        {
-            get => picProduct.Image;
-            set => picProduct.Image = value;
-        }
-
-        [Browsable(true)]
-        [Category("Lelang Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string NamaProduk
-        {
-            get => lblNama.Text;
-            set => lblNama.Text = value;
-        }
-
-        [Browsable(true)]
-        [Category("Lelang Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string Petani
-        {
-            get => lblPetani.Text;
-            set => lblPetani.Text = $"Petani: {value}";
-        }
-
-        [Browsable(true)]
-        [Category("Lelang Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string JenisKopi
-        {
-            get => lblJenis.Text;
-            set => lblJenis.Text = $"Jenis: {value}";
-        }
-
-        [Browsable(true)]
-        [Category("Lelang Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public string Grade
-        {
-            get => lblGrade.Text;
-            set => lblGrade.Text = $"Grade: {value}";
-        }
-
-        [Browsable(true)]
-        [Category("Lelang Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public decimal HargaAwal
-        {
-            get => _hargaAwal;
-            set
-            {
-                _hargaAwal = value;
-                UpdateHargaDisplay();
-            }
-        }
-
-        [Browsable(true)]
-        [Category("Lelang Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public decimal BidTertinggi
-        {
-            get => _bidTertinggi;
-            set
-            {
-                _bidTertinggi = value;
-                UpdateHargaDisplay();
-            }
-        }
-
-        [Browsable(true)]
-        [Category("Lelang Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public decimal HargaSaatIni => _bidTertinggi > 0 ? _bidTertinggi : _hargaAwal;
-
-        private void UpdateHargaDisplay()
-        {
-            lblHarga.Text = $"Harga: Rp {HargaSaatIni:N0}";
-        }
-
-        [Browsable(true)]
-        [Category("Lelang Properties")]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public decimal BeratKg
-        {
-            get => _beratKg;
-            set
-            {
-                _beratKg = value;
-                lblBerat.Text = $"Berat: {value:N0} Kg";
-            }
-        }
-
-        [Browsable(false)]
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public DateTime TglAkhir { get; set; }
-
-        public void UpdateCountdown()
-        {
-            TimeSpan sisa = TglAkhir - DateTime.Now;
-            if (sisa.TotalSeconds <= 0)
-            {
-                lblCountdown.Text = "⏱ Sisa: HABIS";
-                lblCountdown.ForeColor = Color.Red;
+                nudNominalBid.Enabled = false;
+                btnTempatkanBid.Enabled = false;
+                btnTempatkanBid.BackColor = Color.Gray;
             }
             else
             {
-                lblCountdown.Text = $"⏱ Sisa: {(int)sisa.TotalMinutes:D2}:{sisa.Seconds:D2}";
-                lblCountdown.ForeColor = Color.DarkRed;
+                lblTimerCountdown.Text = string.Format("Sisa Waktu: {0:D2}:{1:D2}:{2:D2}",
+                    sisaWaktu.Hours,
+                    sisaWaktu.Minutes,
+                    sisaWaktu.Seconds);
+
+                if (sisaWaktu.TotalMinutes < 1)
+                {
+                    lblTimerCountdown.BackColor = Color.Red;
+                    lblTimerCountdown.ForeColor = Color.White;
+                }
+            }
+        }
+        private void btnTempatkanBid_Click(object sender, EventArgs e)
+        {
+            decimal nominalTawaran = nudNominalBid.Value;
+            bool sukses = _bidController.KirimBid(_lelang.IdLelang, nominalTawaran);
+
+            if (sukses)
+            {
+                var lelangTerbaru = LelangContext.AmbilLelangById(_lelang.IdLelang);
+                if (lelangTerbaru != null)
+                {
+                    _waktuSelesaiLelang = lelangTerbaru.TglAkhir;
+                }
+
+                lblHargaSekarang.Text = $"Harga Saat Ini: Rp {nominalTawaran:N0}";
+                nudNominalBid.Minimum = nominalTawaran + 1000;
+                nudNominalBid.Value = nominalTawaran + 1000;
+
+                UpdateCountdownTampilan();
             }
         }
     }
