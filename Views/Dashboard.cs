@@ -4,10 +4,10 @@ using System.Data;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models;
-using WinFormsApp1.Views.PetaniForm;
-using WinFormsApp1.Views.PembeliForm;
-using WinFormsApp1.Views.InspektorForm;
-using WinFormsApp1.Views.AdminForm;
+using WinFormsApp1.Views.PetaniView;
+using WinFormsApp1.Views.PembeliView;
+using WinFormsApp1.Views.InspektorView;
+using WinFormsApp1.Views.AdminView;
 
 namespace WinFormsApp1.Views
 {
@@ -16,10 +16,16 @@ namespace WinFormsApp1.Views
         private string roleAktif = "admin";
         private bool _isLoggingOut = false;
 
+        private Button btnToggleRole = null!;
+        private Button btnTambahRole = null!;
+        private Button btnHapusRole = null!;
+
         public Dashboard()
         {
             InitializeComponent();
             this.DoubleBuffered = true;
+            InisialisasiRoleButtons();
+            UpdateWelcomeGreeting();
         }
 
         public Dashboard(string role)
@@ -27,13 +33,15 @@ namespace WinFormsApp1.Views
             InitializeComponent();
             roleAktif = role?.Trim().ToLower() ?? string.Empty;
             this.DoubleBuffered = true;
+            InisialisasiRoleButtons();
+            UpdateWelcomeGreeting();
         }
 
         private void FormDashboard_Load(object sender, EventArgs e)
         {
             try
             {
-                // Wire click events for logo/title to go back to dashboard
+
                 pictureBox1.Click += LogoOrTitle_Click;
                 lblSidebarTitle.Click += LogoOrTitle_Click;
                 pictureBox1.Cursor = Cursors.Hand;
@@ -85,6 +93,8 @@ namespace WinFormsApp1.Views
 
             int currentIdUser = UserContext.CurrentUser.IdUser;
 
+            UpdateWelcomeGreeting();
+
             lblSidebarTitle.Text = roleObj.JudulDashboard;
 
             AturMenu(roleObj.GetMenuAkses());
@@ -124,6 +134,8 @@ namespace WinFormsApp1.Views
             {
                 IsiTabelInspektor();
             }
+
+            UpdateRoleButtons();
         }
 
 
@@ -197,7 +209,7 @@ namespace WinFormsApp1.Views
                     r.NamaRole.Equals(roleAktif, StringComparison.OrdinalIgnoreCase));
 
                 if (roleObj != null && !roleObj.BisaAksesMenu(menu))
-                {   
+                {
                     MessageBox.Show($"Menu '{menu}' tidak tersedia untuk role {roleObj.NamaRole}.\n\nRole kamu: {roleObj.GetDeskripsiRole()}",
                         "Akses Ditolak", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
@@ -211,12 +223,14 @@ namespace WinFormsApp1.Views
                     case "beranda":
                         if (activeForm != null) { activeForm.Close(); activeForm = null; }
                         ShowDashboardComponents();
-                        AturDashboard(roleAktif); 
+                        AturDashboard(roleAktif);
                         break;
 
                     case "kelola user":
-                    case "kelola role":
                         openChildForm(new KelolaUser());
+                        break;
+                    case "kelola inspektor":
+                        openChildForm(new KelolaInspektor());
                         break;
                     case "kelola jenis kopi":
                     case "jenis kopi":
@@ -224,7 +238,7 @@ namespace WinFormsApp1.Views
                         break;
                     case "lihat semua produk":
                     case "produk kopi":
-                        openChildForm(new WinFormsApp1.Views.AdminForm.ProdukKopi());
+                        openChildForm(new WinFormsApp1.Views.AdminView.ProdukKopi(roleAktif));
                         break;
                     case "kelola lelang":
                     case "lelang":
@@ -241,7 +255,14 @@ namespace WinFormsApp1.Views
                         break;
                     case "lihat laporan":
                     case "laporan":
-                        openChildForm(new FormRiwayatInspeksi());
+                        if (roleAktif == "admin")
+                        {
+                            openChildForm(new FormStatistikLaporan());
+                        }
+                        else
+                        {
+                            openChildForm(new FormRiwayatInspeksi());
+                        }
                         break;
 
                     case "input produk kopi":
@@ -265,7 +286,6 @@ namespace WinFormsApp1.Views
                         break;
 
                     case "lihat lelang":
-                    case "ikut bid":
                         openChildForm(new FormIkutBid(idUser));
                         break;
                     case "lihat riwayat bid":
@@ -279,17 +299,17 @@ namespace WinFormsApp1.Views
 
                     case "lihat produk pending":
                     case "produk pending":
-                        openChildForm(new WinFormsApp1.Views.InspektorForm.Inspeksi("lihat produk pending"));
+                        openChildForm(new WinFormsApp1.Views.InspektorView.Inspeksi("lihat produk pending"));
                         break;
                     case "input hasil inspeksi":
                     case "input inspeksi":
-                        openChildForm(new WinFormsApp1.Views.InspektorForm.Inspeksi("input hasil inspeksi"));
+                        openChildForm(new WinFormsApp1.Views.InspektorView.Inspeksi("input hasil inspeksi"));
                         break;
                     case "beri grade kopi":
-                        openChildForm(new WinFormsApp1.Views.InspektorForm.Inspeksi("beri grade kopi"));
+                        openChildForm(new WinFormsApp1.Views.InspektorView.Inspeksi("beri grade kopi"));
                         break;
                     case "set status qc":
-                        openChildForm(new WinFormsApp1.Views.InspektorForm.Inspeksi("set status qc"));
+                        openChildForm(new WinFormsApp1.Views.InspektorView.Inspeksi("set status qc"));
                         break;
                     case "riwayat inspeksi":
                     case "laporan qc":
@@ -297,18 +317,18 @@ namespace WinFormsApp1.Views
                         break;
 
                     default:
-                        MessageBox.Show("Menu '" + menu + "' belum diimplementasikan atau salah mapping case.", 
+                        MessageBox.Show("Menu '" + menu + "' belum diimplementasikan atau salah mapping case.",
                                         "Info Halaman",
-                                        MessageBoxButtons.OK, 
+                                        MessageBoxButtons.OK,
                                         MessageBoxIcon.Information);
                         break;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Gagal membuka menu: " + ex.Message, 
+                MessageBox.Show("Gagal membuka menu: " + ex.Message,
                                 "Error",
-                                MessageBoxButtons.OK, 
+                                MessageBoxButtons.OK,
                                 MessageBoxIcon.Error);
             }
         }
@@ -356,6 +376,20 @@ namespace WinFormsApp1.Views
             if (!_isLoggingOut)
             {
                 Application.Exit();
+            }
+        }
+
+        private void UpdateWelcomeGreeting()
+        {
+            if (UserContext.IsLoggedIn() && UserContext.CurrentUser != null)
+            {
+                string nama = UserContext.CurrentUser.NamaLengkap;
+                if (string.IsNullOrWhiteSpace(nama))
+                {
+                    nama = UserContext.CurrentUser.Username;
+                }
+                label1.Text = $"Selamat Datang, {nama}";
+                label1.BringToFront();
             }
         }
 
@@ -425,7 +459,6 @@ namespace WinFormsApp1.Views
 
             ShowDashboardComponents();
 
-            // Memuat ulang card dan tabel dashboard.
             AturDashboard(roleAktif);
 
             ResumeLayout(true);
@@ -465,5 +498,178 @@ namespace WinFormsApp1.Views
         {
 
         }
+
+        private void InisialisasiRoleButtons()
+        {
+            btnToggleRole = new Button
+            {
+                BackColor = System.Drawing.Color.Navy,
+                FlatStyle = FlatStyle.Flat,
+                Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold),
+                ForeColor = System.Drawing.Color.White,
+                Size = new System.Drawing.Size(306, 40),
+                Visible = false,
+                Cursor = Cursors.Hand
+            };
+            btnToggleRole.FlatAppearance.BorderSize = 0;
+            btnToggleRole.Click += BtnToggleRole_Click;
+
+            btnTambahRole = new Button
+            {
+                BackColor = System.Drawing.Color.Orange,
+                FlatStyle = FlatStyle.Flat,
+                Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold),
+                ForeColor = System.Drawing.Color.Black,
+                Size = new System.Drawing.Size(306, 40),
+                Visible = false,
+                Cursor = Cursors.Hand
+            };
+            btnTambahRole.FlatAppearance.BorderSize = 0;
+            btnTambahRole.Click += BtnTambahRole_Click;
+
+            btnHapusRole = new Button
+            {
+                BackColor = System.Drawing.Color.Red,
+                FlatStyle = FlatStyle.Flat,
+                Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold),
+                ForeColor = System.Drawing.Color.White,
+                Size = new System.Drawing.Size(306, 40),
+                Visible = false,
+                Cursor = Cursors.Hand
+            };
+            btnHapusRole.FlatAppearance.BorderSize = 0;
+            btnHapusRole.Click += BtnHapusRole_Click;
+
+            panel2.Controls.Add(btnToggleRole);
+            panel2.Controls.Add(btnTambahRole);
+            panel2.Controls.Add(btnHapusRole);
+        }
+
+        private void UpdateRoleButtons()
+        {
+            if (btnToggleRole == null || btnTambahRole == null || btnHapusRole == null) return;
+
+            btnToggleRole.Visible = false;
+            btnTambahRole.Visible = false;
+            btnHapusRole.Visible = false;
+
+            if (UserContext.CurrentUser == null) return;
+
+            var roles = UserContext.CurrentUser.Roles;
+            bool hasPetani = roles.Any(r => r.NamaRole.Equals("petani", System.StringComparison.OrdinalIgnoreCase));
+            bool hasPembeli = roles.Any(r => r.NamaRole.Equals("pembeli", System.StringComparison.OrdinalIgnoreCase));
+            bool isPetaniOrPembeli = roleAktif.Equals("petani", System.StringComparison.OrdinalIgnoreCase) || roleAktif.Equals("pembeli", System.StringComparison.OrdinalIgnoreCase);
+
+            if (isPetaniOrPembeli)
+            {
+                int logoutY = btnLogout.Location.Y;
+                int logoutX = btnLogout.Location.X;
+
+                if (hasPetani && hasPembeli)
+                {
+                    btnToggleRole.Text = $"🔄 Switch ke {(roleAktif == "petani" ? "Pembeli" : "Petani")}";
+                    btnToggleRole.Location = new System.Drawing.Point(logoutX, logoutY - 50);
+                    btnToggleRole.Visible = true;
+
+                    btnHapusRole.Text = $"⚠️ Hapus Role {roleAktif.ToUpper()}";
+                    btnHapusRole.Location = new System.Drawing.Point(logoutX, logoutY - 100);
+                    btnHapusRole.Visible = true;
+                }
+                else if (hasPetani && !hasPembeli)
+                {
+                    btnTambahRole.Text = "➕ Aktifkan Akses Pembeli";
+                    btnTambahRole.Location = new System.Drawing.Point(logoutX, logoutY - 50);
+                    btnTambahRole.Visible = true;
+                }
+                else if (!hasPetani && hasPembeli)
+                {
+                    btnTambahRole.Text = "➕ Aktifkan Akses Petani";
+                    btnTambahRole.Location = new System.Drawing.Point(logoutX, logoutY - 50);
+                    btnTambahRole.Visible = true;
+                }
+            }
+        }
+
+        private void BtnToggleRole_Click(object? sender, System.EventArgs e)
+        {
+            if (UserContext.CurrentUser == null) return;
+            string targetRole = roleAktif.Equals("petani", System.StringComparison.OrdinalIgnoreCase) ? "pembeli" : "petani";
+            roleAktif = targetRole;
+            AturDashboard(roleAktif);
+            btnKeDashboard_Click(this, System.EventArgs.Empty);
+        }
+
+        private void BtnTambahRole_Click(object? sender, System.EventArgs e)
+        {
+            if (UserContext.CurrentUser == null) return;
+            string targetRole = roleAktif.Equals("petani", System.StringComparison.OrdinalIgnoreCase) ? "pembeli" : "petani";
+
+            var confirm = MessageBox.Show(
+                $"Apakah Anda yakin ingin mengaktifkan role '{targetRole}' untuk akun ini?",
+                "Konfirmasi Aktifkan Role",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question
+            );
+
+            if (confirm == DialogResult.Yes)
+            {
+                try
+                {
+                    UserContext.AddRole(UserContext.CurrentUser.IdUser, targetRole);
+                    UserContext.RefreshCurrentUserRoles();
+                    roleAktif = targetRole;
+                    AturDashboard(roleAktif);
+                    btnKeDashboard_Click(this, System.EventArgs.Empty);
+                    MessageBox.Show($"Role '{targetRole}' berhasil diaktifkan!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                catch (System.Exception ex)
+                {
+                    MessageBox.Show("Gagal mengaktifkan role: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void BtnHapusRole_Click(object? sender, System.EventArgs e)
+        {
+            if (UserContext.CurrentUser == null) return;
+            string targetRole = roleAktif;
+
+            var confirm = MessageBox.Show(
+                $"Apakah Anda yakin ingin menonaktifkan role '{targetRole}' dari akun ini? (Soft Delete)",
+                "Konfirmasi Hapus Role",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning
+            );
+
+            if (confirm == DialogResult.Yes)
+            {
+                try
+                {
+                    UserContext.RemoveRole(UserContext.CurrentUser.IdUser, targetRole);
+                    UserContext.RefreshCurrentUserRoles();
+
+                    var remainingRoleObj = UserContext.CurrentUser.Roles.FirstOrDefault();
+                    if (remainingRoleObj != null)
+                    {
+                        roleAktif = remainingRoleObj.NamaRole;
+                        AturDashboard(roleAktif);
+                        btnKeDashboard_Click(this, System.EventArgs.Empty);
+                        MessageBox.Show($"Role '{targetRole}' berhasil dinonaktifkan.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Akun Anda tidak memiliki role aktif lagi. Silakan login kembali.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        UserContext.Logout();
+                        _isLoggingOut = true;
+                        FormLogin.Instance.TampilkanKembali();
+                        this.Close();
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    MessageBox.Show("Gagal menonaktifkan role: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
     }
-}   
+}

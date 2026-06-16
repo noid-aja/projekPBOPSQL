@@ -14,7 +14,7 @@ namespace WinFormsApp1.Models
         public string Grade { get; set; } = string.Empty;
         public decimal HargaRekomendasi { get; set; }
         public string? Catatan { get; set; }
-        public bool IsLolosQc { get; set; } 
+        public bool IsLolosQc { get; set; }
 
         public Inspeksi() { }
 

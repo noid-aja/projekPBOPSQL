@@ -24,7 +24,6 @@ namespace WinFormsApp1.Views
                 DataTable dt = _lelangController.DapatkanHasilLelang();
                 dgvHasil.DataSource = dt;
 
-                // Format Headers
                 if (dgvHasil.Columns.Contains("id_lelang"))
                 {
                     dgvHasil.Columns["id_lelang"].HeaderText = "ID Lelang";
@@ -52,7 +51,6 @@ namespace WinFormsApp1.Views
                     dgvHasil.Columns["tgl_selesai"].DefaultCellStyle.Format = "dd/MM/yyyy HH:mm:ss";
                 }
 
-                // Hide winner name for Pembeli role
                 if (_role == "pembeli")
                 {
                     if (dgvHasil.Columns.Contains("nama_pemenang"))

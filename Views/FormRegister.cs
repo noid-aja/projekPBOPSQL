@@ -135,8 +135,8 @@ namespace WinFormsApp1
 
                 if (role.Contains("keduanya"))
                 {
-                    selectedRoles = new[] 
-                    { 
+                    selectedRoles = new[]
+                    {
                         "petani", "pembeli"
                     };
                 }

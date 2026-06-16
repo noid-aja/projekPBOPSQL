@@ -1,8 +1,7 @@
-using Npgsql;
 using System;
 using System.Data;
 using System.Windows.Forms;
-using WinFormsApp1.Helpers;
+using WinFormsApp1.Models;
 
 namespace WinFormsApp1
 {
@@ -25,17 +24,7 @@ namespace WinFormsApp1
 
             try
             {
-                using (NpgsqlConnection conn = ConnectDB.GetConnection())
-                {
-                    string query = "insert into kapten.jenis_kopi(nama, deskripsi) values(@nama, @deskripsi)";
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@nama", tbNama.Text.Trim());
-                        cmd.Parameters.AddWithValue("@deskripsi", string.IsNullOrWhiteSpace(tbDeskripsi.Text) ? (object)DBNull.Value : tbDeskripsi.Text.Trim());
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-
+                JenisKopiContext.Tambah(tbNama.Text.Trim(), tbDeskripsi.Text.Trim());
                 MessageBox.Show("Data berhasil ditambah.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadJenisKopi();
             }
@@ -47,13 +36,14 @@ namespace WinFormsApp1
 
         private void LoadJenisKopi()
         {
-            using (NpgsqlConnection conn = ConnectDB.GetConnection())
+            try
             {
-                string query = "select * from kapten.jenis_kopi";
-                NpgsqlDataAdapter da = new NpgsqlDataAdapter(query, conn);
-                DataTable dt = new DataTable();
-                da.Fill(dt);
+                DataTable dt = JenisKopiContext.AmbilSemuaDataTable();
                 dataGridView1.DataSource = dt;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Gagal memuat data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -76,18 +66,7 @@ namespace WinFormsApp1
 
             try
             {
-                using (NpgsqlConnection conn = ConnectDB.GetConnection())
-                {
-                    string query = "update kapten.jenis_kopi set nama=@nama, deskripsi=@deskripsi where jenis_kopi_id=@id";
-                    using (NpgsqlCommand cmd = new NpgsqlCommand(query, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@nama", tbNama.Text.Trim());
-                        cmd.Parameters.AddWithValue("@deskripsi", string.IsNullOrWhiteSpace(tbDeskripsi.Text) ? (object)DBNull.Value : tbDeskripsi.Text.Trim());
-                        cmd.Parameters.AddWithValue("@id", id);
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-
+                JenisKopiContext.Ubah(id, tbNama.Text.Trim(), tbDeskripsi.Text.Trim());
                 MessageBox.Show("Data berhasil diubah.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadJenisKopi();
             }
@@ -112,35 +91,13 @@ namespace WinFormsApp1
 
             try
             {
-                using (NpgsqlConnection conn = ConnectDB.GetConnection())
-                {
-                    // Cek apakah jenis kopi digunakan di tabel produk
-                    string checkQuery = "select count(*) from kapten.produk where jenis_kopi_id = @id";
-                    using (NpgsqlCommand checkCmd = new NpgsqlCommand(checkQuery, conn))
-                    {
-                        checkCmd.Parameters.AddWithValue("@id", id);
-                        long used = Convert.ToInt64(checkCmd.ExecuteScalar());
-                        if (used > 0)
-                        {
-                            MessageBox.Show("Jenis kopi tidak bisa dihapus karena sudah digunakan.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            return;
-                        }
-                    }
-
-                    string deleteQuery = "delete from kapten.jenis_kopi where jenis_kopi_id = @id";
-                    using (NpgsqlCommand delCmd = new NpgsqlCommand(deleteQuery, conn))
-                    {
-                        delCmd.Parameters.AddWithValue("@id", id);
-                        delCmd.ExecuteNonQuery();
-                    }
-                }
-
+                JenisKopiContext.Hapus(id);
                 MessageBox.Show("Data berhasil dihapus.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadJenisKopi();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Terjadi kesalahan saat menghapus data: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Terjadi kesalahan atau data sudah digunakan: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

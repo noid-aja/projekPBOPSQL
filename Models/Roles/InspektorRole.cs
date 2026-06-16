@@ -20,10 +20,7 @@ namespace WinFormsApp1.Models.Roles
         {
             return new List<string>
             {
-                "Lihat Produk Pending",
-                "Input Hasil Inspeksi",
-                "Beri Grade Kopi",
-                "Set Status QC",
+                "Lihat Semua Produk",
                 "Riwayat Inspeksi"
             };
         }

@@ -17,7 +17,7 @@ namespace WinFormsApp1.Controllers
             string konfirmasiPassword,
             string noTelp,
             string[] roles)
-        {   
+        {
 
             if (string.IsNullOrWhiteSpace(namaLengkap))
             {

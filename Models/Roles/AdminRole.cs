@@ -21,7 +21,7 @@ namespace WinFormsApp1.Models.Roles
             return new List<string>
             {
                 "Kelola User",
-                "Kelola Role",
+                "Kelola Inspektor",
                 "Kelola Jenis Kopi",
                 "Lihat Semua Produk",
                 "Kelola Lelang",

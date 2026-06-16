@@ -9,9 +9,7 @@ namespace WinFormsApp1.Models
 {
     public static class ProdukKopiContext
     {
-        // =====================================================
-        // INSERT PRODUK
-        // =====================================================
+
 
         public static bool TambahProduk(
             int idPetani,
@@ -78,9 +76,6 @@ namespace WinFormsApp1.Models
             return true;
         }
 
-        // =====================================================
-        // UPDATE HARGA PRODUK
-        // =====================================================
 
         public static bool UbahHargaProduk(
             int idProduk,
@@ -118,9 +113,6 @@ namespace WinFormsApp1.Models
             return true;
         }
 
-        // =====================================================
-        // DELETE PRODUK PENDING
-        // =====================================================
 
         public static bool HapusProdukPending(
             int idProduk,
@@ -149,9 +141,6 @@ namespace WinFormsApp1.Models
             return true;
         }
 
-        // =====================================================
-        // AMBIL PRODUK PENDING
-        // =====================================================
 
         public static List<ProdukKopi> AmbilProdukPending()
         {
@@ -164,9 +153,6 @@ namespace WinFormsApp1.Models
             return MapProdukList(table);
         }
 
-        // =====================================================
-        // AMBIL PRODUK BERDASARKAN ID
-        // =====================================================
 
         public static ProdukKopi? AmbilById(int idProduk)
         {
@@ -188,9 +174,6 @@ namespace WinFormsApp1.Models
             return MapProduk(table.Rows[0]);
         }
 
-        // =====================================================
-        // CARI PRODUK BERDASARKAN NAMA
-        // =====================================================
 
         public static List<ProdukKopi> CariByNama(
             string nama)
@@ -211,10 +194,6 @@ namespace WinFormsApp1.Models
             return MapProdukList(table);
         }
 
-        // =====================================================
-        // PRODUK MILIK PETANI
-        // Menggunakan function yang sudah ada di PostgreSQL.
-        // =====================================================
 
         public static DataTable AmbilProdukPetani(
             int idPetani)
@@ -233,9 +212,23 @@ namespace WinFormsApp1.Models
                 });
         }
 
-        // =====================================================
-        // MAPPING DATATABLE KE MODEL
-        // =====================================================
+        public static DataTable AmbilProdukPetaniUntukGrid(
+            int idPetani)
+        {
+            return DbExecutor.QueryTable(
+                @"SELECT id_produk, nama_produk,
+                         nama_jenis AS jenis,
+                         berat_kg, harga_pengajuan, status_produk AS status
+                  FROM kapten.fn_produk_petani(@idPetani);",
+
+                new NpgsqlParameter(
+                    "idPetani",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idPetani
+                });
+        }
+
 
         private static List<ProdukKopi> MapProdukList(
             DataTable table)
@@ -269,6 +262,37 @@ namespace WinFormsApp1.Models
                     : Convert.ToString(row["deskripsi"]),
                 Enum.ParseStatusProduk(status)
             );
+        }
+
+        public static DataTable AmbilSemuaProdukDetail()
+        {
+            return DbExecutor.QueryTable(@"
+                SELECT id_produk, nama_produk,
+                       nama_petani AS petani,
+                       nama_jenis AS jenis,
+                       berat_kg, harga_pengajuan, status_produk AS status,
+                       COALESCE(grade, '-') AS grade
+                FROM kapten.vw_produk_detail
+                ORDER BY id_produk DESC;");
+        }
+
+        public static DataTable AmbilSemuaProdukDetail(string status)
+        {
+            if (string.IsNullOrEmpty(status) || status.Equals("Semua", StringComparison.OrdinalIgnoreCase))
+            {
+                return AmbilSemuaProdukDetail();
+            }
+
+            return DbExecutor.QueryTable(@"
+                SELECT id_produk, nama_produk,
+                       nama_petani AS petani,
+                       nama_jenis AS jenis,
+                       berat_kg, harga_pengajuan, status_produk AS status,
+                       COALESCE(grade, '-') AS grade
+                FROM kapten.vw_produk_detail
+                WHERE status_produk = @status
+                ORDER BY id_produk DESC;",
+                new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = status });
         }
     }
 }

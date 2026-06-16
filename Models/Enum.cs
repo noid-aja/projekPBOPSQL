@@ -8,7 +8,7 @@ namespace WinFormsApp1.Models
     {
         public enum StatusProduk
         {
-            PendingInspeksi, 
+            PendingInspeksi,
             LolosQc,
             DitolakQc,
             DijadwalkanLelang,
@@ -50,7 +50,7 @@ namespace WinFormsApp1.Models
 
         public enum StatusLelang
         {
-            Dijadwalkan,    
+            Dijadwalkan,
             Berlangsung,
             Selesai,
             Dibatalkan
@@ -83,7 +83,7 @@ namespace WinFormsApp1.Models
 
         public enum StatusBayar
         {
-            BelumBayar,      
+            BelumBayar,
             Lunas,
             Dibatalkan
         }

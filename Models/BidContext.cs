@@ -45,58 +45,21 @@ namespace WinFormsApp1.Models
             return true;
         }
 
-        public static List<Bid> AmbilRiwayatBidPembeli(
+        public static System.Data.DataTable AmbilRiwayatBidPembeli(
             int idPembeli)
         {
-            var listBid = new List<Bid>();
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.fn_riwayat_bid_pembeli(
+                      @idPembeli
+                  );",
 
-            try
-            {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
-
-                using var cmd = new NpgsqlCommand(@"
-                    SELECT
-                        id_bid,
-                        id_lelang,
-                        id_pembeli,
-                        nominal,
-                        tgl_bid
-                    FROM kapten.bid
-                    WHERE id_pembeli = @idPembeli
-                    ORDER BY tgl_bid DESC;", conn);
-
-                cmd.Parameters.Add(
-                    new NpgsqlParameter(
-                        "idPembeli",
-                        NpgsqlDbType.Integer)
-                    {
-                        Value = idPembeli
-                    });
-
-                using var reader = cmd.ExecuteReader();
-
-                while (reader.Read())
+                new NpgsqlParameter(
+                    "idPembeli",
+                    NpgsqlDbType.Integer)
                 {
-                    listBid.Add(new Bid(
-                        reader.GetInt32(0),
-                        reader.GetInt32(1),
-                        reader.GetInt32(2),
-                        reader.GetDecimal(3),
-                        reader.GetDateTime(4)
-                    ));
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    "Gagal mengambil riwayat bid: " + ex.Message,
-                    "Error Database",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Error);
-            }
-
-            return listBid;
+                    Value = idPembeli
+                });
         }
 
         public static Bid? CariBidById(int id)
@@ -113,7 +76,7 @@ namespace WinFormsApp1.Models
                         id_pembeli,
                         nominal,
                         tgl_bid
-                    FROM kapten.bid
+                    FROM kapten.vw_bid_detail
                     WHERE id_bid = @id;", conn);
 
                 cmd.Parameters.Add(
@@ -161,18 +124,14 @@ namespace WinFormsApp1.Models
 
                 using var cmd = new NpgsqlCommand(@"
                     SELECT
-                        b.id_bid,
-                        b.id_lelang,
-                        b.id_pembeli,
-                        b.nominal,
-                        b.tgl_bid
-                    FROM kapten.bid b
-                    JOIN kapten.lelang l
-                        ON l.id_lelang = b.id_lelang
-                    JOIN kapten.produk_kopi p
-                        ON p.id_produk = l.id_produk
-                    WHERE p.nama_produk ILIKE @nama
-                    ORDER BY b.tgl_bid DESC;", conn);
+                        id_bid,
+                        id_lelang,
+                        id_pembeli,
+                        nominal,
+                        tgl_bid
+                    FROM kapten.vw_bid_detail
+                    WHERE nama_produk ILIKE @nama
+                    ORDER BY tgl_bid DESC;", conn);
 
                 cmd.Parameters.Add(
                     new NpgsqlParameter(

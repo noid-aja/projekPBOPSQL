@@ -129,19 +129,10 @@ namespace WinFormsApp1.Models
         public static DataTable AmbilPesertaLelang(int idLelang)
         {
             return DbExecutor.QueryTable(
-                @"SELECT DISTINCT ON (b.id_pembeli)
-                      u.username,
-                      u.nama_lengkap,
-                      b.nominal AS bid_terakhir,
-                      b.tgl_bid AS waktu_bid_terakhir
-                  FROM kapten.bid b
-                  JOIN kapten.users u
-                      ON u.id_user = b.id_pembeli
-                  WHERE b.id_lelang = @idLelang
-                  ORDER BY
-                      b.id_pembeli,
-                      b.tgl_bid DESC,
-                      b.id_bid DESC;",
+                @"SELECT *
+                  FROM kapten.fn_peserta_lelang(
+                      @idLelang
+                  );",
 
                 new NpgsqlParameter(
                     "idLelang",
@@ -183,6 +174,36 @@ namespace WinFormsApp1.Models
                         row["lokasi_lelang"]),
                 Enum.ParseStatusLelang(status)
             );
+        }
+
+        public static DataTable AmbilLelangAktifPembeli(int idPembeli)
+        {
+            return DbExecutor.QueryTable(
+                @"SELECT * FROM kapten.fn_lelang_aktif_pembeli(@idPembeli);",
+                new NpgsqlParameter("idPembeli", NpgsqlDbType.Integer) { Value = idPembeli });
+        }
+
+        public static DataTable AmbilJadwalLelang()
+        {
+            return DbExecutor.QueryTable(@"
+                SELECT id_lelang, nama_produk,
+                       nama_petani as petani,
+                       nama_jenis as jenis,
+                       bid_minimum, tgl_mulai, tgl_akhir,
+                       lokasi_lelang, status_lelang as status
+                FROM kapten.vw_lelang_detail
+                ORDER BY tgl_mulai DESC;");
+        }
+
+        public static DataTable AmbilSemuaLelangDataTable()
+        {
+            return DbExecutor.QueryTable(@"
+                SELECT id_lelang, nama_produk, bid_minimum,
+                       tgl_mulai, tgl_akhir, lokasi_lelang, status_lelang AS status,
+                       COALESCE(bid_tertinggi, 0) AS bid_tertinggi,
+                       jumlah_bid
+                FROM kapten.vw_lelang_detail
+                ORDER BY id_lelang DESC;");
         }
     }
 }

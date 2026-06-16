@@ -134,6 +134,40 @@ namespace WinFormsApp1.Models
                 });
         }
 
+        public static DataTable AmbilTransaksiUntukGrid(string role, int idUser)
+        {
+            string query = role.ToLower() switch
+            {
+                "admin" => @"
+                    select id_transaksi, nama_produk,
+                           nama_pembeli as pembeli, nama_petani as petani,
+                           total_bayar as harga_final, tgl_transaksi, status_bayar as status_pembayaran, 'Transfer' as metode_pembayaran
+                    from kapten.vw_transaksi_detail
+                    order by id_transaksi desc",
+                "petani" => @"
+                    select id_transaksi, nama_produk,
+                           nama_pembeli as pembeli,
+                           total_bayar as harga_final, tgl_transaksi, status_bayar as status_pembayaran, 'Transfer' as metode_pembayaran
+                    from kapten.vw_transaksi_detail
+                    where id_petani = @idUser
+                    order by id_transaksi desc",
+                "pembeli" => @"
+                    select id_transaksi, nama_produk,
+                           nama_petani as petani,
+                           total_bayar as harga_final, tgl_transaksi, status_bayar as status_pembayaran, 'Transfer' as metode_pembayaran
+                    from kapten.vw_transaksi_detail
+                    where id_pembeli = @idUser
+                    order by id_transaksi desc",
+                _ => "select 1"
+            };
+
+            if (query.Contains("@idUser"))
+            {
+                return DbExecutor.QueryTable(query, new NpgsqlParameter("idUser", NpgsqlDbType.Integer) { Value = idUser });
+            }
+            return DbExecutor.QueryTable(query);
+        }
+
         public static void CekDanTutupLelangExpired()
         {
             DataTable lelangExpired =

@@ -209,8 +209,87 @@ AS $$
     JOIN kapten.lelang l ON l.id_lelang = b.id_lelang
     JOIN kapten.produk_kopi p ON p.id_produk = l.id_produk
     LEFT JOIN kapten.pemenang_lelang pl ON pl.id_lelang = b.id_lelang
-    WHERE b.id_pembeli = p_id_pembeli
     ORDER BY b.tgl_bid DESC;
+$$;
+
+-- Function tabel: Peserta lelang beserta bid terakhir mereka
+CREATE OR REPLACE FUNCTION kapten.fn_peserta_lelang(p_id_lelang INT)
+RETURNS TABLE (
+    username VARCHAR,
+    nama_lengkap VARCHAR,
+    bid_terakhir NUMERIC,
+    waktu_bid_terakhir TIMESTAMP
+)
+LANGUAGE sql
+STABLE
+AS $$
+    SELECT DISTINCT ON (b.id_pembeli)
+          u.username,
+          u.nama_lengkap,
+          b.nominal AS bid_terakhir,
+          b.tgl_bid AS waktu_bid_terakhir
+    FROM kapten.bid b
+    JOIN kapten.users u ON u.id_user = b.id_pembeli
+    WHERE b.id_lelang = p_id_lelang
+    ORDER BY
+          b.id_pembeli,
+          b.tgl_bid DESC,
+          b.id_bid DESC;
+$$;
+
+-- Function tabel: Lelang aktif yang bisa diikuti pembeli beserta seluruh detail model C#
+CREATE OR REPLACE FUNCTION kapten.fn_lelang_aktif_pembeli(p_id_pembeli INT)
+RETURNS TABLE (
+    id_lelang INT,
+    id_produk INT,
+    id_petani INT,
+    id_jenis INT,
+    nama_produk VARCHAR,
+    berat_kg NUMERIC,
+    harga_pengajuan NUMERIC,
+    deskripsi TEXT,
+    status_produk VARCHAR,
+    petani VARCHAR,
+    jenis VARCHAR,
+    grade VARCHAR,
+    bid_minimum NUMERIC,
+    tgl_mulai TIMESTAMP,
+    tgl_akhir TIMESTAMP,
+    lokasi_lelang VARCHAR,
+    status_lelang VARCHAR,
+    bid_tertinggi NUMERIC
+)
+LANGUAGE sql
+STABLE
+AS $$
+    SELECT
+        l.id_lelang,
+        p.id_produk,
+        p.id_petani,
+        p.id_jenis,
+        p.nama_produk,
+        p.berat_kg,
+        p.harga_pengajuan,
+        p.deskripsi,
+        p.status_produk,
+        u.nama_lengkap AS petani,
+        j.nama_jenis AS jenis,
+        COALESCE(i.grade, '-')::VARCHAR AS grade,
+        l.bid_minimum,
+        l.tgl_mulai,
+        l.tgl_akhir,
+        l.lokasi_lelang,
+        l.status_lelang,
+        COALESCE((SELECT MAX(b.nominal) FROM kapten.bid b WHERE b.id_lelang = l.id_lelang), 0) AS bid_tertinggi
+    FROM kapten.lelang l
+    JOIN kapten.produk_kopi p ON p.id_produk = l.id_produk
+    JOIN kapten.users u ON u.id_user = p.id_petani
+    JOIN kapten.jenis_kopi j ON j.id_jenis = p.id_jenis
+    LEFT JOIN kapten.inspeksi i ON i.id_produk = p.id_produk
+    WHERE l.status_lelang = 'berlangsung'
+      AND CURRENT_TIMESTAMP BETWEEN l.tgl_mulai AND l.tgl_akhir
+      AND p.id_petani <> p_id_pembeli
+    ORDER BY l.tgl_akhir ASC;
 $$;
 
 CREATE OR REPLACE PROCEDURE kapten.sp_register_user(
@@ -675,7 +754,7 @@ $$;
 
 DROP TRIGGER IF EXISTS after_inspeksi_sinkron_produk ON kapten.inspeksi;
 CREATE TRIGGER after_inspeksi_sinkron_produk
-AFTER INSERT OR UPDATE OF nilai, status_inspeksi
+AFTER INSERT OR UPDATE
 ON kapten.inspeksi
 FOR EACH ROW
 EXECUTE FUNCTION kapten.trg_sinkron_status_produk_qc();
@@ -930,6 +1009,9 @@ CREATE OR REPLACE PROCEDURE kapten.sp_simpan_inspeksi(
 )
 LANGUAGE plpgsql
 AS $$
+DECLARE
+    v_existing_inspektor_id INT;
+    v_existing_inspektor_name VARCHAR(100);
 BEGIN
     IF NOT EXISTS (
         SELECT 1
@@ -942,6 +1024,17 @@ BEGIN
           AND LOWER(r.nama_role) = 'inspektor'
     ) THEN
         RAISE EXCEPTION 'User ID % bukan inspektor aktif.', p_id_inspektor;
+    END IF;
+
+    -- Cek apakah produk sudah diinspeksi oleh inspektor lain
+    SELECT i.id_inspektor, u.nama_lengkap
+    INTO v_existing_inspektor_id, v_existing_inspektor_name
+    FROM kapten.inspeksi i
+    JOIN kapten.users u ON u.id_user = i.id_inspektor
+    WHERE i.id_produk = p_id_produk;
+
+    IF FOUND AND v_existing_inspektor_id <> p_id_inspektor THEN
+        RAISE EXCEPTION 'Produk ini sudah diinspeksi oleh inspektor lain (%s).', v_existing_inspektor_name;
     END IF;
 
     INSERT INTO kapten.inspeksi (
@@ -1225,6 +1318,26 @@ BEGIN
     END IF;
 END;
 $$;
+CREATE OR REPLACE PROCEDURE kapten.sp_tambah_role_user(
+    p_id_user INT,
+    p_nama_role VARCHAR
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_id_role INT;
+BEGIN
+    SELECT id_role INTO v_id_role FROM kapten.roles WHERE LOWER(nama_role) = LOWER(TRIM(p_nama_role));
+    IF v_id_role IS NULL THEN
+        RAISE EXCEPTION 'Role % tidak ditemukan.', p_nama_role;
+    END IF;
+
+    INSERT INTO kapten.user_roles (id_user, id_role, is_role_aktif)
+    VALUES (p_id_user, v_id_role, TRUE)
+    ON CONFLICT (id_user, id_role) 
+    DO UPDATE SET is_role_aktif = TRUE;
+END;
+$$;
 
 CREATE OR REPLACE PROCEDURE kapten.sp_ubah_status_role(
     p_id_user INT,
@@ -1304,10 +1417,30 @@ DROP VIEW IF EXISTS kapten.vw_transaksi_detail CASCADE;
 DROP VIEW IF EXISTS kapten.vw_lelang_detail CASCADE;
 DROP VIEW IF EXISTS kapten.vw_bid_tertinggi CASCADE;
 DROP VIEW IF EXISTS kapten.vw_produk_detail CASCADE;
+    DROP VIEW IF EXISTS kapten.vw_bid_detail CASCADE;
+    DROP VIEW IF EXISTS kapten.vw_inspeksi_detail CASCADE;
+    DROP VIEW IF EXISTS kapten.vw_users_detail CASCADE;
+
+-- view detail user dan role
+CREATE OR REPLACE VIEW kapten.vw_users_detail AS
+SELECT
+    u.id_user,
+    u.username,
+    u.nama_lengkap,
+    u.no_telp,
+    u.is_aktif,
+    r.nama_role AS role
+FROM kapten.users u
+LEFT JOIN kapten.user_roles ur ON ur.id_user = u.id_user
+LEFT JOIN kapten.roles r ON r.id_role = ur.id_role;
 
 -- view detail sautu produk + dari prdouk mana
 CREATE OR REPLACE VIEW kapten.vw_produk_detail AS
 SELECT
+    p.id_produk,
+    p.id_petani,
+    i.id_inspektor,
+    i.id_inspeksi,
     petani.nama_lengkap AS nama_petani,
     jk.nama_jenis,
     p.nama_produk,
@@ -1327,6 +1460,35 @@ JOIN kapten.users petani ON petani.id_user = p.id_petani
 JOIN kapten.jenis_kopi jk ON jk.id_jenis = p.id_jenis
 LEFT JOIN kapten.inspeksi i ON i.id_produk = p.id_produk
 LEFT JOIN kapten.users inspektor ON inspektor.id_user = i.id_inspektor;
+
+-- view detail inspeksi
+CREATE OR REPLACE VIEW kapten.vw_inspeksi_detail AS
+SELECT
+    i.id_inspeksi,
+    i.id_produk,
+    i.id_inspektor,
+    i.tgl_inspeksi,
+    i.nilai,
+    i.grade,
+    i.harga_rekomendasi,
+    i.catatan,
+    i.status_inspeksi,
+    p.nama_produk
+FROM kapten.inspeksi i
+JOIN kapten.produk_kopi p ON p.id_produk = i.id_produk;
+
+-- view detail bid
+CREATE OR REPLACE VIEW kapten.vw_bid_detail AS
+SELECT
+    b.id_bid,
+    b.id_lelang,
+    b.id_pembeli,
+    b.nominal,
+    b.tgl_bid,
+    p.nama_produk
+FROM kapten.bid b
+JOIN kapten.lelang l ON l.id_lelang = b.id_lelang
+JOIN kapten.produk_kopi p ON p.id_produk = l.id_produk;
 
 -- view lelang detail an
 CREATE OR REPLACE VIEW kapten.vw_lelang_detail AS

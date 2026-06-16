@@ -7,7 +7,7 @@ using WinFormsApp1.Controllers;
 using WinFormsApp1.Views;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models;
-using WinFormsApp1.Views.AdminForm;
+using WinFormsApp1.Views.AdminView;
 
 namespace WinFormsApp1
 {
@@ -35,7 +35,6 @@ namespace WinFormsApp1
 
                 UserContext.SetUser(user);
 
-                // Filter hanya role petani dan pembeli
                 var rolePetaniPembeli = user.Roles?
                     .Where(r => r.NamaRole.Equals("petani", StringComparison.OrdinalIgnoreCase)
                              || r.NamaRole.Equals("pembeli", StringComparison.OrdinalIgnoreCase))
@@ -45,7 +44,7 @@ namespace WinFormsApp1
 
                 if (rolePetaniPembeli.Count >= 2)
                 {
-                    // User punya 2 role (petani & pembeli) → minta pilih
+
                     MessageBox.Show(
                         $"Login berhasil!\nSelamat datang, {user.NamaLengkap}.\n\nAnda memiliki 2 role, silakan pilih role untuk sesi ini.",
                         "Verifikasi Role",
@@ -65,7 +64,7 @@ namespace WinFormsApp1
                 }
                 else if (rolePetaniPembeli.Count == 1)
                 {
-                    // Hanya punya 1 role (petani atau pembeli) → langsung masuk
+
                     roleUtama = rolePetaniPembeli[0].NamaRole;
 
                     MessageBox.Show(
@@ -77,7 +76,7 @@ namespace WinFormsApp1
                 }
                 else
                 {
-                    // Tidak punya role petani/pembeli, cek role lain (admin/inspektor)
+
                     roleUtama = (user.Roles != null && user.Roles.Count > 0)
                                         ? user.Roles[0].NamaRole
                                         : "pembeli";

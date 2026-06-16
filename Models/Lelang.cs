@@ -10,7 +10,7 @@ namespace WinFormsApp1.Models
         public int IdLelang { get; set; }
         public int IdProduk { get; set; }
         public decimal BidMinimum { get; set; }
-        public DateTime TglMulai { get; set; }  
+        public DateTime TglMulai { get; set; }
         public DateTime TglAkhir { get; set; }
         public string? LokasiLelang { get; set; }
         public StatusLelang Status { get; set; } = StatusLelang.Dijadwalkan;

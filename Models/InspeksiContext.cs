@@ -83,7 +83,7 @@ namespace WinFormsApp1.Models
                         harga_rekomendasi,
                         catatan,
                         status_inspeksi
-                    FROM kapten.inspeksi
+                    FROM kapten.vw_inspeksi_detail
                     WHERE id_inspeksi = @id;", conn);
 
                 cmd.Parameters.AddWithValue("id", idInspeksi);
@@ -130,20 +130,18 @@ namespace WinFormsApp1.Models
 
                 using var cmd = new NpgsqlCommand(@"
                     SELECT
-                        i.id_inspeksi,
-                        i.id_produk,
-                        i.id_inspektor,
-                        i.tgl_inspeksi,
-                        i.nilai,
-                        i.grade,
-                        i.harga_rekomendasi,
-                        i.catatan,
-                        i.status_inspeksi
-                    FROM kapten.inspeksi i
-                    JOIN kapten.produk_kopi p
-                        ON p.id_produk = i.id_produk
-                    WHERE p.nama_produk ILIKE @nama
-                    ORDER BY i.id_inspeksi DESC;", conn);
+                        id_inspeksi,
+                        id_produk,
+                        id_inspektor,
+                        tgl_inspeksi,
+                        nilai,
+                        grade,
+                        harga_rekomendasi,
+                        catatan,
+                        status_inspeksi
+                    FROM kapten.vw_inspeksi_detail
+                    WHERE nama_produk ILIKE @nama
+                    ORDER BY id_inspeksi DESC;", conn);
 
                 cmd.Parameters.AddWithValue(
                     "nama",
@@ -183,6 +181,52 @@ namespace WinFormsApp1.Models
             }
 
             return list;
+        }
+
+        public static System.Data.DataTable AmbilHasilQCPetani(int idPetani)
+        {
+            return DbExecutor.QueryTable(@"
+                SELECT nama_produk, nilai, harga_rekomendasi,
+                       catatan, tgl_inspeksi, status_produk,
+                       nama_inspektor as inspektor
+                FROM kapten.vw_produk_detail
+                WHERE id_petani = @idPetani AND tgl_inspeksi IS NOT NULL
+                ORDER BY tgl_inspeksi DESC;",
+                new NpgsqlParameter("idPetani", NpgsqlDbType.Integer) { Value = idPetani });
+        }
+
+        public static System.Data.DataTable AmbilPendingProducts()
+        {
+            return DbExecutor.QueryTable(@"
+                SELECT id_produk, nama_produk, id_petani, id_jenis, berat_kg, harga_pengajuan, status_produk
+                FROM kapten.vw_produk_detail
+                WHERE status_produk = 'pending_inspeksi'
+                ORDER BY id_produk;");
+        }
+
+        public static System.Data.DataTable AmbilRiwayatInspeksiDataTable(int idInspektor)
+        {
+            if (idInspektor > 0)
+            {
+                return DbExecutor.QueryTable(@"
+                    SELECT id_inspeksi, nama_produk, nama_inspektor as inspektor,
+                           nilai, harga_rekomendasi, catatan, tgl_inspeksi,
+                           status_produk
+                    FROM kapten.vw_produk_detail
+                    WHERE id_inspektor = @id and tgl_inspeksi is not null
+                    ORDER BY tgl_inspeksi DESC",
+                    new NpgsqlParameter("id", NpgsqlDbType.Integer) { Value = idInspektor });
+            }
+            else
+            {
+                return DbExecutor.QueryTable(@"
+                    SELECT id_inspeksi, nama_produk, nama_inspektor as inspektor,
+                           nilai, harga_rekomendasi, catatan, tgl_inspeksi,
+                           status_produk
+                    FROM kapten.vw_produk_detail
+                    WHERE tgl_inspeksi is not null
+                    ORDER BY tgl_inspeksi DESC");
+            }
         }
     }
 }

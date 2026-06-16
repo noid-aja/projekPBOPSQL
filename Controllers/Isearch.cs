@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WinFormsApp1.Controllers
 {
-    interface Isearch<T>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+    interface Isearch<T>
     {
         T? Cari(int id);
         List<T> CariNama(string nama);
