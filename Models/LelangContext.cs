@@ -54,8 +54,8 @@ namespace WinFormsApp1.Models
             try
             {
                 using var cmdCekStatus = new NpgsqlCommand(@"
-            select status_produk from kapten.produk_kopi 
-            where id_produk = @idProduk", conn, trans);
+                select status_produk from kapten.produk_kopi 
+                where id_produk = @idProduk", conn, trans);
                 cmdCekStatus.Parameters.AddWithValue("idProduk", idProduk);
 
                 object? statusRes = cmdCekStatus.ExecuteScalar();

@@ -206,9 +206,9 @@ namespace WinFormsApp1.Models
             using var conn = ConnectDB.GetConnection();
             conn.Open();
             using var trans = conn.BeginTransaction();
-            try
+            try;
             {
-                using var cmdTx = new NpgsqlCommand("update kapten.transaksi set status_bayar = 'lunas' where id_transaksi = @id", conn);
+                using var cmdTx = new NpgsqlCommand("update kasi set status_bayar = 'lunas' where id_transaksi = @id", conn);
                 cmdTx.Parameters.AddWithValue("id", idTransaksi);
                 cmdTx.ExecuteNonQuery();
 

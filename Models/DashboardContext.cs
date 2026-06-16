@@ -155,18 +155,8 @@ namespace WinFormsApp1.Models
         {
             return GetDataTable(
                 """
-                SELECT
-                    p.nama_produk AS "Produk",
-                    u.nama_lengkap AS "Petani",
-                    jk.nama_jenis AS "Jenis Kopi",
-                    p.berat_kg AS "Berat Kg",
-                    p.status_produk AS "Status",
-                    COALESCE(i.grade, '-') AS "Grade"
-                FROM kapten.produk_kopi p
-                JOIN kapten.users u ON u.id_user = p.id_petani
-                JOIN kapten.jenis_kopi jk ON jk.id_jenis = p.id_jenis
-                LEFT JOIN kapten.inspeksi i ON i.id_produk = p.id_produk
-                ORDER BY p.id_produk DESC;
+                select * 
+                from viewanu;
                 """);
         }
 
@@ -175,7 +165,7 @@ namespace WinFormsApp1.Models
             return GetDataTable(
                 """
                 SELECT
-                    p.nama_produk AS "Produk",
+                p.nama_produk AS "Produk",
                     jk.nama_jenis AS "Jenis Kopi",
                     p.berat_kg AS "Berat Kg",
                     p.harga_pengajuan AS "Harga Pengajuan",
