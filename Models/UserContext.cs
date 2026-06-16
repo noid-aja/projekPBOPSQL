@@ -108,11 +108,12 @@ namespace WinFormsApp1.Models
 
             if (role != "petani"
                 && role != "pembeli"
-                && role != "inspektor")
+                && role != "inspektor"
+                && role != "keduanya")
             {
                 throw new ArgumentException(
                     "Role hanya boleh petani, pembeli, " +
-                    "atau inspektor.");
+                    "inspektor, atau keduanya.");
             }
 
             DbExecutor.ExecuteCall(
@@ -239,6 +240,34 @@ namespace WinFormsApp1.Models
             }
 
             return user;
+        }
+
+        public static bool VerifyPassword(
+            int idUser,
+            string password)
+        {
+            DataTable table = DbExecutor.QueryTable(
+                @"SELECT kapten.fn_verifikasi_password(
+                      @idUser,
+                      @password
+                  ) AS cocok;",
+
+                new NpgsqlParameter(
+                    "idUser",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idUser
+                },
+
+                new NpgsqlParameter(
+                    "password",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = password
+                });
+
+            return table.Rows.Count > 0
+                && Convert.ToBoolean(table.Rows[0]["cocok"]);
         }
 
         // =====================================================

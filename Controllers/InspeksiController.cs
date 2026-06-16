@@ -1,64 +1,102 @@
-public bool KirimHasilQc(
-    int idProduk,
-    int nilai,
-    decimal hargaRekomendasi,
-    string? catatan)
+using Npgsql;
+using System;
+using System.Collections.Generic;
+using System.Windows.Forms;
+using WinFormsApp1.Helpers;
+using WinFormsApp1.Models;
+
+namespace WinFormsApp1.Controllers
 {
-    if (!UserContext.IsLoggedIn())
+    public class InspeksiController : Isearch<Inspeksi>
     {
-        MessageBox.Show(
-            "Sesi login habis. Silakan login kembali.",
-            "Akses Ditolak",
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Warning);
+        public Inspeksi? Cari(int id) => InspeksiContext.AmbilById(id);
 
-        return false;
-    }
+        public List<Inspeksi> CariNama(string nama) => InspeksiContext.CariByNamaProduk(nama);
 
-    if (!UserContext.IsInspektor())
-    {
-        MessageBox.Show(
-            "Akses ditolak. Hanya Inspektor yang bisa mengisi hasil QC.",
-            "Bukan Inspektor",
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Error);
 
-        return false;
-    }
 
-    if (nilai < 0 || nilai > 100)
-    {
-        MessageBox.Show(
-            "Nilai QC harus antara 0 sampai 100.",
-            "Validasi Gagal",
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Warning);
+        public bool KirimHasilQc(
+            int idProduk,
+            int nilai,
+            decimal hargaRekomendasi,
+            string? catatan)
+        {
+            if (!UserContext.IsLoggedIn())
+            {
+                MessageBox.Show(
+                    "Sesi login habis. Silakan login kembali.",
+                    "Akses Ditolak",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
 
-        return false;
-    }
+                return false;
+            }
 
-    if (hargaRekomendasi <= 0)
-    {
-        MessageBox.Show(
-            "Harga rekomendasi harus lebih dari Rp0.",
-            "Validasi Gagal",
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Warning);
+            if (!UserContext.IsInspektor())
+            {
+                MessageBox.Show(
+                    "Akses ditolak. Hanya Inspektor yang bisa mengisi hasil QC.",
+                    "Bukan Inspektor",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
 
-        return false;
-    }
+                return false;
+            }
 
-    try
-    {
-        int idInspektor =
-            UserContext.CurrentUser!.IdUser;
+            if (nilai < 0 || nilai > 100)
+            {
+                MessageBox.Show(
+                    "Nilai QC harus antara 0 sampai 100.",
+                    "Validasi Gagal",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
 
-            string gradeOtomatis = nilai >= 95 ? "A+"
-                                 : nilai >= 85 ? "A"
-                                 : nilai >= 80 ? "B"
-                                 : nilai >= 60 ? "C"
-                                 : "D";
+                return false;
+            }
 
-        return false;
+            if (hargaRekomendasi <= 0)
+            {
+                MessageBox.Show(
+                    "Harga rekomendasi harus lebih dari Rp0.",
+                    "Validasi Gagal",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return false;
+            }
+
+            try
+            {
+                int idInspektor =
+                    UserContext.CurrentUser!.IdUser;
+
+                return InspeksiContext.SimpanHasilInspeksi(
+                    idProduk,
+                    idInspektor,
+                    nilai,
+                    hargaRekomendasi,
+                    catatan);
+            }
+            catch (PostgresException ex)
+            {
+                MessageBox.Show(
+                    ex.MessageText,
+                    "Database Menolak Data",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Gagal menyimpan hasil QC: " + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return false;
+            }
+        }
     }
 }

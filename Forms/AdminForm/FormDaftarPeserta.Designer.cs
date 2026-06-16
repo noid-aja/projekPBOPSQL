@@ -32,7 +32,7 @@ namespace WinFormsApp1.Forms.AdminForm
             panelHeader.Dock = DockStyle.Top;
             panelHeader.Location = new Point(0, 0);
             panelHeader.Name = "panelHeader";
-            panelHeader.Size = new Size(682, 60);
+            panelHeader.Size = new Size(682, 100);
             panelHeader.TabIndex = 0;
             // 
             // lblTitle
@@ -42,9 +42,10 @@ namespace WinFormsApp1.Forms.AdminForm
             lblTitle.ForeColor = Color.FromArgb(17, 37, 0);
             lblTitle.Location = new Point(12, 18);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(658, 28);
+            lblTitle.Size = new Size(658, 57);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "👥 Daftar Peserta & Bid Terakhir";
+            lblTitle.Click += lblTitle_Click;
             // 
             // dgvPeserta
             // 
@@ -54,13 +55,13 @@ namespace WinFormsApp1.Forms.AdminForm
             dgvPeserta.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvPeserta.BackgroundColor = SystemColors.ControlLightLight;
             dgvPeserta.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvPeserta.Location = new Point(12, 76);
+            dgvPeserta.Location = new Point(12, 106);
             dgvPeserta.MultiSelect = false;
             dgvPeserta.Name = "dgvPeserta";
             dgvPeserta.ReadOnly = true;
             dgvPeserta.RowHeadersWidth = 51;
             dgvPeserta.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvPeserta.Size = new Size(658, 298);
+            dgvPeserta.Size = new Size(658, 307);
             dgvPeserta.TabIndex = 1;
             // 
             // btnClose
@@ -71,9 +72,9 @@ namespace WinFormsApp1.Forms.AdminForm
             btnClose.FlatStyle = FlatStyle.Flat;
             btnClose.Font = new Font("Yu Gothic UI Semibold", 10F, FontStyle.Bold);
             btnClose.ForeColor = Color.White;
-            btnClose.Location = new Point(550, 388);
+            btnClose.Location = new Point(523, 419);
             btnClose.Name = "btnClose";
-            btnClose.Size = new Size(120, 38);
+            btnClose.Size = new Size(147, 50);
             btnClose.TabIndex = 2;
             btnClose.Text = "Tutup";
             btnClose.UseVisualStyleBackColor = false;
@@ -81,10 +82,10 @@ namespace WinFormsApp1.Forms.AdminForm
             // 
             // FormDaftarPeserta
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(682, 438);
+            ClientSize = new Size(682, 469);
             Controls.Add(btnClose);
             Controls.Add(dgvPeserta);
             Controls.Add(panelHeader);

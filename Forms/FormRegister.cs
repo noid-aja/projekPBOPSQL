@@ -151,7 +151,7 @@ namespace WinFormsApp1
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
 
-                Form1.Instance.TampilkanKembali();
+                FormLogin.Instance.TampilkanKembali();
                 Close();
             }
             catch (PostgresException ex)
@@ -212,16 +212,16 @@ namespace WinFormsApp1
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Form1.Instance.TampilkanKembali();
+            FormLogin.Instance.TampilkanKembali();
             Close();
         }
 
         protected override void OnFormClosed(FormClosedEventArgs e)
         {
             base.OnFormClosed(e);
-            if (Form1.Instance != null && !Form1.Instance.Visible)
+            if (FormLogin.Instance != null && !FormLogin.Instance.Visible)
             {
-                Form1.Instance.TampilkanKembali();
+                FormLogin.Instance.TampilkanKembali();
             }
         }
 
@@ -246,6 +246,14 @@ namespace WinFormsApp1
         private void txtusername_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+            int x = (this.ClientSize.Width - panel1.Width) / 2;
+            int y = (this.ClientSize.Height - panel1.Height) / 2;
+
+            panel1.Location = new Point(x, y);
         }
     }
 }

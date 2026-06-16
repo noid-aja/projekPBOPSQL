@@ -125,6 +125,46 @@ namespace WinFormsApp1.Models
             return list;
         }
 
+
+        public static DataTable AmbilPesertaLelang(int idLelang)
+        {
+            return DbExecutor.QueryTable(
+                @"SELECT DISTINCT ON (b.id_pembeli)
+                      u.username,
+                      u.nama_lengkap,
+                      b.nominal AS bid_terakhir,
+                      b.tgl_bid AS waktu_bid_terakhir
+                  FROM kapten.bid b
+                  JOIN kapten.users u
+                      ON u.id_user = b.id_pembeli
+                  WHERE b.id_lelang = @idLelang
+                  ORDER BY
+                      b.id_pembeli,
+                      b.tgl_bid DESC,
+                      b.id_bid DESC;",
+
+                new NpgsqlParameter(
+                    "idLelang",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idLelang
+                });
+        }
+
+        public static DataTable AmbilHasilLelang()
+        {
+            return DbExecutor.QueryTable(@"
+                SELECT
+                    id_lelang,
+                    nama_produk,
+                    nama_petani,
+                    nama_pembeli AS nama_pemenang,
+                    harga_menang AS harga_pemenang,
+                    tgl_ditetapkan AS tgl_selesai
+                FROM kapten.vw_pemenang_lelang_detail
+                ORDER BY tgl_ditetapkan DESC;");
+        }
+
         private static Lelang MapLelang(DataRow row)
         {
             string status =

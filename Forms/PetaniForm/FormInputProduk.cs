@@ -74,5 +74,10 @@ namespace WinFormsApp1.Forms.PetaniForm
         {
 
         }
+
+        private void tbNamaProduk_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

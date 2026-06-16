@@ -102,8 +102,12 @@ namespace WinFormsApp1.Controllers
             if (string.IsNullOrWhiteSpace(passwordLama))
                 throw new ArgumentException("Password lama tidak boleh kosong.");
 
-            if (passwordLama != UserContext.CurrentUser!.Password)
+            if (!UserContext.VerifyPassword(
+                UserContext.CurrentUser!.IdUser,
+                passwordLama))
+            {
                 throw new ArgumentException("Password lama salah.");
+            }
 
             if (string.IsNullOrWhiteSpace(passwordBaru))
                 throw new ArgumentException("Password baru tidak boleh kosong.");

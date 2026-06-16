@@ -30,19 +30,22 @@ namespace WinFormsApp1.Forms.AdminForm
             lblJudul.BackColor = Color.FromArgb(232, 255, 214);
             lblJudul.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
             lblJudul.ForeColor = Color.FromArgb(17, 37, 0);
-            lblJudul.Location = new Point(17, 17);
+            lblJudul.Location = new Point(28, 27);
+            lblJudul.Margin = new Padding(5, 0, 5, 0);
             lblJudul.Name = "lblJudul";
-            lblJudul.Size = new Size(343, 40);
+            lblJudul.Size = new Size(557, 64);
             lblJudul.TabIndex = 0;
             lblJudul.Text = "📦 Kelola Produk Kopi";
             lblJudul.Click += lblJudul_Click_1;
             // 
             // lblTotal
             // 
+            lblTotal.Font = new Font("Yu Gothic UI", 12F);
             lblTotal.ForeColor = Color.White;
-            lblTotal.Location = new Point(590, 37);
+            lblTotal.Location = new Point(717, 39);
+            lblTotal.Margin = new Padding(5, 0, 5, 0);
             lblTotal.Name = "lblTotal";
-            lblTotal.Size = new Size(229, 31);
+            lblTotal.Size = new Size(372, 50);
             lblTotal.TabIndex = 4;
             lblTotal.Text = "Total: -";
             lblTotal.TextAlign = ContentAlignment.MiddleLeft;
@@ -51,9 +54,10 @@ namespace WinFormsApp1.Forms.AdminForm
             // 
             lblFilter.Font = new Font("Yu Gothic UI", 12F);
             lblFilter.ForeColor = Color.White;
-            lblFilter.Location = new Point(21, 34);
+            lblFilter.Location = new Point(34, 39);
+            lblFilter.Margin = new Padding(5, 0, 5, 0);
             lblFilter.Name = "lblFilter";
-            lblFilter.Size = new Size(139, 31);
+            lblFilter.Size = new Size(226, 50);
             lblFilter.TabIndex = 1;
             lblFilter.Text = "Filter Status:";
             lblFilter.TextAlign = ContentAlignment.MiddleLeft;
@@ -63,21 +67,22 @@ namespace WinFormsApp1.Forms.AdminForm
             cmbFilter.BackColor = Color.White;
             cmbFilter.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbFilter.Items.AddRange(new object[] { "Semua", "PendingInspeksi", "LolosQc", "DitolakQc", "Berlangsung", "Terjual" });
-            cmbFilter.Location = new Point(159, 37);
-            cmbFilter.Margin = new Padding(3, 4, 3, 4);
+            cmbFilter.Location = new Point(258, 44);
+            cmbFilter.Margin = new Padding(5, 6, 5, 6);
             cmbFilter.Name = "cmbFilter";
-            cmbFilter.Size = new Size(257, 28);
+            cmbFilter.Size = new Size(415, 40);
             cmbFilter.TabIndex = 2;
             cmbFilter.SelectedIndexChanged += cmbFilter_SelectedIndexChanged;
             // 
             // btnRefresh
             // 
-            btnRefresh.BackColor = Color.FromArgb(232, 255, 214);
+            btnRefresh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnRefresh.BackColor = Color.White;
             btnRefresh.ForeColor = Color.Black;
-            btnRefresh.Location = new Point(448, 31);
-            btnRefresh.Margin = new Padding(3, 4, 3, 4);
+            btnRefresh.Location = new Point(1632, 39);
+            btnRefresh.Margin = new Padding(5, 6, 5, 6);
             btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(114, 37);
+            btnRefresh.Size = new Size(185, 59);
             btnRefresh.TabIndex = 3;
             btnRefresh.Text = "🔄 Refresh";
             btnRefresh.UseVisualStyleBackColor = false;
@@ -90,13 +95,13 @@ namespace WinFormsApp1.Forms.AdminForm
             dgvProduk.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvProduk.BackgroundColor = SystemColors.Control;
             dgvProduk.ColumnHeadersHeight = 29;
-            dgvProduk.Location = new Point(14, 172);
-            dgvProduk.Margin = new Padding(3, 4, 3, 4);
+            dgvProduk.Location = new Point(23, 230);
+            dgvProduk.Margin = new Padding(5, 6, 5, 6);
             dgvProduk.Name = "dgvProduk";
             dgvProduk.ReadOnly = true;
             dgvProduk.RowHeadersWidth = 51;
             dgvProduk.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvProduk.Size = new Size(1097, 572);
+            dgvProduk.Size = new Size(1783, 960);
             dgvProduk.TabIndex = 5;
             // 
             // panel1
@@ -104,9 +109,10 @@ namespace WinFormsApp1.Forms.AdminForm
             panel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             panel1.BackColor = Color.FromArgb(232, 255, 214);
             panel1.Controls.Add(lblJudul);
-            panel1.Location = new Point(-7, -4);
+            panel1.Location = new Point(-11, -6);
+            panel1.Margin = new Padding(5);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1138, 64);
+            panel1.Size = new Size(1849, 100);
             panel1.TabIndex = 6;
             panel1.Paint += panel1_Paint;
             // 
@@ -118,21 +124,22 @@ namespace WinFormsApp1.Forms.AdminForm
             panel2.Controls.Add(lblTotal);
             panel2.Controls.Add(btnRefresh);
             panel2.Controls.Add(cmbFilter);
-            panel2.Location = new Point(-7, 61);
+            panel2.Location = new Point(-11, 90);
+            panel2.Margin = new Padding(5);
             panel2.Name = "panel2";
-            panel2.Size = new Size(1138, 104);
+            panel2.Size = new Size(1849, 129);
             panel2.TabIndex = 7;
             // 
             // ProdukKopi
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(1125, 749);
+            ClientSize = new Size(1828, 1198);
             Controls.Add(panel1);
             Controls.Add(dgvProduk);
             Controls.Add(panel2);
-            Margin = new Padding(3, 4, 3, 4);
+            Margin = new Padding(5, 6, 5, 6);
             Name = "ProdukKopi";
             Text = "Kelola Produk Kopi";
             ((System.ComponentModel.ISupportInitialize)dgvProduk).EndInit();

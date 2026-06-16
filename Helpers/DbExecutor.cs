@@ -1,26 +1,47 @@
-internal static class DbExecutor
+using Npgsql;
+using System.Data;
+
+namespace WinFormsApp1.Helpers
 {
-    public static int ExecuteCall(string sql, params NpgsqlParameter[] parameters)
+    internal static class DbExecutor
     {
-        using var conn = ConnectDB.GetConnection();
-        conn.Open();
+        public static int ExecuteCall(
+            string sql,
+            params NpgsqlParameter[] parameters)
+        {
+            using var conn = ConnectDB.GetConnection();
+            conn.Open();
 
-        using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddRange(parameters);
-        return cmd.ExecuteNonQuery();
-    }
+            using var cmd = new NpgsqlCommand(sql, conn);
 
-    public static DataTable QueryTable(string sql, params NpgsqlParameter[] parameters)
-    {
-        using var conn = ConnectDB.GetConnection();
-        conn.Open();
+            if (parameters.Length > 0)
+            {
+                cmd.Parameters.AddRange(parameters);
+            }
 
-        using var cmd = new NpgsqlCommand(sql, conn);
-        cmd.Parameters.AddRange(parameters);
+            return cmd.ExecuteNonQuery();
+        }
 
-        using var adapter = new NpgsqlDataAdapter(cmd);
-        var table = new DataTable();
-        adapter.Fill(table);
-        return table;
+        public static DataTable QueryTable(
+            string sql,
+            params NpgsqlParameter[] parameters)
+        {
+            using var conn = ConnectDB.GetConnection();
+            conn.Open();
+
+            using var cmd = new NpgsqlCommand(sql, conn);
+
+            if (parameters.Length > 0)
+            {
+                cmd.Parameters.AddRange(parameters);
+            }
+
+            using var adapter = new NpgsqlDataAdapter(cmd);
+
+            var table = new DataTable();
+            adapter.Fill(table);
+
+            return table;
+        }
     }
 }

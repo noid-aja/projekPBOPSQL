@@ -35,8 +35,7 @@ namespace WinFormsApp1.Forms.AdminForm
                     break;
                 case "pembeli":
                     lblJudul.Text = "💳 Transaksi Saya";
-                    btnBayar.Text = "✅ Konfirmasi Bayar";
-                    btnBayar.Visible = true;
+                    btnBayar.Visible = false;
                     break;
                 default:
                     lblJudul.Text = "💳 Transaksi";
@@ -133,35 +132,34 @@ namespace WinFormsApp1.Forms.AdminForm
                 var controller = new WinFormsApp1.Controllers.TransaksiController();
                 bool sukses;
 
-                if (_role == "admin")
+                if (_role != "admin")
                 {
-                    // Admin konfirmasi pembayaran telah diterima (lunas)
-                    sukses = controller.AdminKonfirmasiPembayaranLunas(idTransaksi);
-                    if (sukses)
-                    {
-                        MessageBox.Show("Pembayaran berhasil dikonfirmasi lunas!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadTransaksi();
-                    }
+                    MessageBox.Show(
+                        "Hanya Admin yang bisa mengonfirmasi pembayaran offline.",
+                        "Akses Ditolak",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
                 }
-                else if (_role == "pembeli")
+
+                sukses = controller.KonfirmasiLunas(idTransaksi);
+                if (sukses)
                 {
-                    // Pembeli konfirmasi telah membayar
-                    sukses = controller.BayarTransaksi(idTransaksi);
-                    if (sukses)
-                    {
-                        MessageBox.Show("Pembayaran berhasil dikonfirmasi!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadTransaksi();
-                    }
-                }
-                else
-                {
-                    MessageBox.Show("Hanya Admin atau Pembeli yang bisa konfirmasi pembayaran.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show(
+                        "Pembayaran berhasil dikonfirmasi lunas!",
+                        "Sukses",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                    LoadTransaksi();
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Gagal konfirmasi bayar: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+        private void lblTotal_Click(object sender, EventArgs e)
+        {
         }
     }
 }

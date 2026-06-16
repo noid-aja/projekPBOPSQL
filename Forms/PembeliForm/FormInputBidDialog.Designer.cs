@@ -15,83 +15,113 @@ namespace WinFormsApp1.Forms.PembeliForm
 
         private void InitializeComponent()
         {
-            lblProduk = new System.Windows.Forms.Label();
-            lblHargaSaatIni = new System.Windows.Forms.Label();
-            lblNominalLabel = new System.Windows.Forms.Label();
-            tbNominal = new System.Windows.Forms.TextBox();
-            btnPasang = new System.Windows.Forms.Button();
-            btnBatal = new System.Windows.Forms.Button();
-            panelHeader = new System.Windows.Forms.Panel();
-            lblHeaderTitle = new System.Windows.Forms.Label();
+            lblProduk = new Label();
+            lblHargaSaatIni = new Label();
+            lblNominalLabel = new Label();
+            tbNominal = new TextBox();
+            btnPasang = new Button();
+            btnBatal = new Button();
+            panelHeader = new Panel();
+            lblHeaderTitle = new Label();
             panelHeader.SuspendLayout();
             SuspendLayout();
-
-            // panelHeader
-            panelHeader.BackColor = System.Drawing.Color.FromArgb(46, 204, 113);
-            panelHeader.Controls.Add(lblHeaderTitle);
-            panelHeader.Dock = System.Windows.Forms.DockStyle.Top;
-            panelHeader.Location = new System.Drawing.Point(0, 0);
-            panelHeader.Size = new System.Drawing.Size(350, 50);
-
-            // lblHeaderTitle
-            lblHeaderTitle.Text = "🔨 Pasang Tawaran Bid";
-            lblHeaderTitle.ForeColor = System.Drawing.Color.White;
-            lblHeaderTitle.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
-            lblHeaderTitle.Location = new System.Drawing.Point(12, 12);
-            lblHeaderTitle.Size = new System.Drawing.Size(326, 25);
-
+            // 
             // lblProduk
-            lblProduk.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            lblProduk.ForeColor = System.Drawing.Color.DarkGreen;
-            lblProduk.Location = new System.Drawing.Point(20, 70);
-            lblProduk.Size = new System.Drawing.Size(310, 25);
-
+            // 
+            lblProduk.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblProduk.ForeColor = Color.DarkGreen;
+            lblProduk.Location = new Point(37, 149);
+            lblProduk.Margin = new Padding(6, 0, 6, 0);
+            lblProduk.Name = "lblProduk";
+            lblProduk.Size = new Size(576, 53);
+            lblProduk.TabIndex = 1;
+            // 
             // lblHargaSaatIni
-            lblHargaSaatIni.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Bold);
-            lblHargaSaatIni.ForeColor = System.Drawing.Color.DarkSlateBlue;
-            lblHargaSaatIni.Location = new System.Drawing.Point(20, 105);
-            lblHargaSaatIni.Size = new System.Drawing.Size(310, 22);
-
+            // 
+            lblHargaSaatIni.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            lblHargaSaatIni.ForeColor = Color.DarkSlateBlue;
+            lblHargaSaatIni.Location = new Point(37, 224);
+            lblHargaSaatIni.Margin = new Padding(6, 0, 6, 0);
+            lblHargaSaatIni.Name = "lblHargaSaatIni";
+            lblHargaSaatIni.Size = new Size(576, 47);
+            lblHargaSaatIni.TabIndex = 2;
+            // 
             // lblNominalLabel
+            // 
+            lblNominalLabel.Font = new Font("Segoe UI", 9F);
+            lblNominalLabel.Location = new Point(37, 309);
+            lblNominalLabel.Margin = new Padding(6, 0, 6, 0);
+            lblNominalLabel.Name = "lblNominalLabel";
+            lblNominalLabel.Size = new Size(576, 38);
+            lblNominalLabel.TabIndex = 3;
             lblNominalLabel.Text = "Masukkan Nominal Bid Anda (Rp):";
-            lblNominalLabel.Font = new System.Drawing.Font("Segoe UI", 9F);
-            lblNominalLabel.Location = new System.Drawing.Point(20, 145);
-            lblNominalLabel.Size = new System.Drawing.Size(310, 18);
-
+            // 
             // tbNominal
-            tbNominal.Font = new System.Drawing.Font("Segoe UI", 11F);
-            tbNominal.Location = new System.Drawing.Point(20, 168);
-            tbNominal.Size = new System.Drawing.Size(310, 27);
-
+            // 
+            tbNominal.Font = new Font("Segoe UI", 11F);
+            tbNominal.Location = new Point(37, 358);
+            tbNominal.Margin = new Padding(6, 6, 6, 6);
+            tbNominal.Name = "tbNominal";
+            tbNominal.Size = new Size(572, 47);
+            tbNominal.TabIndex = 4;
+            // 
             // btnPasang
+            // 
+            btnPasang.BackColor = Color.FromArgb(39, 174, 96);
+            btnPasang.FlatStyle = FlatStyle.Flat;
+            btnPasang.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+            btnPasang.ForeColor = Color.White;
+            btnPasang.Location = new Point(37, 469);
+            btnPasang.Margin = new Padding(6, 6, 6, 6);
+            btnPasang.Name = "btnPasang";
+            btnPasang.Size = new Size(269, 77);
+            btnPasang.TabIndex = 5;
             btnPasang.Text = "💰 PASANG BID";
-            btnPasang.BackColor = System.Drawing.Color.FromArgb(46, 204, 113);
-            btnPasang.ForeColor = System.Drawing.Color.White;
-            btnPasang.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
-            btnPasang.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            btnPasang.Location = new System.Drawing.Point(20, 220);
-            btnPasang.Size = new System.Drawing.Size(145, 36);
-            btnPasang.Click += new System.EventHandler(btnPasang_Click);
-
+            btnPasang.UseVisualStyleBackColor = false;
+            btnPasang.Click += btnPasang_Click;
+            // 
             // btnBatal
+            // 
+            btnBatal.BackColor = Color.FromArgb(189, 195, 199);
+            btnBatal.FlatStyle = FlatStyle.Flat;
+            btnBatal.Font = new Font("Segoe UI", 10F);
+            btnBatal.ForeColor = Color.Black;
+            btnBatal.Location = new Point(344, 469);
+            btnBatal.Margin = new Padding(6, 6, 6, 6);
+            btnBatal.Name = "btnBatal";
+            btnBatal.Size = new Size(269, 77);
+            btnBatal.TabIndex = 6;
             btnBatal.Text = "Batal";
-            btnBatal.BackColor = System.Drawing.Color.FromArgb(189, 195, 199);
-            btnBatal.ForeColor = System.Drawing.Color.Black;
-            btnBatal.Font = new System.Drawing.Font("Segoe UI", 10F);
-            btnBatal.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            btnBatal.Location = new System.Drawing.Point(185, 220);
-            btnBatal.Size = new System.Drawing.Size(145, 36);
-            btnBatal.Click += new System.EventHandler(btnBatal_Click);
-
+            btnBatal.UseVisualStyleBackColor = false;
+            btnBatal.Click += btnBatal_Click;
+            // 
+            // panelHeader
+            // 
+            panelHeader.BackColor = Color.FromArgb(17, 37, 0);
+            panelHeader.Controls.Add(lblHeaderTitle);
+            panelHeader.Dock = DockStyle.Top;
+            panelHeader.Location = new Point(0, 0);
+            panelHeader.Margin = new Padding(6, 6, 6, 6);
+            panelHeader.Name = "panelHeader";
+            panelHeader.Size = new Size(650, 107);
+            panelHeader.TabIndex = 0;
+            // 
+            // lblHeaderTitle
+            // 
+            lblHeaderTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            lblHeaderTitle.ForeColor = Color.White;
+            lblHeaderTitle.Location = new Point(22, 26);
+            lblHeaderTitle.Margin = new Padding(6, 0, 6, 0);
+            lblHeaderTitle.Name = "lblHeaderTitle";
+            lblHeaderTitle.Size = new Size(605, 53);
+            lblHeaderTitle.TabIndex = 0;
+            lblHeaderTitle.Text = "🔨 Pasang Tawaran Bid";
+            // 
             // FormInputBidDialog
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(350, 280);
-            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
-            MaximizeBox = false;
-            MinimizeBox = false;
-            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            Text = "Pasang Bid";
+            // 
+            AutoScaleDimensions = new SizeF(13F, 32F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(650, 597);
             Controls.Add(panelHeader);
             Controls.Add(lblProduk);
             Controls.Add(lblHargaSaatIni);
@@ -99,6 +129,13 @@ namespace WinFormsApp1.Forms.PembeliForm
             Controls.Add(tbNominal);
             Controls.Add(btnPasang);
             Controls.Add(btnBatal);
+            FormBorderStyle = FormBorderStyle.FixedDialog;
+            Margin = new Padding(6, 6, 6, 6);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "FormInputBidDialog";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "Pasang Bid";
             panelHeader.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
