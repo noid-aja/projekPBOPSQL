@@ -1,6 +1,5 @@
+using Npgsql;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
 using WinFormsApp1.Helpers;
 using WinFormsApp1.Models;
@@ -9,48 +8,119 @@ namespace WinFormsApp1.Controllers
 {
     public class TransaksiController
     {
-        public void JalankanOtomatisasiPenutupan()
-        {
-            TransaksiContext.CekDanTutupLelangExpired();
-        }
-
-        public bool AdminKonfirmasiPembayaranLunas(int idTransaksi)
-        {
-            if (!UserContext.IsLoggedIn() || !UserContext.IsAdmin())
-            {
-                MessageBox.Show("Akses Ditolak! Hanya akun Admin yang bisa mengonfirmasi pembayaran lunas.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            return TransaksiContext.AdminKonfirmasiLunas(idTransaksi);
-        }
-
-        public bool BayarTransaksi(int idTransaksi)
+        public bool KonfirmasiLunas(int idTransaksi)
         {
             if (!UserContext.IsLoggedIn())
             {
-                MessageBox.Show("Akses Ditolak! Anda harus login terlebih dahulu.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    "Login terlebih dahulu.",
+                    "Akses Ditolak",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
                 return false;
             }
 
-            return TransaksiContext.AdminKonfirmasiLunas(idTransaksi);
+            if (!UserContext.IsAdmin())
+            {
+                MessageBox.Show(
+                    "Hanya Admin yang dapat mengonfirmasi pembayaran.",
+                    "Akses Ditolak",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return false;
+            }
+
+            if (idTransaksi <= 0)
+            {
+                MessageBox.Show(
+                    "Pilih transaksi terlebih dahulu.",
+                    "Validasi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return false;
+            }
+
+            try
+            {
+                return TransaksiContext
+                    .AdminKonfirmasiLunas(idTransaksi);
+            }
+            catch (PostgresException ex)
+            {
+                MessageBox.Show(
+                    ex.MessageText,
+                    "Konfirmasi Pembayaran Gagal",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Gagal mengonfirmasi pembayaran: "
+                    + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return false;
+            }
         }
-  
-        public bool GagalBayarHitAndRun(int idTransaksi)
+
+        public bool KonfirmasiGagalBayar(int idTransaksi)
         {
-            if (!UserContext.IsLoggedIn() || !UserContext.IsAdmin())
+            if (!UserContext.IsLoggedIn())
             {
-                MessageBox.Show("Hanya Admin", "Akses Ditolak", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    "Login terlebih dahulu.",
+                    "Akses Ditolak",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
                 return false;
             }
 
-            bool sukses = TransaksiContext.AdminKonfirmasiGagalBayar(idTransaksi);
-            if (sukses)
+            if (!UserContext.IsAdmin())
             {
-                MessageBox.Show("Transaksi dibatalkan! Produk milik petani akan dikembalikan.", 
-                    "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(
+                    "Hanya Admin yang dapat membatalkan transaksi.",
+                    "Akses Ditolak",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return false;
             }
-            return sukses;
+
+            try
+            {
+                return TransaksiContext
+                    .AdminKonfirmasiGagalBayar(idTransaksi);
+            }
+            catch (PostgresException ex)
+            {
+                MessageBox.Show(
+                    ex.MessageText,
+                    "Pembatalan Transaksi Gagal",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Gagal membatalkan transaksi: "
+                    + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return false;
+            }
         }
     }
 }

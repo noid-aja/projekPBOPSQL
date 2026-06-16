@@ -1,44 +1,57 @@
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-using WinFormsApp1.Helpers;
-using WinFormsApp1.Models;
-
-namespace WinFormsApp1.Controllers
+public bool KirimHasilQc(
+    int idProduk,
+    int nilai,
+    decimal hargaRekomendasi,
+    string? catatan)
 {
-    public class InspeksiController : Isearch<Inspeksi>
+    if (!UserContext.IsLoggedIn())
     {
-        public Inspeksi? Cari(int id) => InspeksiContext.AmbilById(id);
+        MessageBox.Show(
+            "Sesi login habis. Silakan login kembali.",
+            "Akses Ditolak",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
 
-        public List<Inspeksi> CariNama(string nama) => InspeksiContext.CariByNamaProduk(nama);
+        return false;
+    }
 
-        public bool KirimHasilQc(
-            int idProduk,
-            int nilai,
-            decimal hargaRekomendasi,
-            string? catatan,
-            bool isLolos)
-        {
-            if (!UserContext.IsLoggedIn())
-            {
-                MessageBox.Show("Sesi login habis. Silakan login kembali.", "Akses Ditolak",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
+    if (!UserContext.IsInspektor())
+    {
+        MessageBox.Show(
+            "Akses ditolak. Hanya Inspektor yang bisa mengisi hasil QC.",
+            "Bukan Inspektor",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Error);
 
-            if (!UserContext.IsInspektor())
-            {
-                MessageBox.Show("Akses ditolak. Hanya Inspektor yang bisa mengisi hasil QC.",
-                    "Bukan Inspektor", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
+        return false;
+    }
 
-            if (nilai < 0 || nilai > 100)
-            {
-                MessageBox.Show("Nilai QC harus antara 0 sampai 100.", "Validasi Gagal",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return false;
-            }
+    if (nilai < 0 || nilai > 100)
+    {
+        MessageBox.Show(
+            "Nilai QC harus antara 0 sampai 100.",
+            "Validasi Gagal",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
+
+        return false;
+    }
+
+    if (hargaRekomendasi <= 0)
+    {
+        MessageBox.Show(
+            "Harga rekomendasi harus lebih dari Rp0.",
+            "Validasi Gagal",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning);
+
+        return false;
+    }
+
+    try
+    {
+        int idInspektor =
+            UserContext.CurrentUser!.IdUser;
 
             string gradeOtomatis = nilai >= 95 ? "A+"
                                  : nilai >= 85 ? "A"
@@ -46,17 +59,6 @@ namespace WinFormsApp1.Controllers
                                  : nilai >= 60 ? "C"
                                  : "D";
 
-            try
-            {
-                int idInspektor = UserContext.CurrentUser!.IdUser;
-                return InspeksiContext.SimpanHasilInspeksi(
-                    idProduk, idInspektor, nilai, gradeOtomatis, hargaRekomendasi, catatan, isLolos);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error Controller", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-        }
+        return false;
     }
 }

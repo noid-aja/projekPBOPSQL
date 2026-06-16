@@ -1,221 +1,148 @@
 using Npgsql;
+using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Data;
 using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.Models
 {
-    public class LelangContext
+    public static class LelangContext
     {
         public static List<ProdukKopi> AmbilProdukSiapLelang()
         {
+            DataTable table = DbExecutor.QueryTable(@"
+                SELECT *
+                FROM kapten.vw_produk_siap_lelang
+                ORDER BY id_produk ASC;");
+
             var list = new List<ProdukKopi>();
-            try
+
+            foreach (DataRow row in table.Rows)
             {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
+                string status =
+                    Convert.ToString(row["status_produk"])
+                    ?? string.Empty;
 
-                using var cmd = new NpgsqlCommand(@"
-                    select p.id_produk, p.id_petani, p.id_jenis, p.nama_produk, p.berat_kg, p.harga_pengajuan, p.deskripsi, p.status_produk 
-                    from kapten.produk_kopi p
-                    where p.status_produk = 'lolos_qc'
-                    order by p.id_produk asc", conn);
-
-                using var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    string statusStr = reader.GetString(7);
-                    Enum.StatusProduk statusEnum = Enum.ParseStatusProduk(statusStr);
-
-                    list.Add(new ProdukKopi(
-                        reader.GetInt32(0),
-                        reader.GetInt32(1),
-                        reader.GetInt32(2),
-                        reader.GetString(3),
-                        reader.GetDecimal(4),
-                        reader.GetDecimal(5),
-                        reader.IsDBNull(6) ? null : reader.GetString(6),
-                        statusEnum
-                    ));
-                }
+                list.Add(new ProdukKopi(
+                    Convert.ToInt32(row["id_produk"]),
+                    Convert.ToInt32(row["id_petani"]),
+                    Convert.ToInt32(row["id_jenis"]),
+                    Convert.ToString(row["nama_produk"])
+                        ?? string.Empty,
+                    Convert.ToDecimal(row["berat_kg"]),
+                    Convert.ToDecimal(row["harga_pengajuan"]),
+                    row["deskripsi"] == DBNull.Value
+                        ? null
+                        : Convert.ToString(row["deskripsi"]),
+                    Enum.ParseStatusProduk(status)
+                ));
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Gagal mengambil data siap lelang: " + ex.Message, "Error SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+
             return list;
         }
-        public static bool EksekusiBukaLelang(int idProduk, string? lokasiLelang)
+
+        public static bool EksekusiBukaLelang(
+            int idProduk,
+            string? lokasiLelang)
         {
-            using var conn = ConnectDB.GetConnection();
-            conn.Open();
-            using var trans = conn.BeginTransaction();
-            try
-            {
-                using var cmdCekStatus = new NpgsqlCommand(@"
-            select status_produk from kapten.produk_kopi 
-            where id_produk = @idProduk", conn, trans);
-                cmdCekStatus.Parameters.AddWithValue("idProduk", idProduk);
+            DbExecutor.ExecuteCall(
+                @"CALL kapten.sp_buka_lelang(
+                    @idProduk,
+                    @lokasi,
+                    @durasiMenit
+                );",
 
-                object? statusRes = cmdCekStatus.ExecuteScalar();
-                if (statusRes == null)
+                new NpgsqlParameter(
+                    "idProduk",
+                    NpgsqlDbType.Integer)
                 {
-                    throw new Exception("Produk tidak ditemukan di database!");
-                }
+                    Value = idProduk
+                },
 
-                string statusProduk = statusRes.ToString() ?? string.Empty;
-                if (statusProduk != "lolos_qc")
+                new NpgsqlParameter(
+                    "lokasi",
+                    NpgsqlDbType.Varchar)
                 {
-                    throw new Exception($"Produk tidak bisa dilelang! Status saat ini adalah '{statusProduk}'");
-                }
+                    Value = string.IsNullOrWhiteSpace(lokasiLelang)
+                        ? DBNull.Value
+                        : lokasiLelang.Trim()
+                },
 
-                using var cmdGetHarga = new NpgsqlCommand(@"
-                    select harga_rekomendasi from kapten.inspeksi 
-                    where id_produk = @idProduk 
-                    order by id_inspeksi desc limit 1", conn);
-                cmdGetHarga.Parameters.AddWithValue("idProduk", idProduk);
+                new NpgsqlParameter(
+                    "durasiMenit",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = 3
+                });
 
-                object res = cmdGetHarga.ExecuteScalar();
-                if (res == null)
-                    throw new Exception("Produk ini belum memiliki data rekomendasi harga dari Inspektor!");
-
-                decimal bidMinimum = Convert.ToDecimal(res);
-
-                DateTime tglMulai = DateTime.Now;
-                DateTime tglAkhir = tglMulai.AddMinutes(3);
-
-                using var cmdLelang = new NpgsqlCommand(@"
-                    insert into kapten.lelang (id_produk, bid_minimum, tgl_mulai, tgl_akhir, lokasi_lelang, status_lelang) 
-                    values (@idProduk, @bidMin, @tglMulai, @tglAkhir, @lokasi, 'berlangsung')", conn, trans);
-
-                cmdLelang.Parameters.AddWithValue("idProduk", idProduk);
-                cmdLelang.Parameters.AddWithValue("bidMin", bidMinimum);
-                cmdLelang.Parameters.AddWithValue("tglMulai", tglMulai);
-                cmdLelang.Parameters.AddWithValue("tglAkhir", tglAkhir);
-                cmdLelang.Parameters.AddWithValue("lokasi", (object?)lokasiLelang?.Trim() ?? DBNull.Value);
-                cmdLelang.ExecuteNonQuery();
-
-
-                using var cmdProduk = new NpgsqlCommand(@"
-                    update kapten.produk_kopi 
-                    set status_produk = 'berlangsung' 
-                    where id_produk = @idProduk", conn, trans);
-                cmdProduk.Parameters.AddWithValue("idProduk", idProduk);
-                cmdProduk.ExecuteNonQuery();
-
-                trans.Commit();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                trans.Rollback();
-                System.Windows.Forms.MessageBox.Show("Gagal membuka lelang di database: " + ex.Message, "Error SQL", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-                return false;
-            }
+            return true;
         }
 
         public static Lelang? AmbilLelangById(int id)
         {
-            try
-            {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
-                using var cmd = new NpgsqlCommand(@"
-                    select id_lelang, id_produk, bid_minimum, tgl_mulai, tgl_akhir, lokasi_lelang, status_lelang
-                    from kapten.lelang
-                    where id_lelang = @id", conn);
-                cmd.Parameters.AddWithValue("id", id);
-                using var reader = cmd.ExecuteReader();
-                if (!reader.Read()) return null;
-                return new Lelang(
-                    reader.GetInt32(0), reader.GetInt32(1), reader.GetDecimal(2),
-                    reader.GetDateTime(3), reader.GetDateTime(4),
-                    reader.IsDBNull(5) ? null : reader.GetString(5),
-                    Enum.ParseStatusLelang(reader.GetString(6)));
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show("Gagal mencari lelang: " + ex.Message, "Error SQL",
-                    System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+            DataTable table = DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.vw_lelang_detail
+                  WHERE id_lelang = @id;",
+
+                new NpgsqlParameter(
+                    "id",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = id
+                });
+
+            if (table.Rows.Count == 0)
                 return null;
-            }
+
+            return MapLelang(table.Rows[0]);
         }
 
-        public static List<Lelang> CariLelangByLokasi(string namaLokasi)
+        public static List<Lelang> CariLelangByLokasi(
+            string namaLokasi)
         {
+            DataTable table = DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.vw_lelang_detail
+                  WHERE lokasi_lelang ILIKE @lokasi
+                  ORDER BY id_lelang DESC;",
+
+                new NpgsqlParameter(
+                    "lokasi",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = "%" + namaLokasi.Trim() + "%"
+                });
+
             var list = new List<Lelang>();
-            try
+
+            foreach (DataRow row in table.Rows)
             {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
-                using var cmd = new NpgsqlCommand(@"
-                    select id_lelang, id_produk, bid_minimum, tgl_mulai, tgl_akhir, lokasi_lelang, status_lelang
-                    from kapten.lelang
-                    where lower(lokasi_lelang) like lower(@nama)
-                    order by id_lelang desc", conn);
-                cmd.Parameters.AddWithValue("nama", "%" + namaLokasi.Trim() + "%");
-                using var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                    list.Add(new Lelang(
-                        reader.GetInt32(0), reader.GetInt32(1), reader.GetDecimal(2),
-                        reader.GetDateTime(3), reader.GetDateTime(4),
-                        reader.IsDBNull(5) ? null : reader.GetString(5),
-                        Enum.ParseStatusLelang(reader.GetString(6))));
+                list.Add(MapLelang(row));
             }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show("Gagal mencari lelang: " + ex.Message, "Error SQL",
-                    System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-            }
+
             return list;
         }
 
-        public static System.Data.DataTable AmbilPesertaLelang(int idLelang)
+        private static Lelang MapLelang(DataRow row)
         {
-            var dt = new System.Data.DataTable();
-            try
-            {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
-                using var cmd = new NpgsqlCommand(@"
-                    SELECT u.username, u.nama_lengkap, MAX(b.nominal) as bid_terakhir, MAX(b.tgl_bid) as waktu_bid_terakhir
-                    FROM kapten.bid b
-                    JOIN kapten.users u ON u.id_user = b.id_pembeli
-                    WHERE b.id_lelang = @idLelang
-                    GROUP BY u.id_user, u.username, u.nama_lengkap
-                    ORDER BY bid_terakhir DESC", conn);
-                cmd.Parameters.AddWithValue("idLelang", idLelang);
-                using var da = new NpgsqlDataAdapter(cmd);
-                da.Fill(dt);
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show("Gagal mengambil daftar peserta: " + ex.Message, "Error Database", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-            }
-            return dt;
-        }
+            string status =
+                Convert.ToString(row["status_lelang"])
+                ?? string.Empty;
 
-        public static System.Data.DataTable AmbilHasilLelang()
-        {
-            var dt = new System.Data.DataTable();
-            try
-            {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
-                using var cmd = new NpgsqlCommand(@"
-                    select id_lelang, nama_produk, nama_petani, nama_pembeli as nama_pemenang, total_bayar as harga_pemenang, tgl_transaksi as tgl_selesai
-                    from kapten.vw_hasil_lelang
-                    where status_lelang = 'selesai'
-                    order by id_lelang desc", conn);
-                using var da = new NpgsqlDataAdapter(cmd);
-                da.Fill(dt);
-            }
-            catch (Exception ex)
-            {
-                System.Windows.Forms.MessageBox.Show("Gagal mengambil rekap hasil lelang: " + ex.Message, "Error Database", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-            }
-            return dt;
+            return new Lelang(
+                Convert.ToInt32(row["id_lelang"]),
+                Convert.ToInt32(row["id_produk"]),
+                Convert.ToDecimal(row["bid_minimum"]),
+                Convert.ToDateTime(row["tgl_mulai"]),
+                Convert.ToDateTime(row["tgl_akhir"]),
+                row["lokasi_lelang"] == DBNull.Value
+                    ? null
+                    : Convert.ToString(
+                        row["lokasi_lelang"]),
+                Enum.ParseStatusLelang(status)
+            );
         }
     }
 }
