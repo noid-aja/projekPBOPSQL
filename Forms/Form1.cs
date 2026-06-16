@@ -40,9 +40,25 @@ namespace WinFormsApp1
                     MessageBoxIcon.Information
                 );
 
-                string roleUtama = (user.Roles != null && user.Roles.Count > 0)
-                                    ? user.Roles[0].NamaRole
-                                    : "pembeli";
+                string roleUtama;
+                if (user.Roles != null && user.Roles.Count > 1)
+                {
+                    using (var pilihForm = new FormPilihRole(user.Roles))
+                    {
+                        if (pilihForm.ShowDialog() != DialogResult.OK)
+                        {
+                            UserContext.Logout();
+                            return;
+                        }
+                        roleUtama = pilihForm.SelectedRole;
+                    }
+                }
+                else
+                {
+                    roleUtama = (user.Roles != null && user.Roles.Count > 0)
+                                        ? user.Roles[0].NamaRole
+                                        : "pembeli";
+                }
 
                 tbusr.Clear();
                 tbpw.Clear();

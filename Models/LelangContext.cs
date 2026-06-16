@@ -195,5 +195,27 @@ namespace WinFormsApp1.Models
             }
             return dt;
         }
+
+        public static System.Data.DataTable AmbilHasilLelang()
+        {
+            var dt = new System.Data.DataTable();
+            try
+            {
+                using var conn = ConnectDB.GetConnection();
+                conn.Open();
+                using var cmd = new NpgsqlCommand(@"
+                    select id_lelang, nama_produk, nama_petani, nama_pembeli as nama_pemenang, total_bayar as harga_pemenang, tgl_transaksi as tgl_selesai
+                    from kapten.vw_hasil_lelang
+                    where status_lelang = 'selesai'
+                    order by id_lelang desc", conn);
+                using var da = new NpgsqlDataAdapter(cmd);
+                da.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Gagal mengambil rekap hasil lelang: " + ex.Message, "Error Database", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+            }
+            return dt;
+        }
     }
 }

@@ -55,10 +55,10 @@ namespace WinFormsApp1.Controllers
                     "Konfirmasi password tidak cocok.");
             }
 
-            if (role != "petani" && role != "pembeli")
+            if (role != "petani" && role != "pembeli" && role != "keduanya")
             {
                 throw new ArgumentException(
-                    "Role hanya boleh petani atau pembeli.");
+                    "Role hanya boleh petani, pembeli, atau keduanya.");
             }
 
             User user = new User

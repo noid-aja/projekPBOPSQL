@@ -94,9 +94,9 @@ namespace WinFormsApp1
                 return;
             }
 
-            if (role != "petani" && role != "pembeli")
+            if (role != "petani" && role != "pembeli" && !role.Contains("keduanya"))
             {
-                MessageBox.Show("Pilih role Petani atau Pembeli.");
+                MessageBox.Show("Pilih role Petani, Pembeli, atau Keduanya.");
                 txtrole.Focus();
                 return;
             }
@@ -131,13 +131,19 @@ namespace WinFormsApp1
 
             try
             {
+                string dbRole = role;
+                if (role.Contains("keduanya"))
+                {
+                    dbRole = "keduanya";
+                }
+
                 _authController.Register(
                     namaLengkap,
                     username,
                     password,
                     confirmPassword,
                     noTelp,
-                    role);
+                    dbRole);
 
                 MessageBox.Show(
                     $"Registrasi berhasil!\nSelamat datang, {namaLengkap}.",

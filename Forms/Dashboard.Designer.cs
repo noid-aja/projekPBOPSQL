@@ -52,6 +52,7 @@ namespace WinFormsApp1.Forms
             btnLogout = new Button();
             btnMenu6 = new Button();
             btnMenu7 = new Button();
+            btnMenu8 = new Button();
             panel2 = new Panel();
             pictureBox1 = new PictureBox();
             panel1 = new Panel();
@@ -397,10 +398,26 @@ namespace WinFormsApp1.Forms
             btnMenu7.Text = "Laporan";
             btnMenu7.UseVisualStyleBackColor = false;
             // 
+            // btnMenu8
+            // 
+            btnMenu8.BackColor = Color.DarkGreen;
+            btnMenu8.FlatAppearance.BorderSize = 0;
+            btnMenu8.FlatStyle = FlatStyle.Flat;
+            btnMenu8.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            btnMenu8.ForeColor = Color.White;
+            btnMenu8.Location = new Point(31, 553);
+            btnMenu8.Margin = new Padding(2, 3, 2, 3);
+            btnMenu8.Name = "btnMenu8";
+            btnMenu8.Size = new Size(194, 43);
+            btnMenu8.TabIndex = 11;
+            btnMenu8.Text = "Menu8";
+            btnMenu8.UseVisualStyleBackColor = false;
+            // 
             // panel2
             // 
             panel2.BackColor = Color.FromArgb(17, 37, 0);
             panel2.Controls.Add(pictureBox1);
+            panel2.Controls.Add(btnMenu8);
             panel2.Controls.Add(btnMenu7);
             panel2.Controls.Add(lblSidebarTitle);
             panel2.Controls.Add(btnMenu6);
@@ -527,6 +544,7 @@ namespace WinFormsApp1.Forms
         private Button btnLogout;
         private Button btnMenu6;
         private Button btnMenu7;
+        private Button btnMenu8;
         private Panel panel2;
         private Panel panel1;
         private PictureBox pictureBox1;

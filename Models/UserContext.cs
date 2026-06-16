@@ -70,9 +70,9 @@ namespace WinFormsApp1.Models
         public static void Register(User user, string namaRole)
         {
             string roleLower = namaRole.Trim().ToLower();
-            if (roleLower != "petani" && roleLower != "pembeli" && roleLower != "inspektor")
+            if (roleLower != "petani" && roleLower != "pembeli" && roleLower != "inspektor" && roleLower != "keduanya")
             {
-                throw new ArgumentException("Role hanya boleh petani, pembeli, atau inspektor.");
+                throw new ArgumentException("Role hanya boleh petani, pembeli, inspektor, atau keduanya.");
             }
 
             using NpgsqlConnection conn = ConnectDB.GetConnection();
@@ -102,19 +102,35 @@ namespace WinFormsApp1.Models
                     idUser = Convert.ToInt32(result);
                 }
 
-                const string insertRoleQuery = """
-                    INSERT INTO kapten.user_roles (id_user, id_role)
-                    SELECT @id_user, id_role FROM kapten.roles WHERE LOWER(nama_role) = LOWER(@nama_role);
-                    """;
-
-                using (NpgsqlCommand cmd = new NpgsqlCommand(insertRoleQuery, conn, transaction))
+                if (roleLower == "keduanya")
                 {
-                    cmd.Parameters.AddWithValue("id_user", NpgsqlDbType.Integer, idUser);
-                    cmd.Parameters.AddWithValue("nama_role", NpgsqlDbType.Varchar, namaRole);
+                    const string insertRolesQuery = """
+                        INSERT INTO kapten.user_roles (id_user, id_role)
+                        SELECT @id_user, id_role FROM kapten.roles WHERE LOWER(nama_role) IN ('petani', 'pembeli');
+                        """;
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(insertRolesQuery, conn, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("id_user", NpgsqlDbType.Integer, idUser);
+                        int affectedRows = cmd.ExecuteNonQuery();
+                        if (affectedRows < 1)
+                            throw new InvalidOperationException("Gagal memberikan role.");
+                    }
+                }
+                else
+                {
+                    const string insertRoleQuery = """
+                        INSERT INTO kapten.user_roles (id_user, id_role)
+                        SELECT @id_user, id_role FROM kapten.roles WHERE LOWER(nama_role) = LOWER(@nama_role);
+                        """;
+                    using (NpgsqlCommand cmd = new NpgsqlCommand(insertRoleQuery, conn, transaction))
+                    {
+                        cmd.Parameters.AddWithValue("id_user", NpgsqlDbType.Integer, idUser);
+                        cmd.Parameters.AddWithValue("nama_role", NpgsqlDbType.Varchar, namaRole);
 
-                    int affectedRows = cmd.ExecuteNonQuery();
-                    if (affectedRows != 1)
-                        throw new InvalidOperationException("Role tidak ditemukan atau gagal diberikan.");
+                        int affectedRows = cmd.ExecuteNonQuery();
+                        if (affectedRows != 1)
+                            throw new InvalidOperationException("Role tidak ditemukan atau gagal diberikan.");
+                    }
                 }
 
                 transaction.Commit();

@@ -23,7 +23,8 @@ namespace WinFormsApp1.Models.Roles
                 "Lihat Lelang",
                 "Ikut Bid",
                 "Lihat Riwayat Bid",
-                "Lihat Transaksi"
+                "Lihat Transaksi",
+                "Hasil Lelang"
             };
         }
     }

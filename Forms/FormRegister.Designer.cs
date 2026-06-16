@@ -1,4 +1,4 @@
-﻿namespace WinFormsApp1  // ← sama kayak FormRegister.cs
+namespace WinFormsApp1  // ← sama kayak FormRegister.cs
 {
     partial class FormRegister  // ← nama class harus sama
     {
@@ -118,7 +118,7 @@
             txtrole.FlatStyle = FlatStyle.Flat;
             txtrole.ForeColor = SystemColors.WindowFrame;
             txtrole.FormattingEnabled = true;
-            txtrole.Items.AddRange(new object[] { "Petani", "Pembeli" });
+            txtrole.Items.AddRange(new object[] { "Petani", "Pembeli", "Keduanya (Petani & Pembeli)" });
             txtrole.Location = new Point(404, 141);
             txtrole.Margin = new Padding(2);
             txtrole.MaxDropDownItems = 2;

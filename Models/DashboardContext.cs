@@ -8,7 +8,7 @@ namespace WinFormsApp1.Models
 {
     public static class DashboardContext
     {
-        private static int ExecuteScalarInt(string query, params NpgsqlParameter[] parameters)
+        private static int ambilData(string query, params NpgsqlParameter[] parameters)
         {
             using NpgsqlConnection conn = ConnectDB.GetConnection();
             conn.Open();
@@ -57,33 +57,36 @@ namespace WinFormsApp1.Models
 
         public static int CountTotalUser()
         {
-            return ExecuteScalarInt("SELECT COUNT(*) FROM kapten.users;");
+            return ambilData("SELECT COUNT(*) FROM kapten.users;");
         }
 
         public static int CountProdukByStatus(string status)
         {
-            return ExecuteScalarInt(
+            return ambilData(
                 "SELECT COUNT(*) FROM kapten.produk_kopi WHERE status_produk = @status;",
-                new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = MapStatus(status) });
+                new NpgsqlParameter("status", NpgsqlDbType.Varchar) 
+                { 
+                    Value = MapStatus(status)
+                });
         }
 
         public static int CountLelangByStatus(string status)
         {
-            return ExecuteScalarInt(
+            return ambilData(
                 "SELECT COUNT(*) FROM kapten.lelang WHERE status_lelang = @status;",
                 new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = MapStatus(status) });
         }
 
         public static int CountProdukPetani(int idPetani)
         {
-            return ExecuteScalarInt(
+            return ambilData(
                 "SELECT COUNT(*) FROM kapten.produk_kopi WHERE id_petani = @id_petani;",
                 new NpgsqlParameter("id_petani", NpgsqlDbType.Integer) { Value = idPetani });
         }
 
         public static int CountProdukPetaniByStatus(int idPetani, string status)
         {
-            return ExecuteScalarInt(
+            return ambilData(
                 """
                 SELECT COUNT(*)
                 FROM kapten.produk_kopi
@@ -96,14 +99,14 @@ namespace WinFormsApp1.Models
 
         public static int CountBidPembeli(int idPembeli)
         {
-            return ExecuteScalarInt(
+            return ambilData(
                 "SELECT COUNT(*) FROM kapten.bid WHERE id_pembeli = @id_pembeli;",
                 new NpgsqlParameter("id_pembeli", NpgsqlDbType.Integer) { Value = idPembeli });
         }
 
         public static int CountMenangPembeli(int idPembeli)
         {
-            return ExecuteScalarInt(
+            return ambilData(
                 """
                 SELECT COUNT(*)
                 FROM kapten.pemenang_lelang pl
@@ -115,7 +118,7 @@ namespace WinFormsApp1.Models
 
         public static int CountTransaksiPembeliByStatus(int idPembeli, string statusBayar)
         {
-            return ExecuteScalarInt(
+            return ambilData(
                 """
                 SELECT COUNT(*)
                 FROM kapten.transaksi t
@@ -130,14 +133,14 @@ namespace WinFormsApp1.Models
 
         public static int CountInspeksiByInspektor(int idInspektor)
         {
-            return ExecuteScalarInt(
+            return ambilData(
                 "SELECT COUNT(*) FROM kapten.inspeksi WHERE id_inspektor = @id_inspektor;",
                 new NpgsqlParameter("id_inspektor", NpgsqlDbType.Integer) { Value = idInspektor });
         }
 
         public static int CountInspeksiByInspektorAndStatus(int idInspektor, string statusInspeksi)
         {
-            return ExecuteScalarInt(
+            return ambilData(
                 """
                 SELECT COUNT(*)
                 FROM kapten.inspeksi
