@@ -33,7 +33,7 @@
 
   <ItemGroup>
     <Folder Include="DatabasePsql\" />
-    <Folder Include="Forms\PetaniForm\" />
+    <Folder Include="Views\PetaniForm\" />
   </ItemGroup>
 
 </Project>

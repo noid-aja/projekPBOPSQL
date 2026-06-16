@@ -23,7 +23,8 @@ namespace WinFormsApp1.Models.Roles
                 "Lihat Produk Pending",
                 "Input Hasil Inspeksi",
                 "Beri Grade Kopi",
-                "Set Status QC"
+                "Set Status QC",
+                "Riwayat Inspeksi"
             };
         }
     }
