@@ -2,6 +2,7 @@ using Npgsql;
 using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using WinFormsApp1.Helpers;
 
@@ -9,9 +10,22 @@ namespace WinFormsApp1.Models
 {
     public static class UserContext
     {
-        public static User? CurrentUser { get; private set; }
+        public static User? CurrentUser
+        {
+            get;
+            private set;
+        }
+
+        // =====================================================
+        // SESSION USER
+        // =====================================================
 
         public static void Login(User user)
+        {
+            CurrentUser = user;
+        }
+
+        public static void SetUser(User user)
         {
             CurrentUser = user;
         }
@@ -21,15 +35,14 @@ namespace WinFormsApp1.Models
             CurrentUser = null;
         }
 
-        public static void SetUser(User user)
-        {
-            CurrentUser = user;
-        }
-
         public static bool IsLoggedIn()
         {
             return CurrentUser != null;
         }
+
+        // =====================================================
+        // PENGECEKAN ROLE
+        // =====================================================
 
         public static bool IsAdmin()
         {
@@ -51,182 +64,412 @@ namespace WinFormsApp1.Models
             return CurrentUser?.IsInRole("inspektor") == true;
         }
 
-        public static bool HasAnyRole(params string[] roles)
-           => roles.Any(r => CurrentUser?.IsInRole(r) == true);
+        public static bool HasAnyRole(
+            params string[] roles)
+        {
+            return roles.Any(
+                role =>
+                    CurrentUser?.IsInRole(role) == true);
+        }
 
         public static void RequireRole(string role)
         {
             if (CurrentUser == null)
-                throw new UnauthorizedAccessException("Belum login.");
+            {
+                throw new UnauthorizedAccessException(
+                    "Belum login.");
+            }
+
             if (!CurrentUser.IsInRole(role))
-                throw new UnauthorizedAccessException($"Akses ditolak. Role '{role}' dibutuhkan.");
+            {
+                throw new UnauthorizedAccessException(
+                    $"Akses ditolak. Role '{role}' dibutuhkan.");
+            }
         }
 
         public static List<string> GetRoleNames()
-                   => CurrentUser?.Roles.Select(r => r.NamaRole).ToList() ?? new List<string>();
-
-        // --- Database methods migrated from UserRepository ---
-
-        public static void Register(User user, string namaRole)
         {
-            string roleLower = namaRole.Trim().ToLower();
-            if (roleLower != "petani" && roleLower != "pembeli" && roleLower != "inspektor")
-            {
-                throw new ArgumentException("Role hanya boleh petani, pembeli, atau inspektor.");
-            }
-
-            using NpgsqlConnection conn = ConnectDB.GetConnection();
-            conn.Open();
-            using NpgsqlTransaction transaction = conn.BeginTransaction();
-
-            try
-            {
-                const string insertUserQuery = """
-                    INSERT INTO kapten.users (nama_lengkap, username, password, no_telp, is_aktif)
-                    VALUES (@nama_lengkap, @username, @password, @no_telp, TRUE)
-                    RETURNING id_user;
-                    """;
-
-                int idUser;
-                using (NpgsqlCommand cmd = new NpgsqlCommand(insertUserQuery, conn, transaction))
-                {
-                    cmd.Parameters.AddWithValue("nama_lengkap", NpgsqlDbType.Varchar, user.NamaLengkap);
-                    cmd.Parameters.AddWithValue("username", NpgsqlDbType.Varchar, user.Username);
-                    cmd.Parameters.AddWithValue("password", NpgsqlDbType.Varchar, user.Password);
-                    cmd.Parameters.Add("no_telp", NpgsqlDbType.Varchar).Value = string.IsNullOrWhiteSpace(user.NoTelp) ? DBNull.Value : user.NoTelp;
-
-                    object? result = cmd.ExecuteScalar();
-                    if (result is null || result == DBNull.Value)
-                        throw new InvalidOperationException("ID user gagal dibuat.");
-
-                    idUser = Convert.ToInt32(result);
-                }
-
-                const string insertRoleQuery = """
-                    INSERT INTO kapten.user_roles (id_user, id_role)
-                    SELECT @id_user, id_role FROM kapten.roles WHERE LOWER(nama_role) = LOWER(@nama_role);
-                    """;
-
-                using (NpgsqlCommand cmd = new NpgsqlCommand(insertRoleQuery, conn, transaction))
-                {
-                    cmd.Parameters.AddWithValue("id_user", NpgsqlDbType.Integer, idUser);
-                    cmd.Parameters.AddWithValue("nama_role", NpgsqlDbType.Varchar, namaRole);
-
-                    int affectedRows = cmd.ExecuteNonQuery();
-                    if (affectedRows != 1)
-                        throw new InvalidOperationException("Role tidak ditemukan atau gagal diberikan.");
-                }
-
-                transaction.Commit();
-            }
-            catch
-            {
-                transaction.Rollback();
-                throw;
-            }
+            return CurrentUser?.Roles
+                .Select(role => role.NamaRole)
+                .ToList()
+                ?? new List<string>();
         }
 
-        public static User? Authenticate(string username, string password)
+        // =====================================================
+        // REGISTER
+        // =====================================================
+
+        public static void Register(
+            User user,
+            string namaRole)
         {
-            using NpgsqlConnection conn = ConnectDB.GetConnection();
-            conn.Open();
+            string role =
+                namaRole.Trim().ToLowerInvariant();
 
-            const string query = """
-                SELECT u.id_user, u.nama_lengkap, u.username, u.no_telp, u.is_aktif, r.id_role, r.nama_role
-                FROM kapten.users u
-                JOIN kapten.user_roles ur ON ur.id_user = u.id_user
-                JOIN kapten.roles r ON r.id_role = ur.id_role
-                WHERE u.username = @username AND u.password = @password AND u.is_aktif = TRUE
-                ORDER BY r.id_role;
-                """;
-
-            using NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
-            cmd.Parameters.AddWithValue("username", NpgsqlDbType.Varchar, username);
-            cmd.Parameters.AddWithValue("password", NpgsqlDbType.Varchar, password);
-
-            using NpgsqlDataReader reader = cmd.ExecuteReader();
-            User? user = null;
-
-            while (reader.Read())
+            if (role != "petani"
+                && role != "pembeli"
+                && role != "inspektor")
             {
-                if (user is null)
-                {
-                    user = new User
-                    {
-                        IdUser = reader.GetInt32(0),
-                        NamaLengkap = reader.GetString(1),
-                        Username = reader.GetString(2),
-                        NoTelp = reader.IsDBNull(3) ? null : reader.GetString(3),
-                        IsAktif = reader.GetBoolean(4),
-                        Roles = new List<Userrole>()
-                    };
-                }
+                throw new ArgumentException(
+                    "Role hanya boleh petani, pembeli, " +
+                    "atau inspektor.");
+            }
 
-                int idRoleDb = reader.GetInt32(5);
-                string namaRoleDb = reader.GetString(6);
-                user.Roles.Add(new Userrole(user.IdUser, idRoleDb, namaRoleDb));
+            DbExecutor.ExecuteCall(
+                @"CALL kapten.sp_register_user(
+                    @namaLengkap,
+                    @username,
+                    @password,
+                    @noTelp,
+                    @namaRole
+                );",
+
+                new NpgsqlParameter(
+                    "namaLengkap",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = user.NamaLengkap.Trim()
+                },
+
+                new NpgsqlParameter(
+                    "username",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = user.Username.Trim()
+                },
+
+                new NpgsqlParameter(
+                    "password",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = user.Password
+                },
+
+                new NpgsqlParameter(
+                    "noTelp",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = string.IsNullOrWhiteSpace(
+                        user.NoTelp)
+                        ? DBNull.Value
+                        : user.NoTelp.Trim()
+                },
+
+                new NpgsqlParameter(
+                    "namaRole",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = role
+                });
+        }
+
+        // =====================================================
+        // LOGIN / AUTHENTICATE
+        // =====================================================
+
+        public static User? Authenticate(
+            string username,
+            string password)
+        {
+            DataTable table = DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.fn_authenticate_user(
+                      @username,
+                      @password
+                  );",
+
+                new NpgsqlParameter(
+                    "username",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = username.Trim()
+                },
+
+                new NpgsqlParameter(
+                    "password",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = password
+                });
+
+            if (table.Rows.Count == 0)
+                return null;
+
+            DataRow firstRow = table.Rows[0];
+
+            var user = new User
+            {
+                IdUser = Convert.ToInt32(
+                    firstRow["id_user"]),
+
+                NamaLengkap = Convert.ToString(
+                    firstRow["nama_lengkap"])
+                    ?? string.Empty,
+
+                Username = Convert.ToString(
+                    firstRow["username"])
+                    ?? string.Empty,
+
+                NoTelp =
+                    firstRow["no_telp"] == DBNull.Value
+                        ? null
+                        : Convert.ToString(
+                            firstRow["no_telp"]),
+
+                IsAktif = Convert.ToBoolean(
+                    firstRow["is_aktif"]),
+
+                Roles = new List<Userrole>()
+            };
+
+            foreach (DataRow row in table.Rows)
+            {
+                int idRole =
+                    Convert.ToInt32(row["id_role"]);
+
+                string namaRole =
+                    Convert.ToString(row["nama_role"])
+                    ?? string.Empty;
+
+                user.Roles.Add(
+                    new Userrole(
+                        user.IdUser,
+                        idRole,
+                        namaRole));
             }
 
             return user;
         }
 
-        public static bool IsNoTelpTaken(string noTelp)
+        // =====================================================
+        // CEK NOMOR TELEPON
+        // =====================================================
+
+        public static bool IsNoTelpTaken(
+            string noTelp)
         {
-            using var conn = ConnectDB.GetConnection();
-            conn.Open();
-            using var cmd = new NpgsqlCommand("select count(1) from kapten.users where no_telp = @no_telp", conn);
-            cmd.Parameters.AddWithValue("no_telp", NpgsqlDbType.Varchar, noTelp);
-            return Convert.ToInt32(cmd.ExecuteScalar()) > 0;
+            DataTable table = DbExecutor.QueryTable(
+                @"SELECT
+                      kapten.fn_no_telp_terpakai(
+                          @noTelp
+                      ) AS terpakai;",
+
+                new NpgsqlParameter(
+                    "noTelp",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = noTelp.Trim()
+                });
+
+            if (table.Rows.Count == 0)
+                return false;
+
+            return Convert.ToBoolean(
+                table.Rows[0]["terpakai"]);
         }
+
+        // =====================================================
+        // UPDATE PROFIL
+        // =====================================================
 
         public static bool UpdateProfile(User user)
         {
-            using var conn = ConnectDB.GetConnection();
-            conn.Open();
-            using var cmd = new NpgsqlCommand("update kapten.users set nama_lengkap = @nama_lengkap, no_telp = @no_telp where id_user = @id_user", conn);
-            cmd.Parameters.AddWithValue("nama_lengkap", NpgsqlDbType.Varchar, user.NamaLengkap);
-            cmd.Parameters.AddWithValue("no_telp", NpgsqlDbType.Varchar, (object?)user.NoTelp ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("id_user", NpgsqlDbType.Integer, user.IdUser);
-            return cmd.ExecuteNonQuery() > 0;
+            DbExecutor.ExecuteCall(
+                @"CALL kapten.sp_update_profile(
+                    @idUser,
+                    @namaLengkap,
+                    @noTelp
+                );",
+
+                new NpgsqlParameter(
+                    "idUser",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = user.IdUser
+                },
+
+                new NpgsqlParameter(
+                    "namaLengkap",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = user.NamaLengkap.Trim()
+                },
+
+                new NpgsqlParameter(
+                    "noTelp",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = string.IsNullOrWhiteSpace(
+                        user.NoTelp)
+                        ? DBNull.Value
+                        : user.NoTelp.Trim()
+                });
+
+            return true;
         }
 
-        public static bool UpdatePassword(int idUser, string newPassword)
+        // =====================================================
+        // UPDATE PASSWORD
+        // =====================================================
+
+        public static bool UpdatePassword(
+            int idUser,
+            string newPassword)
         {
-            using var conn = ConnectDB.GetConnection();
-            conn.Open();
-            using var cmd = new NpgsqlCommand("update kapten.users set password = @password where id_user = @id_user", conn);
-            cmd.Parameters.AddWithValue("password", NpgsqlDbType.Varchar, newPassword);
-            cmd.Parameters.AddWithValue("id_user", NpgsqlDbType.Integer, idUser);
-            return cmd.ExecuteNonQuery() > 0;
+            DbExecutor.ExecuteCall(
+                @"CALL kapten.sp_update_password(
+                    @idUser,
+                    @passwordBaru
+                );",
+
+                new NpgsqlParameter(
+                    "idUser",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idUser
+                },
+
+                new NpgsqlParameter(
+                    "passwordBaru",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = newPassword
+                });
+
+            return true;
         }
 
-        public static bool AddRole(int idUser, string role)
+        // =====================================================
+        // TAMBAH / AKTIFKAN ROLE
+        // =====================================================
+
+        public static bool AddRole(
+            int idUser,
+            string role)
         {
-            using var conn = ConnectDB.GetConnection();
-            conn.Open();
-            using var cmd = new NpgsqlCommand("insert into kapten.user_roles (id_user, id_role) select @id_user, id_role FROM kapten.roles where LOWER(nama_role) = LOWER(@nama_role)", conn);
-            cmd.Parameters.AddWithValue("id_user", NpgsqlDbType.Integer, idUser);
-            cmd.Parameters.AddWithValue("nama_role", NpgsqlDbType.Varchar, role);
-            return cmd.ExecuteNonQuery() > 0;
+            DbExecutor.ExecuteCall(
+                @"CALL kapten.sp_tambah_role_user(
+                    @idUser,
+                    @role
+                );",
+
+                new NpgsqlParameter(
+                    "idUser",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idUser
+                },
+
+                new NpgsqlParameter(
+                    "role",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = role.Trim()
+                        .ToLowerInvariant()
+                });
+
+            return true;
         }
 
-        public static bool RemoveRole(int idUser, string role)
+        // =====================================================
+        // NONAKTIFKAN ROLE
+        // =====================================================
+
+        public static bool RemoveRole(
+            int idUser,
+            string role)
         {
-            using var conn = ConnectDB.GetConnection();
-            conn.Open();
-            using var cmd = new NpgsqlCommand("delete from kapten.user_roles where id_user = @id_user and id_role = (select id_role from kapten.roles where LOWER(nama_role) = LOWER(@nama_role))", conn);
-            cmd.Parameters.AddWithValue("id_user", NpgsqlDbType.Integer, idUser);
-            cmd.Parameters.AddWithValue("nama_role", NpgsqlDbType.Varchar, role);
-            return cmd.ExecuteNonQuery() > 0;
+            DbExecutor.ExecuteCall(
+                @"CALL kapten.sp_ubah_status_role(
+                    @idUser,
+                    @role,
+                    @status
+                );",
+
+                new NpgsqlParameter(
+                    "idUser",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idUser
+                },
+
+                new NpgsqlParameter(
+                    "role",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = role.Trim()
+                        .ToLowerInvariant()
+                },
+
+                new NpgsqlParameter(
+                    "status",
+                    NpgsqlDbType.Boolean)
+                {
+                    Value = false
+                });
+
+            return true;
         }
+
+        public static bool AktifkanRole(
+            int idUser,
+            string role)
+        {
+            return AddRole(idUser, role);
+        }
+
+        // =====================================================
+        // SOFT DELETE / NONAKTIFKAN AKUN
+        // =====================================================
 
         public static bool SoftDeleteUser(int idUser)
         {
-            using var conn = ConnectDB.GetConnection();
-            conn.Open();
-            using var cmd = new NpgsqlCommand("update kapten.users set is_aktif = false where id_user = @id", conn);
-            cmd.Parameters.AddWithValue("id", NpgsqlDbType.Integer, idUser);
-            return cmd.ExecuteNonQuery() > 0;
+            DbExecutor.ExecuteCall(
+                @"CALL kapten.sp_ubah_status_akun(
+                    @idUser,
+                    @status
+                );",
+
+                new NpgsqlParameter(
+                    "idUser",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idUser
+                },
+
+                new NpgsqlParameter(
+                    "status",
+                    NpgsqlDbType.Boolean)
+                {
+                    Value = false
+                });
+
+            return true;
+        }
+
+        public static bool AktifkanUser(int idUser)
+        {
+            DbExecutor.ExecuteCall(
+                @"CALL kapten.sp_ubah_status_akun(
+                    @idUser,
+                    @status
+                );",
+
+                new NpgsqlParameter(
+                    "idUser",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idUser
+                },
+
+                new NpgsqlParameter(
+                    "status",
+                    NpgsqlDbType.Boolean)
+                {
+                    Value = true
+                });
+
+            return true;
         }
     }
 }

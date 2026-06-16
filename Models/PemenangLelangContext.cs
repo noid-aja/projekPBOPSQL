@@ -1,57 +1,68 @@
 ﻿using Npgsql;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using NpgsqlTypes;
+using System.Data;
 using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.Models
 {
-    internal class PemenangLelangContext
+    internal static class PemenangLelangContext
     {
-        public static List<Dictionary<string, object>> AmbilSemuaPemenang()
+        public static DataTable AmbilSemuaPemenang()
         {
-            var list = new List<Dictionary<string, object>>();
-            try
-            {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
+            return DbExecutor.QueryTable(@"
+                SELECT *
+                FROM kapten.vw_pemenang_lelang_detail
+                ORDER BY tgl_ditetapkan DESC;");
+        }
 
-                using var cmd = new NpgsqlCommand(@"
-                    select 
-                        pl.id_pemenang,
-                        p.nama_produk,
-                        u_petani.nama_lengkap AS nama_petani,
-                        u_pembeli.nama_lengkap AS nama_pembeli,
-                        b.nominal AS harga_menang,
-                        pl.tgl_ditetapkan
-                    from kapten.pemenang_lelang pl
-                    join kapten.bid b on pl.id_bid = b.id_bid
-                    join kapten.lelang l on pl.id_lelang = l.id_lelang
-                    join kapten.produk_kopi p on l.id_produk = p.id_produk
-                    join kapten.users u_petani on p.id_petani = u_petani.id_user
-                    join kapten.users u_pembeli on b.id_pembeli = u_pembeli.id_user
-                    order by pl.tgl_ditetapkan desc", conn);
+        public static DataTable AmbilPemenangById(
+            int idPemenang)
+        {
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.vw_pemenang_lelang_detail
+                  WHERE id_pemenang = @idPemenang;",
 
-                using var reader = cmd.ExecuteReader();
-                while (reader.Read())
+                new NpgsqlParameter(
+                    "idPemenang",
+                    NpgsqlDbType.Integer)
                 {
-                    var row = new Dictionary<string, object>
-                    {
-                        { "IdPemenang", reader.GetInt32(0) },
-                        { "NamaProduk", reader.GetString(1) },
-                        { "NamaPetani", reader.GetString(2) },
-                        { "NamaPembeli", reader.GetString(3) },
-                        { "HargaMenang", reader.GetDecimal(4) },
-                        { "TglDitetapkan", reader.GetDateTime(5) }
-                    };
-                    list.Add(row);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Gagal mengambil data pemenang lelang: " + ex.Message, "Error SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            return list;
+                    Value = idPemenang
+                });
+        }
+
+        public static DataTable AmbilPemenangPembeli(
+            int idPembeli)
+        {
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.vw_pemenang_lelang_detail
+                  WHERE id_pembeli = @idPembeli
+                  ORDER BY tgl_ditetapkan DESC;",
+
+                new NpgsqlParameter(
+                    "idPembeli",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idPembeli
+                });
+        }
+
+        public static DataTable AmbilPemenangPetani(
+            int idPetani)
+        {
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.vw_pemenang_lelang_detail
+                  WHERE id_petani = @idPetani
+                  ORDER BY tgl_ditetapkan DESC;",
+
+                new NpgsqlParameter(
+                    "idPetani",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idPetani
+                });
         }
     }
 }

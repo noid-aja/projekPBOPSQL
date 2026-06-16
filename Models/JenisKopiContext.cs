@@ -1,40 +1,32 @@
-﻿using Npgsql;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Data;
 using WinFormsApp1.Helpers;
 
 namespace WinFormsApp1.Models
 {
-    internal class JenisKopiContext
+    internal static class JenisKopiContext
     {
         public static List<JenisKopi> AmbilSemua()
         {
+            DataTable table = DbExecutor.QueryTable(@"
+                SELECT *
+                FROM kapten.vw_jenis_kopi
+                ORDER BY id_jenis ASC;");
+
             var list = new List<JenisKopi>();
-            try
-            {
-                using var conn = ConnectDB.GetConnection(); 
-                conn.Open();
 
-                using var cmd = new NpgsqlCommand(@"
-                    select id_jenis, nama_jenis, deskripsi 
-                    from kapten.jenis_kopi 
-                    order by id_jenis ASC", conn);
-
-                using var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    list.Add(new JenisKopi(
-                        reader.GetInt32(0),
-                        reader.GetString(1),
-                        reader.IsDBNull(2) ? null : reader.GetString(2)
-                    ));
-                }
-            }
-            catch (Exception ex)
+            foreach (DataRow row in table.Rows)
             {
-                MessageBox.Show("Gagal mengambil data jenis kopi: " + ex.Message, "Error SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                list.Add(new JenisKopi(
+                    Convert.ToInt32(row["id_jenis"]),
+                    row["nama_jenis"].ToString() ?? string.Empty,
+                    row["deskripsi"] == DBNull.Value
+                        ? null
+                        : row["deskripsi"].ToString()
+                ));
             }
+
             return list;
         }
     }

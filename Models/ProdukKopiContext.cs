@@ -1,137 +1,274 @@
 using Npgsql;
+using NpgsqlTypes;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
+using System.Data;
 using WinFormsApp1.Helpers;
-using static WinFormsApp1.Models.Enum;
 
 namespace WinFormsApp1.Models
 {
     public static class ProdukKopiContext
     {
-        public static bool TambahProduk(int idPetani, string namaProduk, int idJenis, decimal beratKg, decimal hargaPengajuan, string? deskripsi)
+        // =====================================================
+        // INSERT PRODUK
+        // =====================================================
+
+        public static bool TambahProduk(
+            int idPetani,
+            string namaProduk,
+            int idJenis,
+            decimal beratKg,
+            decimal hargaPengajuan,
+            string? deskripsi)
         {
-            try
-            {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
+            DbExecutor.ExecuteCall(
+                @"CALL kapten.sp_tambah_produk(
+                    @idPetani,
+                    @idJenis,
+                    @namaProduk,
+                    @beratKg,
+                    @hargaPengajuan,
+                    @deskripsi
+                );",
 
-                using var cmd = new NpgsqlCommand(@"
-                    insert into kapten.produk_kopi (id_petani, id_jenis, nama_produk, berat_kg, harga_pengajuan, deskripsi, status_produk) 
-                    values (@idPetani, @idJenis, @nama, @berat, @harga, @deskripsi, 'pending_inspeksi')", conn);
+                new NpgsqlParameter(
+                    "idPetani",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idPetani
+                },
 
-                cmd.Parameters.AddWithValue("idPetani", idPetani);
-                cmd.Parameters.AddWithValue("idJenis", idJenis);
-                cmd.Parameters.AddWithValue("nama", namaProduk.Trim());
-                cmd.Parameters.AddWithValue("berat", beratKg);
-                cmd.Parameters.AddWithValue("harga", hargaPengajuan);
-                cmd.Parameters.AddWithValue("deskripsi", (object?)deskripsi?.Trim() ?? DBNull.Value);
+                new NpgsqlParameter(
+                    "idJenis",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idJenis
+                },
 
-                int barisTersimpan = cmd.ExecuteNonQuery();
-                return barisTersimpan > 0;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Gagal menyimpan produk ke database: " + ex.Message, "Error SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
+                new NpgsqlParameter(
+                    "namaProduk",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = namaProduk.Trim()
+                },
+
+                new NpgsqlParameter(
+                    "beratKg",
+                    NpgsqlDbType.Numeric)
+                {
+                    Value = beratKg
+                },
+
+                new NpgsqlParameter(
+                    "hargaPengajuan",
+                    NpgsqlDbType.Numeric)
+                {
+                    Value = hargaPengajuan
+                },
+
+                new NpgsqlParameter(
+                    "deskripsi",
+                    NpgsqlDbType.Text)
+                {
+                    Value = string.IsNullOrWhiteSpace(deskripsi)
+                        ? DBNull.Value
+                        : deskripsi.Trim()
+                });
+
+            return true;
         }
+
+        // =====================================================
+        // UPDATE HARGA PRODUK
+        // =====================================================
+
+        public static bool UbahHargaProduk(
+            int idProduk,
+            int idPetani,
+            decimal hargaBaru)
+        {
+            DbExecutor.ExecuteCall(
+                @"CALL kapten.sp_ubah_harga_produk(
+                    @idProduk,
+                    @idPetani,
+                    @hargaBaru
+                );",
+
+                new NpgsqlParameter(
+                    "idProduk",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idProduk
+                },
+
+                new NpgsqlParameter(
+                    "idPetani",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idPetani
+                },
+
+                new NpgsqlParameter(
+                    "hargaBaru",
+                    NpgsqlDbType.Numeric)
+                {
+                    Value = hargaBaru
+                });
+
+            return true;
+        }
+
+        // =====================================================
+        // DELETE PRODUK PENDING
+        // =====================================================
+
+        public static bool HapusProdukPending(
+            int idProduk,
+            int idPetani)
+        {
+            DbExecutor.ExecuteCall(
+                @"CALL kapten.sp_hapus_produk_pending(
+                    @idProduk,
+                    @idPetani
+                );",
+
+                new NpgsqlParameter(
+                    "idProduk",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idProduk
+                },
+
+                new NpgsqlParameter(
+                    "idPetani",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idPetani
+                });
+
+            return true;
+        }
+
+        // =====================================================
+        // AMBIL PRODUK PENDING
+        // =====================================================
 
         public static List<ProdukKopi> AmbilProdukPending()
         {
-            var list = new List<ProdukKopi>();
-            try
-            {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
+            DataTable table = DbExecutor.QueryTable(@"
+                SELECT *
+                FROM kapten.vw_produk_detail
+                WHERE status_produk = 'pending_inspeksi'
+                ORDER BY id_produk ASC;");
 
-                using var cmd = new NpgsqlCommand(@"
-                    select id_produk, id_petani, id_jenis, nama_produk, berat_kg, harga_pengajuan, deskripsi, status_produk 
-                    from kapten.produk_kopi 
-                    where status_produk = 'pending_inspeksi'
-                    order by id_produk ASC", conn);
-
-                using var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    string statusStr = reader.GetString(7);
-                    Enum.StatusProduk statusEnum = Enum.ParseStatusProduk(statusStr);
-
-                    list.Add(new ProdukKopi(
-                        reader.GetInt32(0),
-                        reader.GetInt32(1),
-                        reader.GetInt32(2),
-                        reader.GetString(3),
-                        reader.GetDecimal(4),
-                        reader.GetDecimal(5),
-                        reader.IsDBNull(6) ? null : reader.GetString(6),
-                        statusEnum
-                    ));
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Gagal mengambil antrean inspeksi: " + ex.Message, "Error SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-            return list;
+            return MapProdukList(table);
         }
+
+        // =====================================================
+        // AMBIL PRODUK BERDASARKAN ID
+        // =====================================================
 
         public static ProdukKopi? AmbilById(int idProduk)
         {
-            try
-            {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
-                using var cmd = new NpgsqlCommand(@"
-                    select id_produk, id_petani, id_jenis, nama_produk, berat_kg, harga_pengajuan, deskripsi, status_produk
-                    from kapten.produk_kopi
-                    where id_produk = @idProduk", conn);
-                cmd.Parameters.AddWithValue("idProduk", idProduk);
-                using var reader = cmd.ExecuteReader();
-                if (!reader.Read()) return null;
-                string statusStr = reader.GetString(7);
-                return new ProdukKopi(
-                    reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2),
-                    reader.GetString(3), reader.GetDecimal(4), reader.GetDecimal(5),
-                    reader.IsDBNull(6) ? null : reader.GetString(6),
-                    Enum.ParseStatusProduk(statusStr));
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Gagal mengambil produk: " + ex.Message, "Error SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            DataTable table = DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.vw_produk_detail
+                  WHERE id_produk = @idProduk;",
+
+                new NpgsqlParameter(
+                    "idProduk",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idProduk
+                });
+
+            if (table.Rows.Count == 0)
                 return null;
-            }
+
+            return MapProduk(table.Rows[0]);
         }
 
-        public static List<ProdukKopi> CariByNama(string nama)
+        // =====================================================
+        // CARI PRODUK BERDASARKAN NAMA
+        // =====================================================
+
+        public static List<ProdukKopi> CariByNama(
+            string nama)
+        {
+            DataTable table = DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.vw_produk_detail
+                  WHERE nama_produk ILIKE @nama
+                  ORDER BY id_produk ASC;",
+
+                new NpgsqlParameter(
+                    "nama",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = "%" + nama.Trim() + "%"
+                });
+
+            return MapProdukList(table);
+        }
+
+        // =====================================================
+        // PRODUK MILIK PETANI
+        // Menggunakan function yang sudah ada di PostgreSQL.
+        // =====================================================
+
+        public static DataTable AmbilProdukPetani(
+            int idPetani)
+        {
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.fn_produk_petani(
+                      @idPetani
+                  );",
+
+                new NpgsqlParameter(
+                    "idPetani",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idPetani
+                });
+        }
+
+        // =====================================================
+        // MAPPING DATATABLE KE MODEL
+        // =====================================================
+
+        private static List<ProdukKopi> MapProdukList(
+            DataTable table)
         {
             var list = new List<ProdukKopi>();
-            try
+
+            foreach (DataRow row in table.Rows)
             {
-                using var conn = ConnectDB.GetConnection();
-                conn.Open();
-                using var cmd = new NpgsqlCommand(@"
-                    select id_produk, id_petani, id_jenis, nama_produk, berat_kg, harga_pengajuan, deskripsi, status_produk
-                    from kapten.produk_kopi
-                    where lower(nama_produk) like lower(@nama)
-                    order by id_produk asc", conn);
-                cmd.Parameters.AddWithValue("nama", "%" + nama.Trim() + "%");
-                using var reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    list.Add(new ProdukKopi(
-                        reader.GetInt32(0), reader.GetInt32(1), reader.GetInt32(2),
-                        reader.GetString(3), reader.GetDecimal(4), reader.GetDecimal(5),
-                        reader.IsDBNull(6) ? null : reader.GetString(6),
-                        Enum.ParseStatusProduk(reader.GetString(7))));
-                }
+                list.Add(MapProduk(row));
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Gagal mencari produk: " + ex.Message, "Error SQL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+
             return list;
+        }
+
+        private static ProdukKopi MapProduk(DataRow row)
+        {
+            string status =
+                Convert.ToString(row["status_produk"])
+                ?? string.Empty;
+
+            return new ProdukKopi(
+                Convert.ToInt32(row["id_produk"]),
+                Convert.ToInt32(row["id_petani"]),
+                Convert.ToInt32(row["id_jenis"]),
+                Convert.ToString(row["nama_produk"])
+                    ?? string.Empty,
+                Convert.ToDecimal(row["berat_kg"]),
+                Convert.ToDecimal(row["harga_pengajuan"]),
+                row["deskripsi"] == DBNull.Value
+                    ? null
+                    : Convert.ToString(row["deskripsi"]),
+                Enum.ParseStatusProduk(status)
+            );
         }
     }
 }
