@@ -92,5 +92,25 @@ namespace WinFormsApp1.Forms.AdminForm
                 MessageBox.Show("Gagal filter: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
+        private void lblJudul_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void lblJudul_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblFilter_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

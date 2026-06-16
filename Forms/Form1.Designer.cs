@@ -189,11 +189,11 @@
             label1.AutoSize = true;
             label1.Font = new Font("Yu Gothic UI Semibold", 20F, FontStyle.Bold);
             label1.ForeColor = Color.FromArgb(180, 197, 166);
-            label1.Location = new Point(176, 27);
+            label1.Location = new Point(149, 27);
             label1.Name = "label1";
-            label1.Size = new Size(106, 46);
+            label1.Size = new Size(154, 46);
             label1.TabIndex = 7;
-            label1.Text = "Login";
+            label1.Text = "👤Login";
             // 
             // Form1
             // 
@@ -204,7 +204,7 @@
             ClientSize = new Size(1121, 636);
             Controls.Add(panel1);
             DoubleBuffered = true;
-            ForeColor = Color.Cyan;
+            ForeColor = Color.White;
             Margin = new Padding(5, 4, 5, 4);
             Name = "Form1";
             Text = "Form1";

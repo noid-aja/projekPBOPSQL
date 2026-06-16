@@ -55,6 +55,8 @@ namespace WinFormsApp1.Forms
             panel2 = new Panel();
             pictureBox1 = new PictureBox();
             panel1 = new Panel();
+            tableLayoutPanel1 = new TableLayoutPanel();
+            label1 = new Label();
             panel4.SuspendLayout();
             panel5.SuspendLayout();
             panel6.SuspendLayout();
@@ -63,6 +65,8 @@ namespace WinFormsApp1.Forms
             panel8.SuspendLayout();
             panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            panel1.SuspendLayout();
+            tableLayoutPanel1.SuspendLayout();
             SuspendLayout();
             // 
             // lblSidebarTitle
@@ -84,10 +88,11 @@ namespace WinFormsApp1.Forms
             panel4.BackColor = Color.FromArgb(253, 253, 253);
             panel4.Controls.Add(lblCardValue1);
             panel4.Controls.Add(lblCardTitle1);
-            panel4.Location = new Point(267, 204);
-            panel4.Margin = new Padding(2, 3, 2, 3);
+            panel4.Dock = DockStyle.Fill;
+            panel4.Location = new Point(10, 10);
+            panel4.Margin = new Padding(10);
             panel4.Name = "panel4";
-            panel4.Size = new Size(216, 141);
+            panel4.Size = new Size(194, 180);
             panel4.TabIndex = 4;
             panel4.Paint += panel4_Paint;
             // 
@@ -110,7 +115,7 @@ namespace WinFormsApp1.Forms
             // 
             lblCardTitle1.AutoSize = true;
             lblCardTitle1.Dock = DockStyle.Bottom;
-            lblCardTitle1.Location = new Point(0, 121);
+            lblCardTitle1.Location = new Point(0, 160);
             lblCardTitle1.Margin = new Padding(2, 0, 2, 0);
             lblCardTitle1.Name = "lblCardTitle1";
             lblCardTitle1.Size = new Size(50, 20);
@@ -123,10 +128,11 @@ namespace WinFormsApp1.Forms
             panel5.BackColor = Color.FromArgb(253, 253, 253);
             panel5.Controls.Add(lblCardValue2);
             panel5.Controls.Add(lblCardTitle2);
-            panel5.Location = new Point(522, 204);
-            panel5.Margin = new Padding(2, 3, 2, 3);
+            panel5.Dock = DockStyle.Fill;
+            panel5.Location = new Point(224, 10);
+            panel5.Margin = new Padding(10);
             panel5.Name = "panel5";
-            panel5.Size = new Size(217, 141);
+            panel5.Size = new Size(194, 180);
             panel5.TabIndex = 5;
             panel5.Paint += panel5_Paint;
             // 
@@ -146,7 +152,7 @@ namespace WinFormsApp1.Forms
             // 
             lblCardTitle2.AutoSize = true;
             lblCardTitle2.Dock = DockStyle.Bottom;
-            lblCardTitle2.Location = new Point(0, 121);
+            lblCardTitle2.Location = new Point(0, 160);
             lblCardTitle2.Margin = new Padding(2, 0, 2, 0);
             lblCardTitle2.Name = "lblCardTitle2";
             lblCardTitle2.Size = new Size(50, 20);
@@ -159,10 +165,11 @@ namespace WinFormsApp1.Forms
             panel6.BackColor = Color.FromArgb(253, 253, 253);
             panel6.Controls.Add(lblCardValue3);
             panel6.Controls.Add(lblCardTitle3);
-            panel6.Location = new Point(775, 204);
-            panel6.Margin = new Padding(2, 3, 2, 3);
+            panel6.Dock = DockStyle.Fill;
+            panel6.Location = new Point(438, 10);
+            panel6.Margin = new Padding(10);
             panel6.Name = "panel6";
-            panel6.Size = new Size(217, 141);
+            panel6.Size = new Size(194, 180);
             panel6.TabIndex = 5;
             panel6.Paint += panel6_Paint;
             // 
@@ -182,7 +189,7 @@ namespace WinFormsApp1.Forms
             // 
             lblCardTitle3.AutoSize = true;
             lblCardTitle3.Dock = DockStyle.Bottom;
-            lblCardTitle3.Location = new Point(0, 121);
+            lblCardTitle3.Location = new Point(0, 160);
             lblCardTitle3.Margin = new Padding(2, 0, 2, 0);
             lblCardTitle3.Name = "lblCardTitle3";
             lblCardTitle3.Size = new Size(50, 20);
@@ -195,10 +202,11 @@ namespace WinFormsApp1.Forms
             panel7.BackColor = Color.FromArgb(253, 253, 253);
             panel7.Controls.Add(lblCardValue4);
             panel7.Controls.Add(lblCardTitle4);
-            panel7.Location = new Point(1029, 204);
-            panel7.Margin = new Padding(2, 3, 2, 3);
+            panel7.Dock = DockStyle.Fill;
+            panel7.Location = new Point(652, 10);
+            panel7.Margin = new Padding(10);
             panel7.Name = "panel7";
-            panel7.Size = new Size(217, 141);
+            panel7.Size = new Size(197, 180);
             panel7.TabIndex = 5;
             // 
             // lblCardValue4
@@ -217,7 +225,7 @@ namespace WinFormsApp1.Forms
             // 
             lblCardTitle4.AutoSize = true;
             lblCardTitle4.Dock = DockStyle.Bottom;
-            lblCardTitle4.Location = new Point(0, 121);
+            lblCardTitle4.Location = new Point(0, 160);
             lblCardTitle4.Margin = new Padding(2, 0, 2, 0);
             lblCardTitle4.Name = "lblCardTitle4";
             lblCardTitle4.Size = new Size(50, 20);
@@ -228,7 +236,8 @@ namespace WinFormsApp1.Forms
             // lblTableTitle
             // 
             lblTableTitle.AutoSize = true;
-            lblTableTitle.Location = new Point(2, 5);
+            lblTableTitle.Dock = DockStyle.Top;
+            lblTableTitle.Location = new Point(0, 0);
             lblTableTitle.Margin = new Padding(2, 0, 2, 0);
             lblTableTitle.Name = "lblTableTitle";
             lblTableTitle.Size = new Size(126, 20);
@@ -242,34 +251,38 @@ namespace WinFormsApp1.Forms
             dgvDashboard.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvDashboard.BackgroundColor = Color.White;
             dgvDashboard.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvDashboard.Location = new Point(0, 28);
+            dgvDashboard.Dock = DockStyle.Fill;
+            dgvDashboard.Location = new Point(0, 20);
             dgvDashboard.Margin = new Padding(2, 3, 2, 3);
             dgvDashboard.Name = "dgvDashboard";
             dgvDashboard.ReadOnly = true;
             dgvDashboard.RowHeadersWidth = 82;
             dgvDashboard.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvDashboard.Size = new Size(981, 481);
+            dgvDashboard.Size = new Size(844, 243);
             dgvDashboard.TabIndex = 1;
             dgvDashboard.CellContentClick += dgvDashboard_CellContentClick;
             // 
             // panel8
             // 
+            panel8.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             panel8.BackColor = Color.White;
             panel8.Controls.Add(dgvDashboard);
             panel8.Controls.Add(lblTableTitle);
-            panel8.Location = new Point(267, 392);
+            panel8.Location = new Point(266, 373);
             panel8.Margin = new Padding(2, 3, 2, 3);
             panel8.Name = "panel8";
-            panel8.Size = new Size(982, 509);
+            panel8.Size = new Size(844, 263);
             panel8.TabIndex = 6;
             panel8.Paint += panel8_Paint;
             // 
             // btnMenu1
             // 
             btnMenu1.BackColor = Color.DarkGreen;
+            btnMenu1.FlatAppearance.BorderSize = 0;
+            btnMenu1.FlatStyle = FlatStyle.Flat;
             btnMenu1.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu1.ForeColor = Color.White;
-            btnMenu1.Location = new Point(31, 237);
+            btnMenu1.Location = new Point(31, 238);
             btnMenu1.Margin = new Padding(2, 3, 2, 3);
             btnMenu1.Name = "btnMenu1";
             btnMenu1.Size = new Size(194, 43);
@@ -280,6 +293,8 @@ namespace WinFormsApp1.Forms
             // btnMenu2
             // 
             btnMenu2.BackColor = Color.DarkGreen;
+            btnMenu2.FlatAppearance.BorderSize = 0;
+            btnMenu2.FlatStyle = FlatStyle.Flat;
             btnMenu2.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu2.ForeColor = Color.White;
             btnMenu2.Location = new Point(31, 283);
@@ -293,6 +308,8 @@ namespace WinFormsApp1.Forms
             // btnMenu3
             // 
             btnMenu3.BackColor = Color.DarkGreen;
+            btnMenu3.FlatAppearance.BorderSize = 0;
+            btnMenu3.FlatStyle = FlatStyle.Flat;
             btnMenu3.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu3.ForeColor = Color.White;
             btnMenu3.Location = new Point(31, 328);
@@ -306,6 +323,8 @@ namespace WinFormsApp1.Forms
             // btnMenu4
             // 
             btnMenu4.BackColor = Color.DarkGreen;
+            btnMenu4.FlatAppearance.BorderSize = 0;
+            btnMenu4.FlatStyle = FlatStyle.Flat;
             btnMenu4.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu4.ForeColor = Color.White;
             btnMenu4.Location = new Point(31, 373);
@@ -319,9 +338,11 @@ namespace WinFormsApp1.Forms
             // btnMenu5
             // 
             btnMenu5.BackColor = Color.DarkGreen;
+            btnMenu5.FlatAppearance.BorderSize = 0;
+            btnMenu5.FlatStyle = FlatStyle.Flat;
             btnMenu5.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu5.ForeColor = Color.White;
-            btnMenu5.Location = new Point(31, 420);
+            btnMenu5.Location = new Point(31, 418);
             btnMenu5.Margin = new Padding(2, 3, 2, 3);
             btnMenu5.Name = "btnMenu5";
             btnMenu5.Size = new Size(194, 43);
@@ -331,24 +352,29 @@ namespace WinFormsApp1.Forms
             // 
             // btnLogout
             // 
+            btnLogout.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             btnLogout.BackColor = Color.DarkRed;
+            btnLogout.FlatAppearance.BorderSize = 0;
+            btnLogout.FlatStyle = FlatStyle.Flat;
             btnLogout.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnLogout.ForeColor = Color.White;
-            btnLogout.Location = new Point(37, 819);
+            btnLogout.Location = new Point(31, 582);
             btnLogout.Margin = new Padding(2, 3, 2, 3);
             btnLogout.Name = "btnLogout";
             btnLogout.Size = new Size(189, 47);
             btnLogout.TabIndex = 8;
-            btnLogout.Text = "Logout";
+            btnLogout.Text = "↩️ Logout";
             btnLogout.UseVisualStyleBackColor = false;
             btnLogout.Click += btnLogout_Click;
             // 
             // btnMenu6
             // 
             btnMenu6.BackColor = Color.DarkGreen;
+            btnMenu6.FlatAppearance.BorderSize = 0;
+            btnMenu6.FlatStyle = FlatStyle.Flat;
             btnMenu6.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu6.ForeColor = Color.White;
-            btnMenu6.Location = new Point(31, 465);
+            btnMenu6.Location = new Point(31, 463);
             btnMenu6.Margin = new Padding(2, 3, 2, 3);
             btnMenu6.Name = "btnMenu6";
             btnMenu6.Size = new Size(194, 43);
@@ -359,9 +385,11 @@ namespace WinFormsApp1.Forms
             // btnMenu7
             // 
             btnMenu7.BackColor = Color.DarkGreen;
+            btnMenu7.FlatAppearance.BorderSize = 0;
+            btnMenu7.FlatStyle = FlatStyle.Flat;
             btnMenu7.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu7.ForeColor = Color.White;
-            btnMenu7.Location = new Point(31, 509);
+            btnMenu7.Location = new Point(31, 508);
             btnMenu7.Margin = new Padding(2, 3, 2, 3);
             btnMenu7.Name = "btnMenu7";
             btnMenu7.Size = new Size(194, 43);
@@ -371,8 +399,7 @@ namespace WinFormsApp1.Forms
             // 
             // panel2
             // 
-            panel2.BackColor = Color.Transparent;
-            panel2.BackgroundImage = Properties.Resources.Group_11;
+            panel2.BackColor = Color.FromArgb(17, 37, 0);
             panel2.Controls.Add(pictureBox1);
             panel2.Controls.Add(btnMenu7);
             panel2.Controls.Add(lblSidebarTitle);
@@ -387,7 +414,7 @@ namespace WinFormsApp1.Forms
             panel2.Location = new Point(0, 0);
             panel2.Margin = new Padding(2, 3, 2, 3);
             panel2.Name = "panel2";
-            panel2.Size = new Size(262, 749);
+            panel2.Size = new Size(262, 636);
             panel2.TabIndex = 1;
             // 
             // pictureBox1
@@ -401,30 +428,59 @@ namespace WinFormsApp1.Forms
             // 
             // panel1
             // 
-            panel1.BackgroundImage = Properties.Resources.Group_12;
-            panel1.Dock = DockStyle.Right;
-            panel1.Location = new Point(225, 0);
+            panel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panel1.Controls.Add(tableLayoutPanel1);
+            panel1.Controls.Add(label1);
+            panel1.Location = new Point(259, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1058, 749);
+            panel1.Size = new Size(862, 636);
             panel1.TabIndex = 7;
             panel1.Paint += panel1_Paint;
+            // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            tableLayoutPanel1.ColumnCount = 4;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 25F));
+            tableLayoutPanel1.Controls.Add(panel4, 0, 0);
+            tableLayoutPanel1.Controls.Add(panel5, 1, 0);
+            tableLayoutPanel1.Controls.Add(panel7, 3, 0);
+            tableLayoutPanel1.Controls.Add(panel6, 2, 0);
+            tableLayoutPanel1.Location = new Point(3, 143);
+            tableLayoutPanel1.MinimumSize = new Size(0, 200);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 20F));
+            tableLayoutPanel1.Size = new Size(859, 200);
+            tableLayoutPanel1.TabIndex = 1;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Font = new Font("Yu Gothic UI Semibold", 20F, FontStyle.Bold);
+            label1.Location = new Point(17, 34);
+            label1.Name = "label1";
+            label1.Size = new Size(463, 46);
+            label1.TabIndex = 0;
+            label1.Text = "Hai! Selamat datang kembali";
             // 
             // Dashboard
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(235, 235, 235);
-            ClientSize = new Size(1283, 749);
+            ClientSize = new Size(1121, 636);
             Controls.Add(panel2);
             Controls.Add(panel8);
-            Controls.Add(panel6);
-            Controls.Add(panel7);
-            Controls.Add(panel5);
-            Controls.Add(panel4);
             Controls.Add(panel1);
             Margin = new Padding(2, 3, 2, 3);
             Name = "Dashboard";
             Text = "Dashboard Admin";
+            WindowState = FormWindowState.Maximized;
             Load += FormDashboard_Load;
             panel4.ResumeLayout(false);
             panel4.PerformLayout();
@@ -440,6 +496,9 @@ namespace WinFormsApp1.Forms
             panel2.ResumeLayout(false);
             panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            tableLayoutPanel1.ResumeLayout(false);
             ResumeLayout(false);
         }
 
@@ -471,5 +530,7 @@ namespace WinFormsApp1.Forms
         private Panel panel2;
         private Panel panel1;
         private PictureBox pictureBox1;
+        private Label label1;
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }

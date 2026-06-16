@@ -187,5 +187,15 @@ namespace WinFormsApp1.Forms.AdminForm
         {
 
         }
+
+        private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void lblJudul_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
