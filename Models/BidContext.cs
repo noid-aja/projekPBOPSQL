@@ -19,7 +19,7 @@ namespace WinFormsApp1.Models
                 using var cmdLelang = new NpgsqlCommand(@"
                     select bid_minimum, tgl_akhir, status_lelang 
                     from kapten.lelang 
-                    where id_lelang = @idLelang for update", conn); 
+                    where id_lelang = @idLelang for update", conn, trans); 
                 cmdLelang.Parameters.AddWithValue("idLelang", idLelang);
 
                 using var reader = cmdLelang.ExecuteReader();

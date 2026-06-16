@@ -26,15 +26,21 @@ namespace WinFormsApp1.Forms.AdminForm
             {
                 case "admin":
                     lblJudul.Text = "💳 Semua Transaksi";
+                    btnBayar.Text = "✅ Konfirmasi Lunas";
+                    btnBayar.Visible = true;
                     break;
                 case "petani":
                     lblJudul.Text = "💳 Transaksi Produk Saya";
+                    btnBayar.Visible = false;
                     break;
                 case "pembeli":
                     lblJudul.Text = "💳 Transaksi Saya";
+                    btnBayar.Text = "✅ Konfirmasi Bayar";
+                    btnBayar.Visible = true;
                     break;
                 default:
                     lblJudul.Text = "💳 Transaksi";
+                    btnBayar.Visible = false;
                     break;
             }
         }
@@ -105,32 +111,51 @@ namespace WinFormsApp1.Forms.AdminForm
 
         private void btnBayar_Click(object sender, EventArgs e)
         {
-            if (_role != "pembeli")
-            {
-                MessageBox.Show("Hanya pembeli yang bisa konfirmasi pembayaran.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
             if (dgvTransaksi.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Pilih transaksi terlebih dahulu.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
+
             string statusBayar = dgvTransaksi.SelectedRows[0].Cells["status_pembayaran"].Value?.ToString() ?? "";
-            if (statusBayar.ToLower().Replace("_", "") != "belumbayar")
+            string statusNormalized = statusBayar.ToLower().Replace("_", "");
+
+            if (statusNormalized != "belumbayar")
             {
                 MessageBox.Show("Transaksi ini sudah dibayar atau tidak valid.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
+
             int idTransaksi = Convert.ToInt32(dgvTransaksi.SelectedRows[0].Cells["id_transaksi"].Value);
-            string metode = cmbMetode.SelectedItem?.ToString() ?? "Transfer";
+
             try
             {
                 var controller = new WinFormsApp1.Controllers.TransaksiController();
-                bool sukses = controller.BayarTransaksi(idTransaksi);
-                if (sukses)
+                bool sukses;
+
+                if (_role == "admin")
                 {
-                    MessageBox.Show("Pembayaran berhasil dikonfirmasi!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadTransaksi();
+                    // Admin konfirmasi pembayaran telah diterima (lunas)
+                    sukses = controller.AdminKonfirmasiPembayaranLunas(idTransaksi);
+                    if (sukses)
+                    {
+                        MessageBox.Show("Pembayaran berhasil dikonfirmasi lunas!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadTransaksi();
+                    }
+                }
+                else if (_role == "pembeli")
+                {
+                    // Pembeli konfirmasi telah membayar
+                    sukses = controller.BayarTransaksi(idTransaksi);
+                    if (sukses)
+                    {
+                        MessageBox.Show("Pembayaran berhasil dikonfirmasi!", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadTransaksi();
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Hanya Admin atau Pembeli yang bisa konfirmasi pembayaran.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
             catch (Exception ex)

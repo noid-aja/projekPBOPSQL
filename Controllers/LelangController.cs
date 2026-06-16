@@ -55,5 +55,10 @@ namespace WinFormsApp1.Controllers
             }
             return TransaksiContext.TutupLelang(idLelang);
         }
+
+        public System.Data.DataTable DapatkanPesertaLelang(int idLelang)
+        {
+            return LelangContext.AmbilPesertaLelang(idLelang);
+        }
     }
 }

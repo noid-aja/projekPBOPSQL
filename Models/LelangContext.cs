@@ -87,7 +87,7 @@ namespace WinFormsApp1.Models
 
                 using var cmdLelang = new NpgsqlCommand(@"
                     insert into kapten.lelang (id_produk, bid_minimum, tgl_mulai, tgl_akhir, lokasi_lelang, status_lelang) 
-                    values (@idProduk, @bidMin, @tglMulai, @tglAkhir, @lokasi, 'berlangsung')", conn);
+                    values (@idProduk, @bidMin, @tglMulai, @tglAkhir, @lokasi, 'berlangsung')", conn, trans);
 
                 cmdLelang.Parameters.AddWithValue("idProduk", idProduk);
                 cmdLelang.Parameters.AddWithValue("bidMin", bidMinimum);
@@ -100,7 +100,7 @@ namespace WinFormsApp1.Models
                 using var cmdProduk = new NpgsqlCommand(@"
                     update kapten.produk_kopi 
                     set status_produk = 'berlangsung' 
-                    where id_produk = @idProduk", conn);
+                    where id_produk = @idProduk", conn, trans);
                 cmdProduk.Parameters.AddWithValue("idProduk", idProduk);
                 cmdProduk.ExecuteNonQuery();
 
@@ -169,6 +169,31 @@ namespace WinFormsApp1.Models
                     System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
             }
             return list;
+        }
+
+        public static System.Data.DataTable AmbilPesertaLelang(int idLelang)
+        {
+            var dt = new System.Data.DataTable();
+            try
+            {
+                using var conn = ConnectDB.GetConnection();
+                conn.Open();
+                using var cmd = new NpgsqlCommand(@"
+                    SELECT u.username, u.nama_lengkap, MAX(b.nominal) as bid_terakhir, MAX(b.tgl_bid) as waktu_bid_terakhir
+                    FROM kapten.bid b
+                    JOIN kapten.users u ON u.id_user = b.id_pembeli
+                    WHERE b.id_lelang = @idLelang
+                    GROUP BY u.id_user, u.username, u.nama_lengkap
+                    ORDER BY bid_terakhir DESC", conn);
+                cmd.Parameters.AddWithValue("idLelang", idLelang);
+                using var da = new NpgsqlDataAdapter(cmd);
+                da.Fill(dt);
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show("Gagal mengambil daftar peserta: " + ex.Message, "Error Database", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+            }
+            return dt;
         }
     }
 }

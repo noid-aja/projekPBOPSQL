@@ -15,6 +15,7 @@ BEGIN
     END IF;
 
     RETURN CASE
+        WHEN p_nilai >= 95 THEN 'A+'
         WHEN p_nilai >= 85 THEN 'A'
         WHEN p_nilai >= 80 THEN 'B'
         WHEN p_nilai >= 60 THEN 'C'

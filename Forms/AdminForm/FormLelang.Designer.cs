@@ -21,6 +21,7 @@ namespace WinFormsApp1.Forms.AdminForm
             btnRefresh = new Button();
             lblDaftarLelang = new Label();
             dgvLelang = new DataGridView();
+            btnLihatPeserta = new Button();
             panelAksi = new Panel();
             panel2 = new Panel();
             ((System.ComponentModel.ISupportInitialize)dgvLelang).BeginInit();
@@ -133,6 +134,21 @@ namespace WinFormsApp1.Forms.AdminForm
             lblDaftarLelang.TabIndex = 2;
             lblDaftarLelang.Text = "Daftar Lelang:";
             // 
+            // btnLihatPeserta
+            // 
+            btnLihatPeserta.BackColor = Color.FromArgb(41, 128, 185);
+            btnLihatPeserta.FlatAppearance.BorderSize = 0;
+            btnLihatPeserta.FlatStyle = FlatStyle.Flat;
+            btnLihatPeserta.ForeColor = Color.White;
+            btnLihatPeserta.Location = new Point(280, 215);
+            btnLihatPeserta.Margin = new Padding(4, 6, 4, 6);
+            btnLihatPeserta.Name = "btnLihatPeserta";
+            btnLihatPeserta.Size = new Size(180, 38);
+            btnLihatPeserta.TabIndex = 7;
+            btnLihatPeserta.Text = "👥 Lihat Peserta";
+            btnLihatPeserta.UseVisualStyleBackColor = false;
+            btnLihatPeserta.Click += btnLihatPeserta_Click;
+            // 
             // dgvLelang
             // 
             dgvLelang.AllowUserToAddRows = false;
@@ -184,6 +200,7 @@ namespace WinFormsApp1.Forms.AdminForm
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1547, 1046);
             Controls.Add(panelAksi);
+            Controls.Add(btnLihatPeserta);
             Controls.Add(lblDaftarLelang);
             Controls.Add(dgvLelang);
             Controls.Add(panel2);
@@ -210,5 +227,6 @@ namespace WinFormsApp1.Forms.AdminForm
         private System.Windows.Forms.DataGridView dgvLelang;
         private System.Windows.Forms.Panel panelAksi;
         private Panel panel2;
+        private System.Windows.Forms.Button btnLihatPeserta;
     }
 }

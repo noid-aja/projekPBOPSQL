@@ -8,7 +8,7 @@ namespace WinFormsApp1.Helpers
             "Host=localhost;" +
             "Port=5432;" +
             "Username=postgres;" +
-            "Password=postgres;" +
+            "Password=NOIDAJA;" +
             "Database=Kapten;";
 
         public static NpgsqlConnection GetConnection()
@@ -16,7 +16,6 @@ namespace WinFormsApp1.Helpers
             return new NpgsqlConnection(ConnString);
         }
 
-        // Backwards-compatible helper used by existing forms
         public static NpgsqlConnection GetConn()
         {
             var conn = GetConnection();
