@@ -55,5 +55,21 @@ namespace WinFormsApp1.Controllers
             }
             return TransaksiContext.TutupLelang(idLelang);
         }
+
+        public System.Data.DataTable DapatkanPesertaLelang(int idLelang)
+        {
+            if (!UserContext.IsLoggedIn() || !UserContext.IsAdmin())
+            {
+                MessageBox.Show("Akses ditolak. Hanya Admin yang bisa melihat daftar peserta lelang.",
+                    "Akses Ditolak", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return new System.Data.DataTable();
+            }
+            return LelangContext.AmbilPesertaLelang(idLelang);
+        }
+
+        public System.Data.DataTable DapatkanHasilLelang()
+        {
+            return LelangContext.AmbilHasilLelang();
+        }
     }
 }

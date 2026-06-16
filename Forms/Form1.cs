@@ -40,9 +40,25 @@ namespace WinFormsApp1
                     MessageBoxIcon.Information
                 );
 
-                string roleUtama = (user.Roles != null && user.Roles.Count > 0)
-                                    ? user.Roles[0].NamaRole
-                                    : "pembeli";
+                string roleUtama;
+                if (user.Roles != null && user.Roles.Count > 1)
+                {
+                    using (var pilihForm = new FormPilihRole(user.Roles))
+                    {
+                        if (pilihForm.ShowDialog() != DialogResult.OK)
+                        {
+                            UserContext.Logout();
+                            return;
+                        }
+                        roleUtama = pilihForm.SelectedRole;
+                    }
+                }
+                else
+                {
+                    roleUtama = (user.Roles != null && user.Roles.Count > 0)
+                                        ? user.Roles[0].NamaRole
+                                        : "pembeli";
+                }
 
                 tbusr.Clear();
                 tbpw.Clear();
@@ -129,6 +145,34 @@ namespace WinFormsApp1
             FormRegister registerForm = new FormRegister();
             registerForm.Show();
             Hide();
+        }
+
+        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void label2_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label6_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            int x = (this.ClientSize.Width - panel1.Width) / 2;
+            int y = (this.ClientSize.Height - panel1.Height) / 2;
+
+            panel1.Location = new Point(x, y);
         }
     }
 }

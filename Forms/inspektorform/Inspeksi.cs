@@ -49,9 +49,10 @@ namespace WinFormsApp1.Forms.InspektorForm
 
         private string ComputeGrade(int nilai)
         {
-            if (nilai >= 85 && nilai <= 100) return "A";
-            if (nilai >= 80 && nilai <= 84) return "B";
-            if (nilai >= 60 && nilai <= 79) return "C";
+            if (nilai >= 95) return "A+";
+            if (nilai >= 85) return "A";
+            if (nilai >= 80) return "B";
+            if (nilai >= 60) return "C";
             return "D";
         }
 

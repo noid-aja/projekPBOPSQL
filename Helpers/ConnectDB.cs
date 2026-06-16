@@ -15,5 +15,12 @@ namespace WinFormsApp1.Helpers
         {
             return new NpgsqlConnection(ConnString);
         }
+
+        public static NpgsqlConnection GetConn()
+        {
+            var conn = GetConnection();
+            conn.Open();
+            return conn;
+        }
     }
 }

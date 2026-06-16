@@ -32,7 +32,7 @@ namespace WinFormsApp1.Forms.AdminForm
                     from kapten.lelang l
                     join kapten.produk_kopi p on p.id_produk = l.id_produk
                     left join kapten.bid b on b.id_lelang = l.id_lelang
-                    group by l.id_lelang, p.nama_produk, l.status_lelang
+                    group by l.id_lelang, p.nama_produk, l.bid_minimum, l.tgl_mulai, l.tgl_akhir, l.lokasi_lelang, l.status_lelang
                     order by l.id_lelang desc";
                 var da = new NpgsqlDataAdapter(query, conn);
                 var dt = new DataTable();
@@ -116,6 +116,21 @@ namespace WinFormsApp1.Forms.AdminForm
         {
             LoadLelang();
             LoadProdukSiapLelang();
+        }
+
+        private void btnLihatPeserta_Click(object sender, EventArgs e)
+        {
+            if (dgvLelang.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Pilih lelang terlebih dahulu.", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            int idLelang = Convert.ToInt32(dgvLelang.SelectedRows[0].Cells["id_lelang"].Value);
+            string namaProduk = dgvLelang.SelectedRows[0].Cells["nama_produk"].Value?.ToString() ?? "";
+
+            var formDaftar = new FormDaftarPeserta(idLelang, namaProduk);
+            formDaftar.ShowDialog();
         }
 
         private class ProdukItem

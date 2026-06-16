@@ -69,5 +69,10 @@ namespace WinFormsApp1.Forms.PetaniForm
         {
             tbNamaProduk.Clear(); tbBerat.Clear(); tbHarga.Clear(); tbDeskripsi.Clear();
         }
+
+        private void lblJudul_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

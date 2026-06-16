@@ -94,9 +94,9 @@ namespace WinFormsApp1
                 return;
             }
 
-            if (role != "petani" && role != "pembeli")
+            if (role != "petani" && role != "pembeli" && !role.Contains("keduanya"))
             {
-                MessageBox.Show("Pilih role Petani atau Pembeli.");
+                MessageBox.Show("Pilih role Petani, Pembeli, atau Keduanya.");
                 txtrole.Focus();
                 return;
             }
@@ -131,13 +131,19 @@ namespace WinFormsApp1
 
             try
             {
+                string dbRole = role;
+                if (role.Contains("keduanya"))
+                {
+                    dbRole = "keduanya";
+                }
+
                 _authController.Register(
                     namaLengkap,
                     username,
                     password,
                     confirmPassword,
                     noTelp,
-                    role);
+                    dbRole);
 
                 MessageBox.Show(
                     $"Registrasi berhasil!\nSelamat datang, {namaLengkap}.",
@@ -217,6 +223,29 @@ namespace WinFormsApp1
             {
                 Form1.Instance.TampilkanKembali();
             }
+        }
+
+        private void panel1_Resize(object sender, EventArgs e)
+        {
+            int x = (this.ClientSize.Width - panel1.Width) / 2;
+            int y = (this.ClientSize.Height - panel1.Height) / 2;
+
+            panel1.Location = new Point(x, y);
+        }
+
+        private void label1_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtnamapanjang_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtusername_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

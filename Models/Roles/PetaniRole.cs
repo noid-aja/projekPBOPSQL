@@ -24,7 +24,8 @@ namespace WinFormsApp1.Models.Roles
                 "Lihat Produk Saya",
                 "Lihat Hasil QC",
                 "Lihat Jadwal Lelang",
-                "Lihat Status Transaksi"
+                "Lihat Status Transaksi",
+                "Hasil Lelang"
             };
         }
 

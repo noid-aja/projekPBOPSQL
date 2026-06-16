@@ -89,24 +89,6 @@ namespace WinFormsApp1.Forms.PembeliForm
                     card.SetDataLelang(lelang, produk, bidTertinggi);
 
 
-                    string[] searchPaths = new[]
-                    {
-                        System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Resources", "coffee_placeholder.png"),
-                        System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "..", "..", "..", "Resources", "coffee_placeholder.png"),
-                        "Resources/coffee_placeholder.png"
-                    };
-                    foreach (var path in searchPaths)
-                    {
-                        if (System.IO.File.Exists(path))
-                        {
-                            try
-                            {
-                                break;
-                            }
-                            catch {}
-                        }
-                    }
-
                     card.Click += (s, e) =>
                     {
                         decimal hargaAcuan = bidTertinggi > 0 ? bidTertinggi : lelang.BidMinimum;

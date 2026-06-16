@@ -143,7 +143,7 @@ namespace WinFormsApp1.Forms
 
         private void AturMenu(List<string> menus)
         {
-            Button[] tombolMenu = { btnMenu1, btnMenu2, btnMenu3, btnMenu4, btnMenu5, btnMenu6, btnMenu7 };
+            Button[] tombolMenu = { btnMenu1, btnMenu2, btnMenu3, btnMenu4, btnMenu5, btnMenu6, btnMenu7, btnMenu8 };
 
             for (int i = 0; i < tombolMenu.Length; i++)
             {
@@ -208,6 +208,11 @@ namespace WinFormsApp1.Forms
                     case "kelola lelang":
                     case "lelang":
                         openChildForm(new FormLelang());
+                        break;
+                    case "rekap hasil lelang":
+                    case "hasil lelang":
+                    case "riwayat lelang":
+                        openChildForm(new FormHasilLelang(roleAktif));
                         break;
                     case "kelola transaksi":
                     case "transaksi":

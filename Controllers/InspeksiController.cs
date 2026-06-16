@@ -53,30 +53,11 @@ public bool KirimHasilQc(
         int idInspektor =
             UserContext.CurrentUser!.IdUser;
 
-        return InspeksiContext.SimpanHasilInspeksi(
-            idProduk,
-            idInspektor,
-            nilai,
-            hargaRekomendasi,
-            catatan);
-    }
-    catch (PostgresException ex)
-    {
-        MessageBox.Show(
-            ex.MessageText,
-            "Database Menolak Data",
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Error);
-
-        return false;
-    }
-    catch (Exception ex)
-    {
-        MessageBox.Show(
-            "Gagal menyimpan hasil QC: " + ex.Message,
-            "Error",
-            MessageBoxButtons.OK,
-            MessageBoxIcon.Error);
+            string gradeOtomatis = nilai >= 95 ? "A+"
+                                 : nilai >= 85 ? "A"
+                                 : nilai >= 80 ? "B"
+                                 : nilai >= 60 ? "C"
+                                 : "D";
 
         return false;
     }

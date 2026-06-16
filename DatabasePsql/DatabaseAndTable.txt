@@ -121,7 +121,7 @@ CREATE TABLE kapten.inspeksi (
         CHECK (nilai BETWEEN 0 AND 100),
 
     CONSTRAINT chk_grade_inspeksi
-        CHECK (grade IN ('A', 'B', 'C', 'D')),
+        CHECK (grade IN ('A+', 'A', 'B', 'C', 'D')),
 
     CONSTRAINT chk_status_inspeksi
         CHECK (status_inspeksi IN (
