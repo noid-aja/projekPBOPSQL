@@ -1,5 +1,7 @@
 using Npgsql;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using WinFormsApp1.Controllers;
 using WinFormsApp1.Views;
@@ -33,17 +35,25 @@ namespace WinFormsApp1
 
                 UserContext.SetUser(user);
 
-                MessageBox.Show(
-                    $"Login berhasil!\nSelamat datang, {user.NamaLengkap}.",
-                    "Sukses",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
+                // Filter hanya role petani dan pembeli
+                var rolePetaniPembeli = user.Roles?
+                    .Where(r => r.NamaRole.Equals("petani", StringComparison.OrdinalIgnoreCase)
+                             || r.NamaRole.Equals("pembeli", StringComparison.OrdinalIgnoreCase))
+                    .ToList() ?? new List<Userrole>();
 
                 string roleUtama;
-                if (user.Roles != null && user.Roles.Count > 1)
+
+                if (rolePetaniPembeli.Count >= 2)
                 {
-                    using (var pilihForm = new FormPilihRole(user.Roles))
+                    // User punya 2 role (petani & pembeli) → minta pilih
+                    MessageBox.Show(
+                        $"Login berhasil!\nSelamat datang, {user.NamaLengkap}.\n\nAnda memiliki 2 role, silakan pilih role untuk sesi ini.",
+                        "Verifikasi Role",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+
+                    using (var pilihForm = new FormPilihRole(rolePetaniPembeli))
                     {
                         if (pilihForm.ShowDialog() != DialogResult.OK)
                         {
@@ -53,11 +63,31 @@ namespace WinFormsApp1
                         roleUtama = pilihForm.SelectedRole;
                     }
                 }
+                else if (rolePetaniPembeli.Count == 1)
+                {
+                    // Hanya punya 1 role (petani atau pembeli) → langsung masuk
+                    roleUtama = rolePetaniPembeli[0].NamaRole;
+
+                    MessageBox.Show(
+                        $"Login berhasil!\nSelamat datang, {user.NamaLengkap}.",
+                        "Sukses",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
                 else
                 {
+                    // Tidak punya role petani/pembeli, cek role lain (admin/inspektor)
                     roleUtama = (user.Roles != null && user.Roles.Count > 0)
                                         ? user.Roles[0].NamaRole
                                         : "pembeli";
+
+                    MessageBox.Show(
+                        $"Login berhasil!\nSelamat datang, {user.NamaLengkap}.",
+                        "Sukses",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
                 }
 
                 tbusr.Clear();

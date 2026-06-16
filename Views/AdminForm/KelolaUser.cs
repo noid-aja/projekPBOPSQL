@@ -25,7 +25,6 @@ namespace WinFormsApp1.Views.AdminForm
             {
                 using (var conn = ConnectDB.GetConnection())
                 {
-                    // NpgsqlDataAdapter otomatis mengelola open/close koneksi jika ditutup
                     string query = @"select u.id_user, u.username, u.nama_lengkap, u.no_telp, u.is_aktif,
                                r.nama_role as role
                             from kapten.users u
@@ -52,7 +51,6 @@ namespace WinFormsApp1.Views.AdminForm
             {
                 using (var conn = ConnectDB.GetConnection())
                 {
-                    // 1. PERBAIKAN: Buka koneksi sebelum menjalankan ExecuteReader
                     conn.Open();
 
                     using (var cmd = new NpgsqlCommand("select nama_role from kapten.roles order by id_role", conn))
@@ -69,7 +67,10 @@ namespace WinFormsApp1.Views.AdminForm
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Gagal memuat role: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Gagal memuat role: " + ex.Message,
+                                "Error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
             }
         }
 
@@ -82,70 +83,98 @@ namespace WinFormsApp1.Views.AdminForm
 
             if (string.IsNullOrWhiteSpace(fullName))
             {
-                MessageBox.Show("Nama lengkap harus diisi", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Nama lengkap harus diisi",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbFullName.Focus();
                 return;
             }
 
             if (fullName.Length < 3)
             {
-                MessageBox.Show("Nama lengkap minimal 3 karakter", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Nama lengkap minimal 3 karakter",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbFullName.Focus();
                 return;
             }
 
             if (!System.Text.RegularExpressions.Regex.IsMatch(fullName, @"^[a-zA-ZÀ-ÿ.'\s]+$"))
             {
-                MessageBox.Show("Nama lengkap hanya boleh berisi huruf, spasi, titik, dan apostrof", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Nama lengkap hanya boleh berisi huruf, spasi, titik, dan apostrof",
+                                "Validasi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 tbFullName.Focus();
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(username))
             {
-                MessageBox.Show("Username harus diisi", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Username harus diisi",
+                                "Validasi",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 tbUsername.Focus();
                 return;
             }
 
             if (username.Length < 4)
             {
-                MessageBox.Show("Username minimal 4 karakter", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Username minimal 4 karakter",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbUsername.Focus();
                 return;
             }
 
             if (!System.Text.RegularExpressions.Regex.IsMatch(username, @"^[a-zA-Z0-9_]+$"))
             {
-                MessageBox.Show("Username hanya boleh berisi huruf, angka, dan underscore", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Username hanya boleh berisi huruf, angka, dan underscore",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbUsername.Focus();
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(noTelp))
             {
-                MessageBox.Show("Nomor telepon harus diisi", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Nomor telepon harus diisi",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbNoTelp.Focus();
                 return;
             }
 
             if (!System.Text.RegularExpressions.Regex.IsMatch(noTelp, @"^[0-9]{10,15}$"))
             {
-                MessageBox.Show("Nomor telepon harus berisi 10 sampai 15 angka", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Nomor telepon harus berisi 10 sampai 15 angka",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbNoTelp.Focus();
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(password))
             {
-                MessageBox.Show("Password harus diisi", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Password harus diisi",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbPassword.Focus();
                 return;
             }
 
             if (password.Length < 8)
             {
-                MessageBox.Show("Password minimal 8 karakter", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Password minimal 8 karakter",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbPassword.Focus();
                 return;
             }
@@ -154,12 +183,10 @@ namespace WinFormsApp1.Views.AdminForm
             {
                 using (var conn = ConnectDB.GetConnection())
                 {
-                    // 2. PERBAIKAN: Wajib buka koneksi sebelum membuat Transaction
                     conn.Open();
 
                     using (var tran = conn.BeginTransaction())
                     {
-                        // insert user and get new id_user
                         using (var cmd = new NpgsqlCommand("insert into kapten.users(nama_lengkap, username, password, no_telp, is_aktif) values(@nama, @username, @password, @notelp, true) returning id_user", conn, tran))
                         {
                             cmd.Parameters.AddWithValue("@nama", string.IsNullOrWhiteSpace(tbFullName.Text) ? (object)DBNull.Value : tbFullName.Text.Trim());
@@ -194,13 +221,19 @@ namespace WinFormsApp1.Views.AdminForm
                         tran.Commit();
                     }
                 }
-                MessageBox.Show("User berhasil ditambahkan", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("User berhasil ditambahkan",
+                                "Sukses",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
                 ClearInputs();
                 LoadUsers();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Gagal menambah user: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Gagal menambah user: " + ex.Message,
+                                "Error",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
             }
         }
 
@@ -208,7 +241,10 @@ namespace WinFormsApp1.Views.AdminForm
         {
             if (dgvUsers.SelectedRows.Count == 0)
             {
-                MessageBox.Show("Pilih user dulu", "Peringatan", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Pilih user dulu",
+                                "Peringatan",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 return;
             }
 
@@ -219,56 +255,80 @@ namespace WinFormsApp1.Views.AdminForm
 
             if (string.IsNullOrWhiteSpace(fullName))
             {
-                MessageBox.Show("Nama lengkap harus diisi", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Nama lengkap harus diisi",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbFullName.Focus();
                 return;
             }
 
             if (fullName.Length < 3)
             {
-                MessageBox.Show("Nama lengkap minimal 3 karakter", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Nama lengkap minimal 3 karakter",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbFullName.Focus();
                 return;
             }
 
             if (!System.Text.RegularExpressions.Regex.IsMatch(fullName, @"^[a-zA-ZÀ-ÿ.'\s]+$"))
             {
-                MessageBox.Show("Nama lengkap hanya boleh berisi huruf, spasi, titik, dan apostrof", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Nama lengkap hanya boleh berisi huruf, spasi, titik, dan apostrof",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbFullName.Focus();
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(username))
             {
-                MessageBox.Show("Username harus diisi", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Username harus diisi",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbUsername.Focus();
                 return;
             }
 
             if (username.Length < 4)
             {
-                MessageBox.Show("Username minimal 4 karakter", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Username minimal 4 karakter",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbUsername.Focus();
                 return;
             }
 
             if (!System.Text.RegularExpressions.Regex.IsMatch(username, @"^[a-zA-Z0-9_]+$"))
             {
-                MessageBox.Show("Username hanya boleh berisi huruf, angka, dan underscore", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Username hanya boleh berisi huruf, angka, dan underscore",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbUsername.Focus();
                 return;
             }
 
             if (string.IsNullOrWhiteSpace(noTelp))
             {
-                MessageBox.Show("Nomor telepon harus diisi", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Nomor telepon harus diisi",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbNoTelp.Focus();
                 return;
             }
 
             if (!System.Text.RegularExpressions.Regex.IsMatch(noTelp, @"^[0-9]{10,15}$"))
             {
-                MessageBox.Show("Nomor telepon harus berisi 10 sampai 15 angka", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Nomor telepon harus berisi 10 sampai 15 angka",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbNoTelp.Focus();
                 return;
             }
@@ -276,7 +336,10 @@ namespace WinFormsApp1.Views.AdminForm
             bool shouldUpdatePassword = !string.IsNullOrEmpty(password);
             if (shouldUpdatePassword && password.Length < 8)
             {
-                MessageBox.Show("Password minimal 8 karakter", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Password minimal 8 karakter",
+                                "Validasi",
+                                MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 tbPassword.Focus();
                 return;
             }
@@ -286,12 +349,10 @@ namespace WinFormsApp1.Views.AdminForm
             {
                 using (var conn = ConnectDB.GetConnection())
                 {
-                    // 3. PERBAIKAN: Wajib buka koneksi sebelum membuat Transaction
                     conn.Open();
 
                     using (var tran = conn.BeginTransaction())
                     {
-                        // update user fields
                         string updateQuery = shouldUpdatePassword
                             ? "update kapten.users set username=@username, nama_lengkap=@nama, no_telp=@notelp, password=@password where id_user=@id"
                             : "update kapten.users set username=@username, nama_lengkap=@nama, no_telp=@notelp where id_user=@id";
@@ -308,7 +369,6 @@ namespace WinFormsApp1.Views.AdminForm
                             cmd.Parameters.AddWithValue("@id", id);
                             cmd.ExecuteNonQuery();
                         }
-                        // update role: remove existing and insert selected
                         using (var del = new NpgsqlCommand("delete from kapten.user_roles where id_user=@id", conn, tran))
                         {
                             del.Parameters.AddWithValue("@id", id);
@@ -361,7 +421,6 @@ namespace WinFormsApp1.Views.AdminForm
             {
                 using (var conn = ConnectDB.GetConnection())
                 {
-                    // 4. PERBAIKAN: Buka koneksi sebelum ExecuteNonQuery
                     conn.Open();
 
                     using (var cmd = new NpgsqlCommand("update kapten.users set is_aktif = false where id_user = @id", conn))
@@ -466,6 +525,11 @@ namespace WinFormsApp1.Views.AdminForm
         }
 
         private void label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
         {
 
         }

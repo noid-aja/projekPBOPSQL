@@ -131,10 +131,18 @@ namespace WinFormsApp1
 
             try
             {
-                string dbRole = role;
+                string[] selectedRoles;
+
                 if (role.Contains("keduanya"))
                 {
-                    dbRole = "keduanya";
+                    selectedRoles = new[] 
+                    { 
+                        "petani", "pembeli"
+                    };
+                }
+                else
+                {
+                    selectedRoles = new[] { role };
                 }
 
                 _authController.Register(
@@ -143,7 +151,7 @@ namespace WinFormsApp1
                     password,
                     confirmPassword,
                     noTelp,
-                    dbRole);
+                    selectedRoles);
 
                 MessageBox.Show(
                     $"Registrasi berhasil!\nSelamat datang, {namaLengkap}.",
@@ -152,6 +160,7 @@ namespace WinFormsApp1
                     MessageBoxIcon.Information);
 
                 FormLogin.Instance.TampilkanKembali();
+                Close(); FormLogin.Instance.TampilkanKembali();
                 Close();
             }
             catch (PostgresException ex)

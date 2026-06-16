@@ -9,13 +9,6 @@
 -- CATATAN:
 --   File ini TIDAK menghapus tabel/data. Aman dijalankan ulang karena objek
 --   dibuat dengan CREATE OR REPLACE dan trigger lama di-drop sebelum dibuat.
---
--- REVISI:
---   Diselaraskan dengan DbExecutor dan Context WinForms terbaru.
---   Operasi tulis memakai CALL procedure; operasi baca memakai VIEW/FUNCTION.
---   Mencakup UserContext, ProdukKopiContext, InspeksiContext, LelangContext,
---   BidContext, TransaksiContext, DashboardContext, JenisKopiContext, dan
---   PemenangLelangContext.
 -- ============================================================================
 
 CREATE SCHEMA IF NOT EXISTS kapten;
@@ -36,6 +29,7 @@ BEGIN
     END IF;
 
     RETURN CASE
+		WHEN p_nilai = 100 THEN 'A+'
         WHEN p_nilai >= 85 THEN 'A'
         WHEN p_nilai >= 80 THEN 'B'
         WHEN p_nilai >= 60 THEN 'C'
@@ -219,26 +213,174 @@ AS $$
     ORDER BY b.tgl_bid DESC;
 $$;
 
--- USER: REGISTER
--- Register user dan berikan satu role awal.
 CREATE OR REPLACE PROCEDURE kapten.sp_register_user(
     p_nama_lengkap VARCHAR,
     p_username VARCHAR,
     p_password VARCHAR,
     p_no_telp VARCHAR,
-    p_nama_role VARCHAR
+    p_nama_role VARCHAR[]
 )
 LANGUAGE plpgsql
 AS $$
 DECLARE
     v_id_user INT;
     v_id_role INT;
-    v_role VARCHAR(30) := LOWER(TRIM(p_nama_role));
+    v_role VARCHAR(30);
+	i int;
 BEGIN
-    IF v_role NOT IN ('petani', 'pembeli', 'inspektor') THEN
-        RAISE EXCEPTION
-            'Role hanya boleh petani, pembeli, atau inspektor.';
+	 IF p_nama_roles IS NULL OR array_length(p_nama_roles, 1) IS NULL THEN
+        RAISE EXCEPTION 'Minimal pilih satu role.';
     END IF;
+
+    FOR i IN 1..array_length(p_nama_roles, 1) LOOP
+        v_role := LOWER(TRIM(p_nama_roles[i]));
+        IF v_role NOT IN ('petani', 'pembeli', 'inspektor') THEN
+            RAISE EXCEPTION
+                'Role hanya boleh petani, pembeli, atau inspektor.';
+        END IF;
+    END LOOP;
+
+    -- Validasi data user
+    IF NULLIF(TRIM(p_nama_lengkap), '') IS NULL THEN
+        RAISE EXCEPTION
+            'Nama lengkap tidak boleh kosong.';
+    END IF;
+
+    IF NULLIF(TRIM(p_username), '') IS NULL THEN
+        RAISE EXCEPTION
+            'Username tidak boleh kosong.';
+    END IF;
+
+    IF NULLIF(p_password, '') IS NULL THEN
+        RAISE EXCEPTION
+            'Password tidak boleh kosong.';
+    END IF;
+
+    IF p_nama_role IS NULL
+       OR CARDINALITY(p_nama_role) = 0 THEN
+        RAISE EXCEPTION
+            'Minimal pilih satu role.';
+    END IF;
+
+    IF EXISTS (
+        SELECT 1
+        FROM kapten.users
+        WHERE LOWER(username) =
+              LOWER(TRIM(p_username))
+    ) THEN
+        RAISE EXCEPTION
+            'Username % sudah digunakan.',
+            p_username;
+    END IF;
+
+    IF NULLIF(TRIM(p_no_telp), '') IS NOT NULL
+       AND EXISTS (
+           SELECT 1
+           FROM kapten.users
+           WHERE no_telp = TRIM(p_no_telp)
+       ) THEN
+        RAISE EXCEPTION
+            'Nomor telepon sudah digunakan.';
+    END IF;
+
+    -- Validasi semua role sebelum user dibuat
+    FOREACH v_role IN ARRAY p_nama_role
+    LOOP
+        v_role := LOWER(TRIM(v_role));
+
+        IF v_role NOT IN (
+            'petani',
+            'pembeli',
+            'inspektor'
+        ) THEN
+            RAISE EXCEPTION
+                'Role % tidak diperbolehkan.',
+                v_role;
+        END IF;
+
+        IF NOT EXISTS (
+            SELECT 1
+            FROM kapten.roles
+            WHERE LOWER(nama_role) = v_role
+        ) THEN
+            RAISE EXCEPTION
+                'Role % tidak ditemukan.',
+                v_role;
+        END IF;
+    END LOOP;
+
+    -- Buat user satu kali
+    INSERT INTO kapten.users (
+        nama_lengkap,
+        username,
+        password,
+        no_telp,
+        is_aktif
+    )
+    VALUES (
+        TRIM(p_nama_lengkap),
+        TRIM(p_username),
+        p_password,
+        NULLIF(TRIM(p_no_telp), ''),
+        TRUE
+    )
+    RETURNING id_user
+    INTO v_id_user;
+
+    -- Masukkan seluruh role
+    FOREACH v_role IN ARRAY p_nama_role
+    LOOP
+        v_role := LOWER(TRIM(v_role));
+
+        SELECT id_role
+        INTO v_id_role
+        FROM kapten.roles
+        WHERE LOWER(nama_role) = v_role;
+
+        INSERT INTO kapten.user_roles (
+            id_user,
+            id_role,
+            is_role_aktif
+        )
+        VALUES (
+            v_id_user,
+            v_id_role,
+            TRUE
+        )
+        ON CONFLICT (id_user, id_role)
+        DO UPDATE SET
+            is_role_aktif = TRUE;
+    END LOOP;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE kapten.sp_register_user(
+    p_nama_lengkap VARCHAR,
+    p_username VARCHAR,
+    p_password VARCHAR,
+    p_no_telp VARCHAR,
+    p_nama_roles VARCHAR[]
+)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    v_id_user INT;
+    v_id_role INT;
+    v_role VARCHAR(30);
+    i INT;
+BEGIN
+    IF p_nama_roles IS NULL OR array_length(p_nama_roles, 1) IS NULL THEN
+        RAISE EXCEPTION 'Minimal pilih satu role.';
+    END IF;
+
+    -- Validasi semua role terlebih dahulu
+    FOR i IN 1..array_length(p_nama_roles, 1) LOOP
+        v_role := LOWER(TRIM(p_nama_roles[i]));
+        IF v_role NOT IN ('petani', 'pembeli', 'inspektor') THEN
+            RAISE EXCEPTION
+                'Role hanya boleh petani, pembeli, atau inspektor.';
+        END IF;
+    END LOOP;
 
     IF NULLIF(TRIM(p_nama_lengkap), '') IS NULL THEN
         RAISE EXCEPTION 'Nama lengkap tidak boleh kosong.';
@@ -281,15 +423,7 @@ BEGIN
         RAISE EXCEPTION 'Nomor telepon sudah digunakan.';
     END IF;
 
-    SELECT id_role
-    INTO v_id_role
-    FROM kapten.roles
-    WHERE LOWER(nama_role) = v_role;
-
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Role % tidak ditemukan.', v_role;
-    END IF;
-
+    -- Insert user baru
     INSERT INTO kapten.users (
         nama_lengkap,
         username,
@@ -306,22 +440,83 @@ BEGIN
     )
     RETURNING id_user INTO v_id_user;
 
-    INSERT INTO kapten.user_roles (
-        id_user,
-        id_role,
-        is_role_aktif
-    )
-    VALUES (
-        v_id_user,
-        v_id_role,
-        TRUE
-    );
+    -- Loop insert semua role yang dipilih
+    FOR i IN 1..array_length(p_nama_roles, 1) LOOP
+        v_role := LOWER(TRIM(p_nama_roles[i]));
+
+        SELECT id_role
+        INTO v_id_role
+        FROM kapten.roles
+        WHERE LOWER(nama_role) = v_role;
+
+        IF NOT FOUND THEN
+            RAISE EXCEPTION 'Role % tidak ditemukan.', v_role;
+        END IF;
+
+        INSERT INTO kapten.user_roles (
+            id_user,
+            id_role,
+            is_role_aktif
+        )
+        VALUES (
+            v_id_user,
+            v_id_role,
+            TRUE
+        )
+        ON CONFLICT (id_user, id_role)
+        DO NOTHING;
+    END LOOP;
 END;
 $$;
 
+select * from kapten.user_roles
 
--- USER: UPDATE PROFILE
--- Ubah nama lengkap dan nomor telepon user.
+DROP PROCEDURE kapten.sp_register_user
+
+-- update profile
+CREATE OR REPLACE PROCEDURE kapten.sp_update_profile(
+    p_id_user INT,
+    p_username VARCHAR,
+    p_nama_lengkap VARCHAR,
+    p_no_telp VARCHAR
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF NULLIF(TRIM(p_username), '') IS NULL THEN
+        RAISE EXCEPTION 'Username tidak boleh kosong.';
+    END IF;
+    IF NULLIF(TRIM(p_nama_lengkap), '') IS NULL THEN
+        RAISE EXCEPTION 'Nama lengkap tidak boleh kosong.';
+    END IF;
+    IF EXISTS (
+        SELECT 1 FROM kapten.users
+        WHERE username = TRIM(p_username) AND id_user <> p_id_user
+    ) THEN
+        RAISE EXCEPTION 'Username sudah digunakan user lain.';
+    END IF;
+    IF NULLIF(TRIM(p_no_telp), '') IS NOT NULL
+       AND EXISTS (
+           SELECT 1 FROM kapten.users
+           WHERE no_telp = TRIM(p_no_telp) AND id_user <> p_id_user
+       ) THEN
+        RAISE EXCEPTION 'Nomor telepon sudah digunakan user lain.';
+    END IF;
+
+    UPDATE kapten.users
+    SET
+        username = TRIM(p_username),
+        nama_lengkap = TRIM(p_nama_lengkap),
+        no_telp = NULLIF(TRIM(p_no_telp), '')
+    WHERE id_user = p_id_user;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'User ID % tidak ditemukan.', p_id_user;
+    END IF;
+END;
+$$;''
+
+-- update profile
 CREATE OR REPLACE PROCEDURE kapten.sp_update_profile(
     p_id_user INT,
     p_nama_lengkap VARCHAR,
@@ -330,41 +525,37 @@ CREATE OR REPLACE PROCEDURE kapten.sp_update_profile(
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    IF p_id_user <= 0 THEN
-        RAISE EXCEPTION 'ID user tidak valid.';
-    END IF;
-
     IF NULLIF(TRIM(p_nama_lengkap), '') IS NULL THEN
-        RAISE EXCEPTION 'Nama lengkap tidak boleh kosong.';
+        RAISE EXCEPTION
+            'Nama lengkap tidak boleh kosong.';
     END IF;
 
-    IF NULLIF(TRIM(p_no_telp), '') IS NULL THEN
-        RAISE EXCEPTION 'Nomor telepon tidak boleh kosong.';
-    END IF;
-
-    IF EXISTS (
-        SELECT 1
-        FROM kapten.users
-        WHERE no_telp = TRIM(p_no_telp)
-          AND id_user <> p_id_user
-    ) THEN
-        RAISE EXCEPTION 'Nomor telepon sudah digunakan user lain.';
+    IF NULLIF(TRIM(p_no_telp), '') IS NOT NULL
+       AND EXISTS (
+           SELECT 1
+           FROM kapten.users
+           WHERE no_telp = TRIM(p_no_telp)
+             AND id_user <> p_id_user
+       ) THEN
+        RAISE EXCEPTION
+            'Nomor telepon sudah digunakan user lain.';
     END IF;
 
     UPDATE kapten.users
-    SET nama_lengkap = TRIM(p_nama_lengkap),
-        no_telp = TRIM(p_no_telp)
+    SET
+        nama_lengkap = TRIM(p_nama_lengkap),
+        no_telp = NULLIF(TRIM(p_no_telp), '')
     WHERE id_user = p_id_user;
 
     IF NOT FOUND THEN
-        RAISE EXCEPTION 'User ID % tidak ditemukan.', p_id_user;
+        RAISE EXCEPTION
+            'User ID % tidak ditemukan.',
+            p_id_user;
     END IF;
 END;
 $$;
 
-
--- USER: UPDATE PASSWORD
--- Ubah password user aktif.
+-- updatye PASSWORD
 CREATE OR REPLACE PROCEDURE kapten.sp_update_password(
     p_id_user INT,
     p_password_baru VARCHAR
@@ -372,16 +563,9 @@ CREATE OR REPLACE PROCEDURE kapten.sp_update_password(
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    IF p_id_user <= 0 THEN
-        RAISE EXCEPTION 'ID user tidak valid.';
-    END IF;
-
     IF NULLIF(p_password_baru, '') IS NULL THEN
-        RAISE EXCEPTION 'Password baru tidak boleh kosong.';
-    END IF;
-
-    IF LENGTH(p_password_baru) < 8 THEN
-        RAISE EXCEPTION 'Password baru minimal 8 karakter.';
+        RAISE EXCEPTION
+            'Password baru tidak boleh kosong.';
     END IF;
 
     UPDATE kapten.users
@@ -390,55 +574,14 @@ BEGIN
       AND is_aktif = TRUE;
 
     IF NOT FOUND THEN
-        RAISE EXCEPTION 'User tidak ditemukan atau sudah dinonaktifkan.';
+        RAISE EXCEPTION
+            'User tidak ditemukan atau sudah dinonaktifkan.';
     END IF;
 END;
 $$;
 
 
--- Tambah role baru atau aktifkan kembali role yang sebelumnya nonaktif.
-CREATE OR REPLACE PROCEDURE kapten.sp_tambah_role_user(
-    p_id_user INT,
-    p_nama_role VARCHAR
-)
-LANGUAGE plpgsql
-AS $$
-DECLARE
-    v_id_role INT;
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1
-        FROM kapten.users
-        WHERE id_user = p_id_user
-    ) THEN
-        RAISE EXCEPTION 'User ID % tidak ditemukan.', p_id_user;
-    END IF;
-
-    SELECT id_role
-    INTO v_id_role
-    FROM kapten.roles
-    WHERE LOWER(nama_role) = LOWER(TRIM(p_nama_role));
-
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Role % tidak ditemukan.', p_nama_role;
-    END IF;
-
-    INSERT INTO kapten.user_roles (
-        id_user,
-        id_role,
-        is_role_aktif
-    )
-    VALUES (
-        p_id_user,
-        v_id_role,
-        TRUE
-    )
-    ON CONFLICT (id_user, id_role)
-    DO UPDATE SET is_role_aktif = TRUE;
-END;
-$$;
-
--- USER: AUTENTIKASI
+-- autentikasi user
 CREATE OR REPLACE FUNCTION kapten.fn_authenticate_user(
     p_username VARCHAR,
     p_password VARCHAR
@@ -475,7 +618,7 @@ AS $$
     ORDER BY r.id_role;
 $$;
 
--- USER: CEK NOMOR TELEPON
+-- nomor telpon verified
 CREATE OR REPLACE FUNCTION kapten.fn_no_telp_terpakai(
     p_no_telp VARCHAR
 )
@@ -561,6 +704,9 @@ BEGIN
     RETURN NEW;
 END;
 $$;
+
+select * from kapten.users
+select * from kapten.user_roles
 
 DROP TRIGGER IF EXISTS before_lelang_validasi_produk ON kapten.lelang;
 CREATE TRIGGER before_lelang_validasi_produk
@@ -696,7 +842,7 @@ EXECUTE FUNCTION kapten.trg_hitung_transaksi();
 -- Semua procedure berikut dipanggil WinForms dengan CALL kapten.nama_procedure(...)
 -- ============================================================================
 
--- PRODUK: INSERT
+-- INSERT produk.
 CREATE OR REPLACE PROCEDURE kapten.sp_tambah_produk(
     p_id_petani INT,
     p_id_jenis INT,
@@ -708,26 +854,6 @@ CREATE OR REPLACE PROCEDURE kapten.sp_tambah_produk(
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    IF NULLIF(TRIM(p_nama_produk), '') IS NULL THEN
-        RAISE EXCEPTION 'Nama produk tidak boleh kosong.';
-    END IF;
-
-    IF p_berat_kg <= 0 THEN
-        RAISE EXCEPTION 'Berat produk harus lebih dari 0 kg.';
-    END IF;
-
-    IF p_harga_pengajuan <= 0 THEN
-        RAISE EXCEPTION 'Harga pengajuan harus lebih dari Rp0.';
-    END IF;
-
-    IF NOT EXISTS (
-        SELECT 1
-        FROM kapten.jenis_kopi
-        WHERE id_jenis = p_id_jenis
-    ) THEN
-        RAISE EXCEPTION 'Jenis kopi ID % tidak ditemukan.', p_id_jenis;
-    END IF;
-
     IF NOT EXISTS (
         SELECT 1
         FROM kapten.users u
@@ -742,28 +868,16 @@ BEGIN
     END IF;
 
     INSERT INTO kapten.produk_kopi (
-        id_petani,
-        id_jenis,
-        nama_produk,
-        berat_kg,
-        harga_pengajuan,
-        deskripsi,
-        status_produk
-    )
-    VALUES (
-        p_id_petani,
-        p_id_jenis,
-        TRIM(p_nama_produk),
-        p_berat_kg,
-        p_harga_pengajuan,
-        NULLIF(TRIM(p_deskripsi), ''),
-        'pending_inspeksi'
+        id_petani, id_jenis, nama_produk, berat_kg,
+        harga_pengajuan, deskripsi, status_produk
+    ) VALUES (
+        p_id_petani, p_id_jenis, TRIM(p_nama_produk), p_berat_kg,
+        p_harga_pengajuan, NULLIF(TRIM(p_deskripsi), ''), 'pending_inspeksi'
     );
 END;
 $$;
 
-
--- PRODUK: UPDATE harga pengajuan; hanya boleh sebelum lelang dibuat.
+-- UPDATE harga pengajuan; hanya boleh sebelum lelang dibuat.
 CREATE OR REPLACE PROCEDURE kapten.sp_ubah_harga_produk(
     p_id_produk INT,
     p_id_petani INT,
@@ -772,32 +886,20 @@ CREATE OR REPLACE PROCEDURE kapten.sp_ubah_harga_produk(
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    IF p_harga_baru <= 0 THEN
-        RAISE EXCEPTION 'Harga baru harus lebih dari Rp0.';
-    END IF;
-
     UPDATE kapten.produk_kopi p
     SET harga_pengajuan = p_harga_baru
     WHERE p.id_produk = p_id_produk
       AND p.id_petani = p_id_petani
-      AND p.status_produk IN (
-          'pending_inspeksi',
-          'lolos_qc',
-          'ditolak_qc'
-      )
+      AND p.status_produk IN ('pending_inspeksi', 'lolos_qc', 'ditolak_qc')
       AND NOT EXISTS (
-          SELECT 1
-          FROM kapten.lelang l
-          WHERE l.id_produk = p.id_produk
+          SELECT 1 FROM kapten.lelang l WHERE l.id_produk = p.id_produk
       );
 
     IF NOT FOUND THEN
-        RAISE EXCEPTION
-            'Produk tidak ditemukan, bukan milik petani, atau sudah masuk lelang.';
+        RAISE EXCEPTION 'Produk tidak ditemukan, bukan milik petani, atau sudah masuk lelang.';
     END IF;
 END;
 $$;
-
 
 -- DELETE produk pending.
 CREATE OR REPLACE PROCEDURE kapten.sp_hapus_produk_pending(
@@ -818,7 +920,7 @@ BEGIN
 END;
 $$;
 
--- INSPEKSI: UPSERT hasil QC. Grade dan status dihitung oleh trigger database.
+-- UPSERT hasil QC. Grade dan status tetap dihitung trigger.
 CREATE OR REPLACE PROCEDURE kapten.sp_simpan_inspeksi(
     p_id_produk INT,
     p_id_inspektor INT,
@@ -828,17 +930,7 @@ CREATE OR REPLACE PROCEDURE kapten.sp_simpan_inspeksi(
 )
 LANGUAGE plpgsql
 AS $$
-DECLARE
-    v_status_produk VARCHAR(30);
 BEGIN
-    IF p_nilai NOT BETWEEN 0 AND 100 THEN
-        RAISE EXCEPTION 'Nilai QC harus 0 sampai 100.';
-    END IF;
-
-    IF p_harga_rekomendasi <= 0 THEN
-        RAISE EXCEPTION 'Harga rekomendasi harus lebih dari Rp0.';
-    END IF;
-
     IF NOT EXISTS (
         SELECT 1
         FROM kapten.users u
@@ -852,58 +944,15 @@ BEGIN
         RAISE EXCEPTION 'User ID % bukan inspektor aktif.', p_id_inspektor;
     END IF;
 
-    SELECT status_produk
-    INTO v_status_produk
-    FROM kapten.produk_kopi
-    WHERE id_produk = p_id_produk
-    FOR UPDATE;
-
-    IF NOT FOUND THEN
-        RAISE EXCEPTION 'Produk ID % tidak ditemukan.', p_id_produk;
-    END IF;
-
-    IF EXISTS (
-        SELECT 1
-        FROM kapten.lelang
-        WHERE id_produk = p_id_produk
-    ) THEN
-        RAISE EXCEPTION
-            'Produk ID % sudah memiliki lelang dan tidak dapat diinspeksi ulang.',
-            p_id_produk;
-    END IF;
-
-    IF v_status_produk NOT IN (
-        'pending_inspeksi',
-        'lolos_qc',
-        'ditolak_qc'
-    ) THEN
-        RAISE EXCEPTION
-            'Produk tidak dapat diinspeksi saat berstatus %.',
-            v_status_produk;
-    END IF;
-
     INSERT INTO kapten.inspeksi (
-        id_produk,
-        id_inspektor,
-        tgl_inspeksi,
-        nilai,
-        grade,
-        harga_rekomendasi,
-        catatan,
-        status_inspeksi
+        id_produk, id_inspektor, tgl_inspeksi, nilai,
+        grade, harga_rekomendasi, catatan, status_inspeksi
+    ) VALUES (
+        p_id_produk, p_id_inspektor, CURRENT_DATE, p_nilai,
+        kapten.fn_tentukan_grade(p_nilai), p_harga_rekomendasi,
+        NULLIF(TRIM(p_catatan), ''), kapten.fn_tentukan_status_qc(p_nilai)
     )
-    VALUES (
-        p_id_produk,
-        p_id_inspektor,
-        CURRENT_DATE,
-        p_nilai,
-        kapten.fn_tentukan_grade(p_nilai),
-        p_harga_rekomendasi,
-        NULLIF(TRIM(p_catatan), ''),
-        kapten.fn_tentukan_status_qc(p_nilai)
-    )
-    ON CONFLICT (id_produk)
-    DO UPDATE SET
+    ON CONFLICT (id_produk) DO UPDATE SET
         id_inspektor = EXCLUDED.id_inspektor,
         tgl_inspeksi = CURRENT_DATE,
         nilai = EXCLUDED.nilai,
@@ -912,17 +961,7 @@ BEGIN
 END;
 $$;
 
-
--- LELANG: hapus overload lama lima parameter agar CALL WinForms tidak ambigu.
-DROP PROCEDURE IF EXISTS kapten.sp_buka_lelang(
-    INTEGER,
-    NUMERIC,
-    TIMESTAMP WITHOUT TIME ZONE,
-    TIMESTAMP WITHOUT TIME ZONE,
-    CHARACTER VARYING
-);
-
--- Buka lelang: harga minimum diambil dari rekomendasi QC dan durasi dihitung DB.
+-- buka lelang dengan timestamp
 CREATE OR REPLACE PROCEDURE kapten.sp_buka_lelang(
     p_id_produk INT,
     p_lokasi VARCHAR DEFAULT NULL,
@@ -937,13 +976,16 @@ DECLARE
     v_tgl_akhir TIMESTAMP;
 BEGIN
     IF p_id_produk <= 0 THEN
-        RAISE EXCEPTION 'ID produk tidak valid.';
+        RAISE EXCEPTION
+            'ID produk tidak valid.';
     END IF;
 
     IF p_durasi_menit <= 0 THEN
-        RAISE EXCEPTION 'Durasi lelang harus lebih dari 0 menit.';
+        RAISE EXCEPTION
+            'Durasi lelang harus lebih dari 0 menit.';
     END IF;
 
+    -- Mengunci produk agar tidak dibuatkan dua lelang bersamaan.
     SELECT status_produk
     INTO v_status_produk
     FROM kapten.produk_kopi
@@ -951,7 +993,9 @@ BEGIN
     FOR UPDATE;
 
     IF NOT FOUND THEN
-        RAISE EXCEPTION 'Produk ID % tidak ditemukan.', p_id_produk;
+        RAISE EXCEPTION
+            'Produk ID % tidak ditemukan.',
+            p_id_produk;
     END IF;
 
     IF v_status_produk <> 'lolos_qc' THEN
@@ -965,7 +1009,9 @@ BEGIN
         FROM kapten.lelang
         WHERE id_produk = p_id_produk
     ) THEN
-        RAISE EXCEPTION 'Produk ID % sudah memiliki lelang.', p_id_produk;
+        RAISE EXCEPTION
+            'Produk ID % sudah memiliki lelang.',
+            p_id_produk;
     END IF;
 
     SELECT harga_rekomendasi
@@ -980,11 +1026,13 @@ BEGIN
     END IF;
 
     IF v_bid_minimum <= 0 THEN
-        RAISE EXCEPTION 'Harga rekomendasi harus lebih dari Rp0.';
+        RAISE EXCEPTION
+            'Harga rekomendasi harus lebih dari Rp0.';
     END IF;
 
     v_tgl_akhir :=
-        v_tgl_mulai + MAKE_INTERVAL(mins => p_durasi_menit);
+        v_tgl_mulai
+        + MAKE_INTERVAL(mins => p_durasi_menit);
 
     INSERT INTO kapten.lelang (
         id_produk,
@@ -1003,12 +1051,11 @@ BEGIN
         'berlangsung'
     );
 
-    -- Trigger after_lelang_sinkron_produk menyetel produk menjadi berlangsung.
+    -- Status produk menjadi 'berlangsung'
+    -- melalui trigger after_lelang_sinkron_produk.
 END;
 $$;
 
-
--- Pasang bid secara atomik dan aktifkan perlindungan anti-sniper.
 CREATE OR REPLACE PROCEDURE kapten.sp_pasang_bid(
     p_id_lelang INT,
     p_id_pembeli INT,
@@ -1017,14 +1064,15 @@ CREATE OR REPLACE PROCEDURE kapten.sp_pasang_bid(
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    -- Lock satu lelang agar dua bid bersamaan divalidasi secara berurutan.
     PERFORM 1
     FROM kapten.lelang
     WHERE id_lelang = p_id_lelang
     FOR UPDATE;
 
     IF NOT FOUND THEN
-        RAISE EXCEPTION 'Lelang ID % tidak ditemukan.', p_id_lelang;
+        RAISE EXCEPTION
+            'Lelang ID % tidak ditemukan.',
+            p_id_lelang;
     END IF;
 
     INSERT INTO kapten.bid (
@@ -1045,7 +1093,6 @@ BEGIN
       AND tgl_akhir - CURRENT_TIMESTAMP <= INTERVAL '1 minute';
 END;
 $$;
-
 
 -- Menutup lelang, memilih bid tertinggi, membuat pemenang dan transaksi.
 -- Jika tidak ada bid: lelang + produk dibatalkan, pemenang/transaksi tidak dibuat.
@@ -1126,7 +1173,6 @@ BEGIN
 END;
 $$;
 
--- Konfirmasi pembayaran offline; hanya transaksi belum_bayar yang dapat diubah.
 CREATE OR REPLACE PROCEDURE kapten.sp_konfirmasi_pembayaran(
     p_id_transaksi INT,
     p_status_bayar VARCHAR
@@ -1135,20 +1181,17 @@ LANGUAGE plpgsql
 AS $$
 DECLARE
     v_id_produk INT;
-    v_status_lama VARCHAR(30);
-    v_status_baru VARCHAR(30) := LOWER(TRIM(p_status_bayar));
+    v_status VARCHAR(30) := LOWER(TRIM(p_status_bayar));
 BEGIN
-    IF v_status_baru NOT IN ('lunas', 'dibatalkan') THEN
+    IF v_status NOT IN ('lunas', 'dibatalkan') THEN
         RAISE EXCEPTION 'Status pembayaran harus lunas atau dibatalkan.';
     END IF;
 
-    SELECT l.id_produk, t.status_bayar
-    INTO v_id_produk, v_status_lama
+    SELECT l.id_produk
+    INTO v_id_produk
     FROM kapten.transaksi t
-    JOIN kapten.pemenang_lelang pl
-        ON pl.id_pemenang = t.id_pemenang
-    JOIN kapten.lelang l
-        ON l.id_lelang = pl.id_lelang
+    JOIN kapten.pemenang_lelang pl ON pl.id_pemenang = t.id_pemenang
+    JOIN kapten.lelang l ON l.id_lelang = pl.id_lelang
     WHERE t.id_transaksi = p_id_transaksi
     FOR UPDATE OF t;
 
@@ -1156,25 +1199,15 @@ BEGIN
         RAISE EXCEPTION 'Transaksi ID % tidak ditemukan.', p_id_transaksi;
     END IF;
 
-    IF v_status_lama <> 'belum_bayar' THEN
-        RAISE EXCEPTION
-            'Transaksi sudah berstatus % dan tidak dapat diubah lagi.',
-            v_status_lama;
-    END IF;
-
     UPDATE kapten.transaksi
-    SET status_bayar = v_status_baru
+    SET status_bayar = v_status
     WHERE id_transaksi = p_id_transaksi;
 
     UPDATE kapten.produk_kopi
-    SET status_produk = CASE
-        WHEN v_status_baru = 'lunas' THEN 'terjual'
-        ELSE 'dibatalkan'
-    END
+    SET status_produk = CASE WHEN v_status = 'lunas' THEN 'terjual' ELSE 'dibatalkan' END
     WHERE id_produk = v_id_produk;
 END;
 $$;
-
 
 CREATE OR REPLACE PROCEDURE kapten.sp_ubah_status_akun(
     p_id_user INT,
@@ -1193,7 +1226,6 @@ BEGIN
 END;
 $$;
 
--- Aktifkan atau nonaktifkan role milik user.
 CREATE OR REPLACE PROCEDURE kapten.sp_ubah_status_role(
     p_id_user INT,
     p_nama_role VARCHAR,
@@ -1210,24 +1242,54 @@ BEGIN
       AND LOWER(r.nama_role) = LOWER(TRIM(p_nama_role));
 
     IF NOT FOUND THEN
-        RAISE EXCEPTION
-            'Role % milik user ID % tidak ditemukan.',
-            p_nama_role,
-            p_id_user;
+        RAISE EXCEPTION 'Role % milik user ID % tidak ditemukan.', p_nama_role, p_id_user;
     END IF;
 END;
 $$;
 
+CREATE OR REPLACE PROCEDURE kapten.sp_pasang_bid(
+    p_id_lelang INT,
+    p_id_pembeli INT,
+    p_nominal NUMERIC
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    PERFORM 1
+    FROM kapten.lelang
+    WHERE id_lelang = p_id_lelang
+    FOR UPDATE;
+
+    IF NOT FOUND THEN
+        RAISE EXCEPTION
+            'Lelang ID % tidak ditemukan.',
+            p_id_lelang;
+    END IF;
+
+    INSERT INTO kapten.bid (
+        id_lelang,
+        id_pembeli,
+        nominal
+    )
+    VALUES (
+        p_id_lelang,
+        p_id_pembeli,
+        p_nominal
+    );
+
+    UPDATE kapten.lelang
+    SET tgl_akhir = tgl_akhir + INTERVAL '10 seconds'
+    WHERE id_lelang = p_id_lelang
+      AND tgl_akhir > CURRENT_TIMESTAMP
+      AND tgl_akhir - CURRENT_TIMESTAMP <= INTERVAL '1 minute';
+END;
+$$;
 
 -- ============================================================================
 -- 04. VIEW: QUERY KOMPLEKS DISEMBUNYIKAN DARI WINFORMS
 -- ============================================================================
 
 -- Drop lebih dahulu agar tetap kompatibel bila versi view lama sudah terpasang.
-DROP VIEW IF EXISTS kapten.vw_dashboard_produk_admin CASCADE;
-DROP VIEW IF EXISTS kapten.vw_pemenang_lelang_detail CASCADE;
-DROP VIEW IF EXISTS kapten.vw_produk_siap_lelang CASCADE;
-DROP VIEW IF EXISTS kapten.vw_jenis_kopi CASCADE;
 DROP VIEW IF EXISTS kapten.vw_except_pembeli_belum_bid CASCADE;
 DROP VIEW IF EXISTS kapten.vw_intersect_petani_pembeli CASCADE;
 DROP VIEW IF EXISTS kapten.vw_union_aktivitas_user CASCADE;
@@ -1246,18 +1308,13 @@ DROP VIEW IF EXISTS kapten.vw_produk_detail CASCADE;
 -- view detail sautu produk + dari prdouk mana
 CREATE OR REPLACE VIEW kapten.vw_produk_detail AS
 SELECT
-    p.id_produk,
-    p.id_petani,
     petani.nama_lengkap AS nama_petani,
-    p.id_jenis,
     jk.nama_jenis,
     p.nama_produk,
     p.berat_kg,
     p.harga_pengajuan,
     p.deskripsi,
     p.status_produk,
-    i.id_inspeksi,
-    i.id_inspektor,
     inspektor.nama_lengkap AS nama_inspektor,
     i.tgl_inspeksi,
     i.nilai,
@@ -1796,7 +1853,7 @@ WHERE u.is_aktif = TRUE;
 --
 -- BEGIN;
 -- CALL kapten.sp_simpan_inspeksi(1, 6, 88, 1300000, 'Aroma baik');
--- CALL kapten.sp_buka_lelang(1, 'KAPTEN', 3);
+-- CALL kapten.sp_buka_lelang(1, 1300000, NOW(), NOW() + INTERVAL '2 hours', 'KAPTEN');
 -- COMMIT;
 --
 -- Bila salah satu CALL gagal:
@@ -1815,29 +1872,14 @@ WHERE u.is_aktif = TRUE;
 --
 -- CALL kapten.sp_tambah_produk(2, 1, 'Arabika Gunung', 20, 1200000, 'Panen baru');
 -- CALL kapten.sp_simpan_inspeksi(1, 6, 88, 1300000, 'Layak lelang');
--- CALL kapten.sp_buka_lelang(1, 'Gedung KAPTEN', 3);
+-- CALL kapten.sp_buka_lelang(1, 1300000, NOW(), NOW() + INTERVAL '2 hours', 'Gedung KAPTEN');
 -- CALL kapten.sp_pasang_bid(1, 4, 1400000);
 -- CALL kapten.sp_tutup_lelang(1, 5.00);
 -- CALL kapten.sp_konfirmasi_pembayaran(1, 'lunas');
 --
--- CALL kapten.sp_register_user(
---     'Petani Baru', 'petanibaru', 'password123', '081234567890', 'petani'
--- );
--- SELECT * FROM kapten.fn_authenticate_user('petanibaru', 'password123');
--- SELECT kapten.fn_no_telp_terpakai('081234567890');
--- CALL kapten.sp_update_profile(2, 'Pak Budi Baru', '082222222222');
--- CALL kapten.sp_update_password(2, 'passwordbaru123');
--- CALL kapten.sp_tambah_role_user(2, 'pembeli');
--- CALL kapten.sp_ubah_status_role(2, 'pembeli', FALSE);
--- CALL kapten.sp_ubah_status_akun(2, TRUE);
---
--- SELECT * FROM kapten.fn_dashboard_ringkas(1, 'admin');
 -- SELECT * FROM kapten.vw_produk_detail;
 -- SELECT * FROM kapten.vw_lelang_detail;
 -- SELECT * FROM kapten.vw_transaksi_detail;
--- SELECT * FROM kapten.vw_pemenang_lelang_detail;
--- SELECT * FROM kapten.vw_jenis_kopi;
--- SELECT * FROM kapten.vw_produk_siap_lelang;
 -- SELECT * FROM kapten.vw_groupby_produk;
 -- SELECT * FROM kapten.vw_rollup_produk;
 -- SELECT * FROM kapten.vw_cube_produk;

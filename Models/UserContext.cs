@@ -16,10 +16,6 @@ namespace WinFormsApp1.Models
             private set;
         }
 
-        // =====================================================
-        // SESSION USER
-        // =====================================================
-
         public static void Login(User user)
         {
             CurrentUser = user;
@@ -39,10 +35,6 @@ namespace WinFormsApp1.Models
         {
             return CurrentUser != null;
         }
-
-        // =====================================================
-        // PENGECEKAN ROLE
-        // =====================================================
 
         public static bool IsAdmin()
         {
@@ -99,31 +91,39 @@ namespace WinFormsApp1.Models
         // REGISTER
         // =====================================================
 
-        public static void Register(
-            User user,
-            string namaRole)
+        public static void Register(User user, string[] namaRoles)
         {
-            string role =
-                namaRole.Trim().ToLowerInvariant();
-
-            if (role != "petani"
-                && role != "pembeli"
-                && role != "inspektor"
-                && role != "keduanya")
+            if (namaRoles == null || namaRoles.Length == 0)
             {
                 throw new ArgumentException(
-                    "Role hanya boleh petani, pembeli, " +
-                    "inspektor, atau keduanya.");
+                    "Minimal pilih satu role.");
+            }
+
+            string[] roles = namaRoles
+                .Select(role => role.Trim().ToLowerInvariant())
+                .Distinct()
+                .ToArray();
+
+            foreach (string role in roles)
+            {
+                if (role != "petani"
+                    && role != "pembeli"
+                    && role != "inspektor")
+                {
+                    throw new ArgumentException(
+                        "Role hanya boleh petani, pembeli, " +
+                        "atau inspektor.");
+                }
             }
 
             DbExecutor.ExecuteCall(
                 @"CALL kapten.sp_register_user(
-                    @namaLengkap,
-                    @username,
-                    @password,
-                    @noTelp,
-                    @namaRole
-                );",
+            @namaLengkap,
+            @username,
+            @password,
+            @noTelp,
+            @namaRoles
+        );",
 
                 new NpgsqlParameter(
                     "namaLengkap",
@@ -150,18 +150,19 @@ namespace WinFormsApp1.Models
                     "noTelp",
                     NpgsqlDbType.Varchar)
                 {
-                    Value = string.IsNullOrWhiteSpace(
-                        user.NoTelp)
+                    Value = string.IsNullOrWhiteSpace(user.NoTelp)
                         ? DBNull.Value
                         : user.NoTelp.Trim()
                 },
 
                 new NpgsqlParameter(
-                    "namaRole",
+                    "namaRoles",
+                    NpgsqlDbType.Array |
                     NpgsqlDbType.Varchar)
                 {
-                    Value = role
-                });
+                    Value = roles
+                }
+            );
         }
 
         // =====================================================

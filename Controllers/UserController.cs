@@ -42,7 +42,7 @@ namespace WinFormsApp1.Controllers
 
             try
             {
-                UserContext.Register(user, "inspektor");
+                UserContext.Register(user, new[] { "inspektor" });
             }
             catch
             {

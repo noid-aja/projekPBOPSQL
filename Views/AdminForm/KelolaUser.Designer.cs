@@ -230,6 +230,7 @@
             panel2.Name = "panel2";
             panel2.Size = new Size(2210, 100);
             panel2.TabIndex = 12;
+            panel2.Paint += panel2_Paint;
             // 
             // lblJudul
             // 

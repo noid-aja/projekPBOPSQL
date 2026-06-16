@@ -16,7 +16,7 @@ namespace WinFormsApp1.Controllers
             string password,
             string konfirmasiPassword,
             string noTelp,
-            string role)
+            string[] roles)
         {   
 
             if (string.IsNullOrWhiteSpace(namaLengkap))
@@ -55,10 +55,18 @@ namespace WinFormsApp1.Controllers
                     "Konfirmasi password tidak cocok.");
             }
 
-            if (role != "petani" && role != "pembeli" && role != "keduanya")
+            if (roles == null || roles.Length == 0)
             {
-                throw new ArgumentException(
-                    "Role hanya boleh petani, pembeli, atau keduanya.");
+                throw new ArgumentException("Minimal pilih satu role.");
+            }
+
+            foreach (string role in roles)
+            {
+                if (role != "petani" && role != "pembeli")
+                {
+                    throw new ArgumentException(
+                        $"Role '{role}' tidak diperbolehkan saat registrasi.");
+                }
             }
 
             User user = new User
@@ -71,7 +79,7 @@ namespace WinFormsApp1.Controllers
                     : noTelp.Trim()
             };
 
-            UserContext.Register(user, role);
+            UserContext.Register(user, roles);
         }
 
         public User Login(string username, string password)

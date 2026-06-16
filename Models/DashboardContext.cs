@@ -45,8 +45,7 @@ namespace WinFormsApp1.Models
         {
             return DbExecutor.QueryTable(
                 @"SELECT *
-                  FROM kapten.vw_produk_detail
-                  ORDER BY id_produk DESC;");
+                  FROM kapten.vw_produk_detail");
         }
 
         public static DataTable AmbilLelangAdmin()
