@@ -43,10 +43,10 @@ namespace WinFormsApp1.Forms.AdminForm
             // 
             lblPilihProduk.Font = new Font("Yu Gothic UI", 12F);
             lblPilihProduk.ForeColor = Color.White;
-            lblPilihProduk.Location = new Point(8, 32);
+            lblPilihProduk.Location = new Point(15, 35);
             lblPilihProduk.Margin = new Padding(4, 0, 4, 0);
             lblPilihProduk.Name = "lblPilihProduk";
-            lblPilihProduk.Size = new Size(188, 43);
+            lblPilihProduk.Size = new Size(318, 43);
             lblPilihProduk.TabIndex = 0;
             lblPilihProduk.Text = "Produk Siap Lelang:";
             lblPilihProduk.TextAlign = ContentAlignment.MiddleLeft;
@@ -54,31 +54,31 @@ namespace WinFormsApp1.Forms.AdminForm
             // cmbProduk
             // 
             cmbProduk.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbProduk.Location = new Point(201, 36);
+            cmbProduk.Location = new Point(334, 36);
             cmbProduk.Margin = new Padding(4, 6, 4, 6);
             cmbProduk.Name = "cmbProduk";
-            cmbProduk.Size = new Size(344, 36);
+            cmbProduk.Size = new Size(419, 53);
             cmbProduk.TabIndex = 1;
             // 
             // lblLokasi
             // 
             lblLokasi.Font = new Font("Yu Gothic UI", 12F);
             lblLokasi.ForeColor = Color.White;
-            lblLokasi.Location = new Point(565, 32);
+            lblLokasi.Location = new Point(15, 111);
             lblLokasi.Margin = new Padding(4, 0, 4, 0);
             lblLokasi.Name = "lblLokasi";
-            lblLokasi.Size = new Size(78, 43);
+            lblLokasi.Size = new Size(181, 43);
             lblLokasi.TabIndex = 2;
             lblLokasi.Text = "Lokasi:";
             lblLokasi.TextAlign = ContentAlignment.MiddleLeft;
             // 
             // tbLokasi
             // 
-            tbLokasi.Location = new Point(649, 37);
+            tbLokasi.Location = new Point(334, 111);
             tbLokasi.Margin = new Padding(4, 6, 4, 6);
             tbLokasi.Name = "tbLokasi";
             tbLokasi.PlaceholderText = "Opsional...";
-            tbLokasi.Size = new Size(280, 34);
+            tbLokasi.Size = new Size(419, 50);
             tbLokasi.TabIndex = 3;
             // 
             // btnBukaLelang
@@ -87,10 +87,10 @@ namespace WinFormsApp1.Forms.AdminForm
             btnBukaLelang.FlatAppearance.BorderSize = 0;
             btnBukaLelang.FlatStyle = FlatStyle.Flat;
             btnBukaLelang.ForeColor = Color.White;
-            btnBukaLelang.Location = new Point(943, 29);
+            btnBukaLelang.Location = new Point(802, 37);
             btnBukaLelang.Margin = new Padding(4, 6, 4, 6);
             btnBukaLelang.Name = "btnBukaLelang";
-            btnBukaLelang.Size = new Size(205, 52);
+            btnBukaLelang.Size = new Size(264, 52);
             btnBukaLelang.TabIndex = 4;
             btnBukaLelang.Text = "✅ Buka Lelang";
             btnBukaLelang.UseVisualStyleBackColor = false;
@@ -102,10 +102,10 @@ namespace WinFormsApp1.Forms.AdminForm
             btnTutupLelang.FlatAppearance.BorderSize = 0;
             btnTutupLelang.FlatStyle = FlatStyle.Flat;
             btnTutupLelang.ForeColor = Color.White;
-            btnTutupLelang.Location = new Point(1159, 29);
+            btnTutupLelang.Location = new Point(802, 106);
             btnTutupLelang.Margin = new Padding(4, 6, 4, 6);
             btnTutupLelang.Name = "btnTutupLelang";
-            btnTutupLelang.Size = new Size(205, 52);
+            btnTutupLelang.Size = new Size(264, 52);
             btnTutupLelang.TabIndex = 5;
             btnTutupLelang.Text = "❌ Tutup Lelang";
             btnTutupLelang.UseVisualStyleBackColor = false;
@@ -113,41 +113,27 @@ namespace WinFormsApp1.Forms.AdminForm
             // 
             // btnRefresh
             // 
+            btnRefresh.Anchor = AnchorStyles.Top | AnchorStyles.Right;
             btnRefresh.BackColor = Color.White;
             btnRefresh.ForeColor = Color.Black;
-            btnRefresh.Location = new Point(1376, 29);
+            btnRefresh.Location = new Point(1619, 35);
             btnRefresh.Margin = new Padding(4, 6, 4, 6);
             btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(78, 52);
+            btnRefresh.Size = new Size(224, 65);
             btnRefresh.TabIndex = 6;
-            btnRefresh.Text = "🔄";
+            btnRefresh.Text = "🔄Refresh";
             btnRefresh.UseVisualStyleBackColor = false;
             btnRefresh.Click += btnRefresh_Click;
             // 
             // lblDaftarLelang
             // 
             lblDaftarLelang.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
-            lblDaftarLelang.Location = new Point(19, 224);
+            lblDaftarLelang.Location = new Point(13, 296);
             lblDaftarLelang.Margin = new Padding(4, 0, 4, 0);
             lblDaftarLelang.Name = "lblDaftarLelang";
             lblDaftarLelang.Size = new Size(235, 38);
             lblDaftarLelang.TabIndex = 2;
             lblDaftarLelang.Text = "Daftar Lelang:";
-            // 
-            // btnLihatPeserta
-            // 
-            btnLihatPeserta.BackColor = Color.FromArgb(41, 128, 185);
-            btnLihatPeserta.FlatAppearance.BorderSize = 0;
-            btnLihatPeserta.FlatStyle = FlatStyle.Flat;
-            btnLihatPeserta.ForeColor = Color.White;
-            btnLihatPeserta.Location = new Point(280, 215);
-            btnLihatPeserta.Margin = new Padding(4, 6, 4, 6);
-            btnLihatPeserta.Name = "btnLihatPeserta";
-            btnLihatPeserta.Size = new Size(180, 38);
-            btnLihatPeserta.TabIndex = 7;
-            btnLihatPeserta.Text = "👥 Lihat Peserta";
-            btnLihatPeserta.UseVisualStyleBackColor = false;
-            btnLihatPeserta.Click += btnLihatPeserta_Click;
             // 
             // dgvLelang
             // 
@@ -155,14 +141,29 @@ namespace WinFormsApp1.Forms.AdminForm
             dgvLelang.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             dgvLelang.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvLelang.ColumnHeadersHeight = 29;
-            dgvLelang.Location = new Point(19, 261);
+            dgvLelang.Location = new Point(19, 340);
             dgvLelang.Margin = new Padding(4, 6, 4, 6);
             dgvLelang.Name = "dgvLelang";
             dgvLelang.ReadOnly = true;
             dgvLelang.RowHeadersWidth = 51;
             dgvLelang.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvLelang.Size = new Size(1508, 746);
+            dgvLelang.Size = new Size(1842, 667);
             dgvLelang.TabIndex = 3;
+            // 
+            // btnLihatPeserta
+            // 
+            btnLihatPeserta.BackColor = Color.FromArgb(41, 128, 185);
+            btnLihatPeserta.FlatAppearance.BorderSize = 0;
+            btnLihatPeserta.FlatStyle = FlatStyle.Flat;
+            btnLihatPeserta.ForeColor = Color.White;
+            btnLihatPeserta.Location = new Point(1093, 35);
+            btnLihatPeserta.Margin = new Padding(4, 6, 4, 6);
+            btnLihatPeserta.Name = "btnLihatPeserta";
+            btnLihatPeserta.Size = new Size(160, 123);
+            btnLihatPeserta.TabIndex = 7;
+            btnLihatPeserta.Text = "👥 Lihat Peserta";
+            btnLihatPeserta.UseVisualStyleBackColor = false;
+            btnLihatPeserta.Click += btnLihatPeserta_Click;
             // 
             // panelAksi
             // 
@@ -170,6 +171,7 @@ namespace WinFormsApp1.Forms.AdminForm
             panelAksi.BackColor = Color.FromArgb(17, 37, 0);
             panelAksi.BorderStyle = BorderStyle.FixedSingle;
             panelAksi.Controls.Add(lblPilihProduk);
+            panelAksi.Controls.Add(btnLihatPeserta);
             panelAksi.Controls.Add(cmbProduk);
             panelAksi.Controls.Add(lblLokasi);
             panelAksi.Controls.Add(tbLokasi);
@@ -177,10 +179,10 @@ namespace WinFormsApp1.Forms.AdminForm
             panelAksi.Controls.Add(btnTutupLelang);
             panelAksi.Controls.Add(btnRefresh);
             panelAksi.ForeColor = Color.White;
-            panelAksi.Location = new Point(3, 69);
+            panelAksi.Location = new Point(3, 96);
             panelAksi.Margin = new Padding(4, 6, 4, 6);
             panelAksi.Name = "panelAksi";
-            panelAksi.Size = new Size(1531, 114);
+            panelAksi.Size = new Size(1865, 194);
             panelAksi.TabIndex = 1;
             // 
             // panel2
@@ -191,16 +193,15 @@ namespace WinFormsApp1.Forms.AdminForm
             panel2.Location = new Point(3, 0);
             panel2.Margin = new Padding(4);
             panel2.Name = "panel2";
-            panel2.Size = new Size(1551, 70);
+            panel2.Size = new Size(1885, 100);
             panel2.TabIndex = 9;
             // 
             // FormLelang
             // 
-            AutoScaleDimensions = new SizeF(11F, 28F);
+            AutoScaleDimensions = new SizeF(18F, 45F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1547, 1046);
+            ClientSize = new Size(1881, 1046);
             Controls.Add(panelAksi);
-            Controls.Add(btnLihatPeserta);
             Controls.Add(lblDaftarLelang);
             Controls.Add(dgvLelang);
             Controls.Add(panel2);

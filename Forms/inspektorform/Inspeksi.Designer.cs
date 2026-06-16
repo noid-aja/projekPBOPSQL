@@ -37,117 +37,152 @@ namespace WinFormsApp1.Forms.InspektorForm
             tbCatatan = new TextBox();
             btnSubmit = new Button();
             btnRefresh = new Button();
-            // inspector id removed; use current user context
+            panel1 = new Panel();
             ((System.ComponentModel.ISupportInitialize)dgvPending).BeginInit();
             ((System.ComponentModel.ISupportInitialize)nudNilai).BeginInit();
+            panel1.SuspendLayout();
             SuspendLayout();
             // 
             // dgvPending
             // 
+            dgvPending.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            dgvPending.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dgvPending.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvPending.Location = new Point(12, 12);
+            dgvPending.Location = new Point(20, 330);
+            dgvPending.Margin = new Padding(5);
             dgvPending.Name = "dgvPending";
             dgvPending.ReadOnly = true;
             dgvPending.RowHeadersWidth = 51;
             dgvPending.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvPending.Size = new Size(920, 300);
+            dgvPending.Size = new Size(1495, 493);
             dgvPending.TabIndex = 0;
             dgvPending.CellClick += dgvPending_CellClick;
+            dgvPending.CellContentClick += dgvPending_CellContentClick;
             // 
             // lblNilai
             // 
             lblNilai.AutoSize = true;
-            lblNilai.Location = new Point(150, 330);
+            lblNilai.Font = new Font("Yu Gothic UI", 12F);
+            lblNilai.ForeColor = Color.White;
+            lblNilai.Location = new Point(34, 19);
+            lblNilai.Margin = new Padding(5, 0, 5, 0);
             lblNilai.Name = "lblNilai";
-            lblNilai.Size = new Size(40, 20);
+            lblNilai.Size = new Size(84, 45);
             lblNilai.TabIndex = 3;
             lblNilai.Text = "Nilai";
             // 
             // nudNilai
             // 
-            nudNilai.Location = new Point(150, 353);
+            nudNilai.Location = new Point(349, 27);
+            nudNilai.Margin = new Padding(5);
             nudNilai.Name = "nudNilai";
-            nudNilai.Size = new Size(80, 27);
+            nudNilai.Size = new Size(872, 39);
             nudNilai.TabIndex = 4;
             // 
             // lblHarga
             // 
             lblHarga.AutoSize = true;
-            lblHarga.Location = new Point(250, 330);
+            lblHarga.Font = new Font("Yu Gothic UI", 12F);
+            lblHarga.ForeColor = Color.White;
+            lblHarga.Location = new Point(34, 84);
+            lblHarga.Margin = new Padding(5, 0, 5, 0);
             lblHarga.Name = "lblHarga";
-            lblHarga.Size = new Size(143, 20);
+            lblHarga.Size = new Size(305, 45);
             lblHarga.TabIndex = 5;
             lblHarga.Text = "Harga Rekomendasi";
             // 
             // tbHargaRekomendasi
             // 
-            tbHargaRekomendasi.Location = new Point(250, 353);
+            tbHargaRekomendasi.Location = new Point(349, 91);
+            tbHargaRekomendasi.Margin = new Padding(5);
             tbHargaRekomendasi.Name = "tbHargaRekomendasi";
             tbHargaRekomendasi.PlaceholderText = "Harga (numeric)";
-            tbHargaRekomendasi.Size = new Size(150, 27);
+            tbHargaRekomendasi.Size = new Size(872, 39);
             tbHargaRekomendasi.TabIndex = 6;
             // 
             // lblCatatan
             // 
             lblCatatan.AutoSize = true;
-            lblCatatan.Location = new Point(430, 330);
+            lblCatatan.Font = new Font("Yu Gothic UI", 12F);
+            lblCatatan.ForeColor = Color.White;
+            lblCatatan.Location = new Point(34, 149);
+            lblCatatan.Margin = new Padding(5, 0, 5, 0);
             lblCatatan.Name = "lblCatatan";
-            lblCatatan.Size = new Size(60, 20);
+            lblCatatan.Size = new Size(128, 45);
             lblCatatan.TabIndex = 7;
             lblCatatan.Text = "Catatan";
             // 
             // tbCatatan
             // 
-            tbCatatan.Location = new Point(430, 353);
+            tbCatatan.Location = new Point(349, 156);
+            tbCatatan.Margin = new Padding(5);
             tbCatatan.Multiline = true;
             tbCatatan.Name = "tbCatatan";
-            tbCatatan.Size = new Size(350, 80);
+            tbCatatan.Size = new Size(872, 126);
             tbCatatan.TabIndex = 8;
             // 
             // btnSubmit
             // 
-            btnSubmit.Location = new Point(800, 353);
+            btnSubmit.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            btnSubmit.BackColor = Color.FromArgb(39, 174, 96);
+            btnSubmit.FlatAppearance.BorderSize = 0;
+            btnSubmit.Font = new Font("Yu Gothic UI", 12F);
+            btnSubmit.Location = new Point(1270, 27);
+            btnSubmit.Margin = new Padding(5);
             btnSubmit.Name = "btnSubmit";
-            btnSubmit.Size = new Size(94, 29);
+            btnSubmit.Size = new Size(234, 83);
             btnSubmit.TabIndex = 9;
             btnSubmit.Text = "Simpan";
-            btnSubmit.UseVisualStyleBackColor = true;
+            btnSubmit.UseVisualStyleBackColor = false;
             btnSubmit.Click += btnSubmit_Click;
             // 
             // btnRefresh
             // 
-            btnRefresh.Location = new Point(800, 393);
+            btnRefresh.Anchor = AnchorStyles.Right;
+            btnRefresh.Font = new Font("Yu Gothic UI", 12F);
+            btnRefresh.Location = new Point(1351, 120);
+            btnRefresh.Margin = new Padding(5);
             btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(94, 29);
+            btnRefresh.Size = new Size(153, 46);
             btnRefresh.TabIndex = 10;
             btnRefresh.Text = "Refresh";
             btnRefresh.UseVisualStyleBackColor = true;
             btnRefresh.Click += btnRefresh_Click;
             // 
-            // inspector id removed; use current user context
+            // panel1
+            // 
+            panel1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            panel1.BackColor = Color.FromArgb(17, 37, 0);
+            panel1.Controls.Add(btnRefresh);
+            panel1.Controls.Add(nudNilai);
+            panel1.Controls.Add(btnSubmit);
+            panel1.Controls.Add(lblNilai);
+            panel1.Controls.Add(tbCatatan);
+            panel1.Controls.Add(lblHarga);
+            panel1.Controls.Add(lblCatatan);
+            panel1.Controls.Add(tbHargaRekomendasi);
+            panel1.Location = new Point(0, 3);
+            panel1.Margin = new Padding(5);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(1527, 317);
+            panel1.TabIndex = 14;
             // 
             // Inspeksi
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(944, 456);
-            Controls.Add(btnRefresh);
-            Controls.Add(btnSubmit);
-            Controls.Add(tbCatatan);
-            Controls.Add(lblCatatan);
-            Controls.Add(tbHargaRekomendasi);
-            Controls.Add(lblHarga);
-            Controls.Add(nudNilai);
-            Controls.Add(lblNilai);
-            // inspector id controls removed
+            ClientSize = new Size(1534, 805);
             Controls.Add(dgvPending);
+            Controls.Add(panel1);
+            Margin = new Padding(5);
             Name = "Inspeksi";
             Text = "Input Inspeksi";
             Load += Inspeksi_Load;
             ((System.ComponentModel.ISupportInitialize)dgvPending).EndInit();
             ((System.ComponentModel.ISupportInitialize)nudNilai).EndInit();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             ResumeLayout(false);
-            PerformLayout();
         }
 
         #endregion
@@ -161,5 +196,6 @@ namespace WinFormsApp1.Forms.InspektorForm
         private System.Windows.Forms.TextBox tbCatatan;
         private System.Windows.Forms.Button btnSubmit;
         private System.Windows.Forms.Button btnRefresh;
+        private Panel panel1;
     }
 }

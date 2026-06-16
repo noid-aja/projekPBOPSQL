@@ -83,40 +83,39 @@ namespace WinFormsApp1.Forms
 
             AturMenu(roleObj.GetMenuAkses());
 
+            DataTable ringkasan = DashboardContext.AmbilRingkasan(
+                currentIdUser,
+                roleObj.NamaRole);
+
+            if (ringkasan.Rows.Count > 0)
+            {
+                DataRow row = ringkasan.Rows[0];
+
+                AturCard(
+                    row["card1_value"]?.ToString() ?? "0",
+                    row["card1_title"]?.ToString() ?? "-",
+                    row["card2_value"]?.ToString() ?? "0",
+                    row["card2_title"]?.ToString() ?? "-",
+                    row["card3_value"]?.ToString() ?? "0",
+                    row["card3_title"]?.ToString() ?? "-",
+                    row["card4_value"]?.ToString() ?? "0",
+                    row["card4_title"]?.ToString() ?? "-");
+            }
+
             if (roleObj.NamaRole == "admin")
             {
-                AturCard(
-                    DashboardContext.CountTotalUser().ToString(), "Total User",
-                    DashboardContext.CountProdukByStatus("PendingInspeksi").ToString(), "Pending QC",
-                    DashboardContext.CountProdukByStatus("LolosQc").ToString(), "Lolos QC",
-                    DashboardContext.CountLelangByStatus("Berlangsung").ToString(), "Lelang Aktif");
                 IsiTabelAdmin();
             }
             else if (roleObj.NamaRole == "petani")
             {
-                AturCard(
-                    DashboardContext.CountProdukPetani(currentIdUser).ToString(), "Produk Saya",
-                    DashboardContext.CountProdukPetaniByStatus(currentIdUser, "PendingInspeksi").ToString(), "Pending QC",
-                    DashboardContext.CountProdukPetaniByStatus(currentIdUser, "LolosQc").ToString(), "Lolos QC",
-                    DashboardContext.CountProdukPetaniByStatus(currentIdUser, "Terjual").ToString(), "Terjual");
                 IsiTabelPetani(currentIdUser);
             }
             else if (roleObj.NamaRole == "pembeli")
             {
-                AturCard(
-                    DashboardContext.CountLelangByStatus("Berlangsung").ToString(), "Lelang Aktif",
-                    DashboardContext.CountBidPembeli(currentIdUser).ToString(), "Bid Saya",
-                    DashboardContext.CountMenangPembeli(currentIdUser).ToString(), "Menang",
-                    DashboardContext.CountTransaksiPembeliByStatus(currentIdUser, "BelumBayar").ToString(), "Belum Bayar");
-                IsiTabelPembeli();
+                IsiTabelPembeli(currentIdUser);
             }
             else if (roleObj.NamaRole == "inspektor")
             {
-                AturCard(
-                    DashboardContext.CountProdukByStatus("PendingInspeksi").ToString(), "Pending QC",
-                    DashboardContext.CountInspeksiByInspektor(currentIdUser).ToString(), "Sudah Dicek",
-                    DashboardContext.CountProdukByStatus("LolosQc").ToString(), "Lolos QC",
-                    DashboardContext.CountProdukByStatus("DitolakQc").ToString(), "Ditolak QC");
                 IsiTabelInspektor();
             }
         }
@@ -290,23 +289,30 @@ namespace WinFormsApp1.Forms
             dgvDashboard.DataSource = table;
         }
 
-        private void IsiTabelAdmin() => SetTable(DashboardContext.GetProdukAdmin());
-        private void IsiTabelPetani(int idPetani) => SetTable(DashboardContext.GetProdukPetani(idPetani));
-        private void IsiTabelPembeli() => SetTable(DashboardContext.GetLelangPembeli());
-        private void IsiTabelInspektor() => SetTable(DashboardContext.GetProdukPendingInspeksi());
+        private void IsiTabelAdmin() =>
+            SetTable(DashboardContext.AmbilProdukAdmin());
+
+        private void IsiTabelPetani(int idPetani) =>
+            SetTable(DashboardContext.AmbilProdukPetani(idPetani));
+
+        private void IsiTabelPembeli(int idPembeli) =>
+            SetTable(DashboardContext.AmbilLelangTersedia(idPembeli));
+
+        private void IsiTabelInspektor() =>
+            SetTable(DashboardContext.AmbilProdukPendingInspeksi());
 
         private void btnLogout_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show("Apakah Anda yakin ingin logout?",
-                                                   "Konfirmasi Logout", 
-                                                   MessageBoxButtons.YesNo, 
+                                                   "Konfirmasi Logout",
+                                                   MessageBoxButtons.YesNo,
                                                    MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
                 UserContext.Logout();
                 _isLoggingOut = true;
 
-                Form1.Instance.TampilkanKembali();
+                FormLogin.Instance.TampilkanKembali();
 
                 this.Close();
             }
@@ -369,6 +375,7 @@ namespace WinFormsApp1.Forms
 
         private void lblSidebarTitle_Click(object sender, EventArgs e)
         {
+
         }
 
         private void panel4_Paint(object sender, PaintEventArgs e)
@@ -400,5 +407,10 @@ namespace WinFormsApp1.Forms
         private void panel1_Paint(object sender, PaintEventArgs e)
         {
         }
+
+        private void btnMenu1_Click(object sender, EventArgs e)
+        {
+
+        }
     }
-}
+}   

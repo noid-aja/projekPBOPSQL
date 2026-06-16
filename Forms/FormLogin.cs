@@ -9,13 +9,13 @@ using WinFormsApp1.Forms.AdminForm;
 
 namespace WinFormsApp1
 {
-    public partial class Form1 : Form
+    public partial class FormLogin : Form
     {
         private readonly AuthController _authController;
 
-        public static Form1 Instance { get; private set; } = null!;
+        public static FormLogin Instance { get; private set; } = null!;
 
-        public Form1()
+        public FormLogin()
         {
             InitializeComponent();
             _authController = new AuthController();
@@ -173,6 +173,11 @@ namespace WinFormsApp1
             int y = (this.ClientSize.Height - panel1.Height) / 2;
 
             panel1.Location = new Point(x, y);
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }

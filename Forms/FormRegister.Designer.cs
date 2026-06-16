@@ -45,11 +45,10 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             txtnamapanjang.BorderStyle = BorderStyle.None;
             txtnamapanjang.Font = new Font("Segoe UI", 10F);
             txtnamapanjang.ForeColor = Color.WhiteSmoke;
-            txtnamapanjang.Location = new Point(65, 138);
-            txtnamapanjang.Margin = new Padding(2);
+            txtnamapanjang.Location = new Point(106, 221);
             txtnamapanjang.Name = "txtnamapanjang";
             txtnamapanjang.PlaceholderText = "Masukan Nama";
-            txtnamapanjang.Size = new Size(271, 23);
+            txtnamapanjang.Size = new Size(440, 36);
             txtnamapanjang.TabIndex = 0;
             txtnamapanjang.TextChanged += txtnamapanjang_TextChanged;
             // 
@@ -59,11 +58,10 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             txtpassword.BorderStyle = BorderStyle.None;
             txtpassword.Font = new Font("Segoe UI", 10.2F);
             txtpassword.ForeColor = Color.WhiteSmoke;
-            txtpassword.Location = new Point(414, 210);
-            txtpassword.Margin = new Padding(2);
+            txtpassword.Location = new Point(673, 336);
             txtpassword.Name = "txtpassword";
             txtpassword.PlaceholderText = "Masukan Password";
-            txtpassword.Size = new Size(271, 23);
+            txtpassword.Size = new Size(440, 37);
             txtpassword.TabIndex = 4;
             txtpassword.UseSystemPasswordChar = true;
             txtpassword.TextChanged += txtpassword_TextChanged;
@@ -74,11 +72,10 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             txtcpassword.BorderStyle = BorderStyle.None;
             txtcpassword.Font = new Font("Segoe UI", 10.2F);
             txtcpassword.ForeColor = Color.WhiteSmoke;
-            txtcpassword.Location = new Point(414, 295);
-            txtcpassword.Margin = new Padding(2);
+            txtcpassword.Location = new Point(673, 472);
             txtcpassword.Name = "txtcpassword";
             txtcpassword.PlaceholderText = "Ulangi Password";
-            txtcpassword.Size = new Size(271, 23);
+            txtcpassword.Size = new Size(440, 37);
             txtcpassword.TabIndex = 6;
             txtcpassword.UseSystemPasswordChar = true;
             // 
@@ -89,10 +86,9 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             Register.FlatAppearance.BorderSize = 0;
             Register.FlatStyle = FlatStyle.Flat;
             Register.Font = new Font("Yu Gothic UI Semibold", 15F, FontStyle.Bold);
-            Register.Location = new Point(192, 398);
-            Register.Margin = new Padding(2);
+            Register.Location = new Point(312, 637);
             Register.Name = "Register";
-            Register.Size = new Size(358, 47);
+            Register.Size = new Size(582, 75);
             Register.TabIndex = 8;
             Register.Text = "Daftar";
             Register.UseVisualStyleBackColor = false;
@@ -104,11 +100,10 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             txtnotelp.BorderStyle = BorderStyle.None;
             txtnotelp.Font = new Font("Segoe UI", 10.2F);
             txtnotelp.ForeColor = Color.WhiteSmoke;
-            txtnotelp.Location = new Point(65, 295);
-            txtnotelp.Margin = new Padding(2);
+            txtnotelp.Location = new Point(106, 472);
             txtnotelp.Name = "txtnotelp";
             txtnotelp.PlaceholderText = "Masukan No.Telp";
-            txtnotelp.Size = new Size(271, 23);
+            txtnotelp.Size = new Size(440, 37);
             txtnotelp.TabIndex = 12;
             // 
             // txtrole
@@ -119,11 +114,10 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             txtrole.ForeColor = SystemColors.WindowFrame;
             txtrole.FormattingEnabled = true;
             txtrole.Items.AddRange(new object[] { "Petani", "Pembeli", "Keduanya (Petani & Pembeli)" });
-            txtrole.Location = new Point(404, 141);
-            txtrole.Margin = new Padding(2);
+            txtrole.Location = new Point(656, 226);
             txtrole.MaxDropDownItems = 2;
             txtrole.Name = "txtrole";
-            txtrole.Size = new Size(281, 28);
+            txtrole.Size = new Size(454, 40);
             txtrole.TabIndex = 14;
             txtrole.Tag = "";
             txtrole.Text = "Pilih Role";
@@ -135,11 +129,10 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             txtusername.BorderStyle = BorderStyle.None;
             txtusername.Font = new Font("Segoe UI", 10.2F);
             txtusername.ForeColor = Color.WhiteSmoke;
-            txtusername.Location = new Point(65, 210);
-            txtusername.Margin = new Padding(2);
+            txtusername.Location = new Point(106, 336);
             txtusername.Name = "txtusername";
             txtusername.PlaceholderText = "Masukan Username";
-            txtusername.Size = new Size(271, 23);
+            txtusername.Size = new Size(440, 37);
             txtusername.TabIndex = 16;
             txtusername.TextChanged += txtusername_TextChanged;
             // 
@@ -152,9 +145,10 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             btnback.FlatStyle = FlatStyle.Flat;
             btnback.Font = new Font("Yu Gothic UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnback.ForeColor = Color.WhiteSmoke;
-            btnback.Location = new Point(17, 6);
+            btnback.Location = new Point(28, 10);
+            btnback.Margin = new Padding(5, 5, 5, 5);
             btnback.Name = "btnback";
-            btnback.Size = new Size(140, 46);
+            btnback.Size = new Size(228, 74);
             btnback.TabIndex = 17;
             btnback.Text = "Kembali";
             btnback.UseVisualStyleBackColor = false;
@@ -186,12 +180,14 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             panel1.Controls.Add(txtnamapanjang);
             panel1.Controls.Add(btnback);
             panel1.Controls.Add(Register);
-            panel1.Location = new Point(200, 58);
-            panel1.MaximumSize = new Size(738, 486);
-            panel1.MinimumSize = new Size(738, 486);
+            panel1.Location = new Point(325, 93);
+            panel1.Margin = new Padding(5, 5, 5, 5);
+            panel1.MaximumSize = new Size(1199, 778);
+            panel1.MinimumSize = new Size(1199, 778);
             panel1.Name = "panel1";
-            panel1.Size = new Size(738, 486);
+            panel1.Size = new Size(1199, 778);
             panel1.TabIndex = 18;
+            panel1.Paint += panel1_Paint;
             panel1.Resize += panel1_Resize;
             // 
             // panel2
@@ -199,9 +195,10 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             panel2.BackColor = Color.Transparent;
             panel2.BackgroundImage = (Image)resources.GetObject("panel2.BackgroundImage");
             panel2.BackgroundImageLayout = ImageLayout.Center;
-            panel2.Location = new Point(15, 18);
+            panel2.Location = new Point(24, 29);
+            panel2.Margin = new Padding(5, 5, 5, 5);
             panel2.Name = "panel2";
-            panel2.Size = new Size(31, 27);
+            panel2.Size = new Size(50, 43);
             panel2.TabIndex = 31;
             // 
             // label13
@@ -209,9 +206,10 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             label13.AutoSize = true;
             label13.Font = new Font("Yu Gothic UI", 12F);
             label13.ForeColor = Color.White;
-            label13.Location = new Point(404, 108);
+            label13.Location = new Point(656, 173);
+            label13.Margin = new Padding(5, 0, 5, 0);
             label13.Name = "label13";
-            label13.Size = new Size(51, 28);
+            label13.Size = new Size(83, 45);
             label13.TabIndex = 30;
             label13.Text = "Role";
             // 
@@ -220,18 +218,20 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             label11.AutoSize = true;
             label11.Font = new Font("Yu Gothic UI", 12F);
             label11.ForeColor = Color.White;
-            label11.Location = new Point(404, 180);
+            label11.Location = new Point(656, 288);
+            label11.Margin = new Padding(5, 0, 5, 0);
             label11.Name = "label11";
-            label11.Size = new Size(94, 28);
+            label11.Size = new Size(153, 45);
             label11.TabIndex = 29;
             label11.Text = "Password";
             // 
             // label12
             // 
             label12.BackColor = Color.White;
-            label12.Location = new Point(404, 239);
+            label12.Location = new Point(656, 382);
+            label12.Margin = new Padding(5, 0, 5, 0);
             label12.Name = "label12";
-            label12.Size = new Size(281, 1);
+            label12.Size = new Size(457, 2);
             label12.TabIndex = 28;
             // 
             // label9
@@ -239,18 +239,20 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             label9.AutoSize = true;
             label9.Font = new Font("Yu Gothic UI", 12F);
             label9.ForeColor = Color.White;
-            label9.Location = new Point(404, 265);
+            label9.Location = new Point(656, 424);
+            label9.Margin = new Padding(5, 0, 5, 0);
             label9.Name = "label9";
-            label9.Size = new Size(192, 28);
+            label9.Size = new Size(312, 45);
             label9.TabIndex = 27;
             label9.Text = "Konfirmasi Password";
             // 
             // label10
             // 
             label10.BackColor = Color.White;
-            label10.Location = new Point(404, 324);
+            label10.Location = new Point(656, 518);
+            label10.Margin = new Padding(5, 0, 5, 0);
             label10.Name = "label10";
-            label10.Size = new Size(281, 1);
+            label10.Size = new Size(457, 2);
             label10.TabIndex = 26;
             // 
             // label7
@@ -258,18 +260,20 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             label7.AutoSize = true;
             label7.Font = new Font("Yu Gothic UI", 12F);
             label7.ForeColor = Color.White;
-            label7.Location = new Point(55, 265);
+            label7.Location = new Point(89, 424);
+            label7.Margin = new Padding(5, 0, 5, 0);
             label7.Name = "label7";
-            label7.Size = new Size(148, 28);
+            label7.Size = new Size(242, 45);
             label7.TabIndex = 25;
             label7.Text = "Nomor Telepon";
             // 
             // label8
             // 
             label8.BackColor = Color.White;
-            label8.Location = new Point(55, 324);
+            label8.Location = new Point(89, 518);
+            label8.Margin = new Padding(5, 0, 5, 0);
             label8.Name = "label8";
-            label8.Size = new Size(281, 1);
+            label8.Size = new Size(457, 2);
             label8.TabIndex = 24;
             // 
             // label5
@@ -277,18 +281,20 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             label5.AutoSize = true;
             label5.Font = new Font("Yu Gothic UI", 12F);
             label5.ForeColor = Color.White;
-            label5.Location = new Point(55, 180);
+            label5.Location = new Point(89, 288);
+            label5.Margin = new Padding(5, 0, 5, 0);
             label5.Name = "label5";
-            label5.Size = new Size(99, 28);
+            label5.Size = new Size(163, 45);
             label5.TabIndex = 23;
             label5.Text = "Username";
             // 
             // label6
             // 
             label6.BackColor = Color.White;
-            label6.Location = new Point(55, 239);
+            label6.Location = new Point(89, 382);
+            label6.Margin = new Padding(5, 0, 5, 0);
             label6.Name = "label6";
-            label6.Size = new Size(281, 1);
+            label6.Size = new Size(457, 2);
             label6.TabIndex = 22;
             // 
             // label1
@@ -296,9 +302,10 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             label1.AutoSize = true;
             label1.Font = new Font("Yu Gothic UI Semibold", 20F, FontStyle.Bold);
             label1.ForeColor = Color.FromArgb(180, 197, 166);
-            label1.Location = new Point(236, 18);
+            label1.Location = new Point(384, 29);
+            label1.Margin = new Padding(5, 0, 5, 0);
             label1.Name = "label1";
-            label1.Size = new Size(260, 46);
+            label1.Size = new Size(410, 72);
             label1.TabIndex = 20;
             label1.Text = "Registrasi Akun";
             label1.Click += label1_Click_1;
@@ -308,30 +315,31 @@ namespace WinFormsApp1  // ← sama kayak FormRegister.cs
             label4.AutoSize = true;
             label4.Font = new Font("Yu Gothic UI", 12F);
             label4.ForeColor = Color.White;
-            label4.Location = new Point(55, 108);
+            label4.Location = new Point(89, 173);
+            label4.Margin = new Padding(5, 0, 5, 0);
             label4.Name = "label4";
-            label4.Size = new Size(64, 28);
+            label4.Size = new Size(104, 45);
             label4.TabIndex = 19;
             label4.Text = "Nama";
             // 
             // label2
             // 
             label2.BackColor = Color.White;
-            label2.Location = new Point(58, 169);
+            label2.Location = new Point(94, 270);
+            label2.Margin = new Padding(5, 0, 5, 0);
             label2.Name = "label2";
-            label2.Size = new Size(281, 1);
+            label2.Size = new Size(457, 2);
             label2.TabIndex = 18;
             // 
             // FormRegister
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.bg_register_login;
             BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(1121, 636);
+            ClientSize = new Size(1822, 1018);
             Controls.Add(panel1);
             DoubleBuffered = true;
-            Margin = new Padding(2);
             Name = "FormRegister";
             Text = "Register";
             WindowState = FormWindowState.Maximized;

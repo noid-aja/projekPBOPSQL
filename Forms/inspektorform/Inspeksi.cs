@@ -49,7 +49,6 @@ namespace WinFormsApp1.Forms.InspektorForm
 
         private string ComputeGrade(int nilai)
         {
-            if (nilai >= 95) return "A+";
             if (nilai >= 85) return "A";
             if (nilai >= 80) return "B";
             if (nilai >= 60) return "C";
@@ -88,7 +87,11 @@ namespace WinFormsApp1.Forms.InspektorForm
             string? catatan = string.IsNullOrWhiteSpace(tbCatatan.Text) ? null : tbCatatan.Text.Trim();
             bool isLolos = nilai >= 80;
 
-            bool sukses = _inspeksiController.KirimHasilQc(idProduk, nilai, hargaRekomendasi, catatan, isLolos);
+            bool sukses = _inspeksiController.KirimHasilQc(
+                idProduk,
+                nilai,
+                hargaRekomendasi,
+                catatan);
             if (sukses)
             {
                 string grade = ComputeGrade(nilai);
@@ -97,6 +100,10 @@ namespace WinFormsApp1.Forms.InspektorForm
                     "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadPendingProducts();
             }
+        }
+        private void dgvPending_CellContentClick(object sender,DataGridViewCellEventArgs e)
+        {
+            // Kosongkan kalau event ini memang belum dipakai.
         }
     }
 }

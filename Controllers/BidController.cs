@@ -1,3 +1,4 @@
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -18,30 +19,82 @@ namespace WinFormsApp1.Controllers
             return BidContext.CariBidByNamaProduk(nama);
         }
 
-        public bool KirimBid(int idLelang, decimal nominalTawaran)
+        public bool KirimBid(
+            int idLelang,
+            decimal nominalTawaran)
         {
             if (!UserContext.IsLoggedIn())
             {
-                MessageBox.Show("Login dulu ya.", "Akses Ditolak",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(
+                    "Login dulu sebelum memasang bid.",
+                    "Akses Ditolak",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
                 return false;
             }
 
             if (!UserContext.IsPembeli())
             {
-                MessageBox.Show("Hanya Pembeli yang bisa memasukkan bid.", "Akses Ditolak",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    "Hanya Pembeli yang bisa memasang bid.",
+                    "Akses Ditolak",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return false;
+            }
+
+            if (idLelang <= 0)
+            {
+                MessageBox.Show(
+                    "Pilih lelang terlebih dahulu.",
+                    "Validasi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return false;
+            }
+
+            if (nominalTawaran <= 0)
+            {
+                MessageBox.Show(
+                    "Nominal bid harus lebih dari Rp0.",
+                    "Validasi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
                 return false;
             }
 
             try
             {
-                int idPembeli = UserContext.CurrentUser!.IdUser;
-                return BidContext.EksekusiBid(idLelang, idPembeli, nominalTawaran);
+                int idPembeli =
+                    UserContext.CurrentUser!.IdUser;
+
+                return BidContext.EksekusiBid(
+                    idLelang,
+                    idPembeli,
+                    nominalTawaran);
+            }
+            catch (PostgresException ex)
+            {
+                MessageBox.Show(
+                    ex.MessageText,
+                    "Gagal Memasang Bid",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return false;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Error Controller", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    "Gagal memasang bid: " + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
                 return false;
             }
         }

@@ -1,6 +1,5 @@
 using Npgsql;
 using NpgsqlTypes;
-using System;
 using System.Data;
 using WinFormsApp1.Helpers;
 
@@ -8,214 +7,209 @@ namespace WinFormsApp1.Models
 {
     public static class DashboardContext
     {
-        private static int ambilData(string query, params NpgsqlParameter[] parameters)
+        // =====================================================
+        // RINGKASAN 4 CARD DASHBOARD
+        // =====================================================
+
+        public static DataTable AmbilRingkasan(
+            int idUser,
+            string role)
         {
-            using NpgsqlConnection conn = ConnectDB.GetConnection();
-            conn.Open();
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.fn_dashboard_ringkas(
+                      @idUser,
+                      @role
+                  );",
 
-            using NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
-            cmd.Parameters.AddRange(parameters);
+                new NpgsqlParameter(
+                    "idUser",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idUser
+                },
 
-            object? result = cmd.ExecuteScalar();
-            return result == null || result == DBNull.Value
-                ? 0
-                : Convert.ToInt32(result);
-        }
-
-        private static DataTable GetDataTable(string query, params NpgsqlParameter[] parameters)
-        {
-            using NpgsqlConnection conn = ConnectDB.GetConnection();
-            conn.Open();
-
-            using NpgsqlCommand cmd = new NpgsqlCommand(query, conn);
-            cmd.Parameters.AddRange(parameters);
-
-            using NpgsqlDataAdapter adapter = new NpgsqlDataAdapter(cmd);
-            DataTable table = new DataTable();
-            adapter.Fill(table);
-
-            return table;
-        }
-
-        private static string MapStatus(string status)
-        {
-            if (string.IsNullOrWhiteSpace(status)) return status;
-            switch (status.ToLower().Trim())
-            {
-                case "pendinginspeksi": return "pending_inspeksi";
-                case "lolosqc": return "lolos_qc";
-                case "ditolakqc": return "ditolak_qc";
-                case "dijadwalkanlelang": return "dijadwalkan_lelang";
-                case "berlangsung": return "berlangsung";
-                case "terjual": return "terjual";
-                case "dibatalkan": return "dibatalkan";
-                case "belumbayar": return "belum_bayar";
-                case "lunas": return "lunas";
-                default: return status.ToLower();
-            }
-        }
-
-        public static int CountTotalUser()
-        {
-            return ambilData("SELECT COUNT(*) FROM kapten.users;");
-        }
-
-        public static int CountProdukByStatus(string status)
-        {
-            return ambilData(
-                "SELECT COUNT(*) FROM kapten.produk_kopi WHERE status_produk = @status;",
-                new NpgsqlParameter("status", NpgsqlDbType.Varchar) 
-                { 
-                    Value = MapStatus(status)
+                new NpgsqlParameter(
+                    "role",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = role.Trim().ToLowerInvariant()
                 });
         }
 
-        public static int CountLelangByStatus(string status)
+        // =====================================================
+        // DASHBOARD ADMIN
+        // =====================================================
+
+        public static DataTable AmbilProdukAdmin()
         {
-            return ambilData(
-                "SELECT COUNT(*) FROM kapten.lelang WHERE status_lelang = @status;",
-                new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = MapStatus(status) });
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.vw_produk_detail
+                  ORDER BY id_produk DESC;");
         }
 
-        public static int CountProdukPetani(int idPetani)
+        public static DataTable AmbilLelangAdmin()
         {
-            return ambilData(
-                "SELECT COUNT(*) FROM kapten.produk_kopi WHERE id_petani = @id_petani;",
-                new NpgsqlParameter("id_petani", NpgsqlDbType.Integer) { Value = idPetani });
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.vw_lelang_detail
+                  ORDER BY id_lelang DESC;");
         }
 
-        public static int CountProdukPetaniByStatus(int idPetani, string status)
+        public static DataTable AmbilTransaksiAdmin()
         {
-            return ambilData(
-                """
-                SELECT COUNT(*)
-                FROM kapten.produk_kopi
-                WHERE id_petani = @id_petani
-                  AND status_produk = @status;
-                """,
-                new NpgsqlParameter("id_petani", NpgsqlDbType.Integer) { Value = idPetani },
-                new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = MapStatus(status) });
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.vw_transaksi_detail
+                  ORDER BY tgl_transaksi DESC;");
         }
 
-        public static int CountBidPembeli(int idPembeli)
+        // =====================================================
+        // DASHBOARD PETANI
+        // =====================================================
+
+        public static DataTable AmbilProdukPetani(
+            int idPetani)
         {
-            return ambilData(
-                "SELECT COUNT(*) FROM kapten.bid WHERE id_pembeli = @id_pembeli;",
-                new NpgsqlParameter("id_pembeli", NpgsqlDbType.Integer) { Value = idPembeli });
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.fn_produk_petani(
+                      @idPetani
+                  );",
+
+                new NpgsqlParameter(
+                    "idPetani",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idPetani
+                });
         }
 
-        public static int CountMenangPembeli(int idPembeli)
+        // Wrapper kalau Form lama masih memakai nama ini.
+        public static DataTable GetProdukPetani(
+            int idPetani)
         {
-            return ambilData(
-                """
-                SELECT COUNT(*)
-                FROM kapten.pemenang_lelang pl
-                JOIN kapten.bid b ON b.id_bid = pl.id_bid
-                WHERE b.id_pembeli = @id_pembeli;
-                """,
-                new NpgsqlParameter("id_pembeli", NpgsqlDbType.Integer) { Value = idPembeli });
+            return AmbilProdukPetani(idPetani);
         }
 
-        public static int CountTransaksiPembeliByStatus(int idPembeli, string statusBayar)
+        // =====================================================
+        // DASHBOARD PEMBELI
+        // =====================================================
+
+        public static DataTable AmbilLelangTersedia(
+            int idPembeli)
         {
-            return ambilData(
-                """
-                SELECT COUNT(*)
-                FROM kapten.transaksi t
-                JOIN kapten.pemenang_lelang pl ON pl.id_pemenang = t.id_pemenang
-                JOIN kapten.bid b ON b.id_bid = pl.id_bid
-                WHERE b.id_pembeli = @id_pembeli
-                  AND t.status_bayar = @status_bayar;
-                """,
-                new NpgsqlParameter("id_pembeli", NpgsqlDbType.Integer) { Value = idPembeli },
-                new NpgsqlParameter("status_bayar", NpgsqlDbType.Varchar) { Value = MapStatus(statusBayar) });
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.fn_lelang_tersedia(
+                      @idPembeli
+                  );",
+
+                new NpgsqlParameter(
+                    "idPembeli",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idPembeli
+                });
         }
 
-        public static int CountInspeksiByInspektor(int idInspektor)
+        public static DataTable AmbilRiwayatBidPembeli(
+            int idPembeli)
         {
-            return ambilData(
-                "SELECT COUNT(*) FROM kapten.inspeksi WHERE id_inspektor = @id_inspektor;",
-                new NpgsqlParameter("id_inspektor", NpgsqlDbType.Integer) { Value = idInspektor });
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.fn_riwayat_bid_pembeli(
+                      @idPembeli
+                  );",
+
+                new NpgsqlParameter(
+                    "idPembeli",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idPembeli
+                });
         }
 
-        public static int CountInspeksiByInspektorAndStatus(int idInspektor, string statusInspeksi)
+        public static DataTable AmbilTransaksiPembeli(
+            int idPembeli)
         {
-            return ambilData(
-                """
-                SELECT COUNT(*)
-                FROM kapten.inspeksi
-                WHERE id_inspektor = @id_inspektor
-                  AND status_inspeksi = @status_inspeksi;
-                """,
-                new NpgsqlParameter("id_inspektor", NpgsqlDbType.Integer) { Value = idInspektor },
-                new NpgsqlParameter("status_inspeksi", NpgsqlDbType.Varchar) { Value = MapStatus(statusInspeksi) });
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.vw_transaksi_detail
+                  WHERE id_pembeli = @idPembeli
+                  ORDER BY tgl_transaksi DESC;",
+
+                new NpgsqlParameter(
+                    "idPembeli",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idPembeli
+                });
         }
 
-        public static DataTable GetProdukAdmin()
+        // =====================================================
+        // DASHBOARD INSPEKTOR
+        // =====================================================
+
+        public static DataTable AmbilProdukPendingInspeksi()
         {
-            return GetDataTable(
-                """
-                select * 
-                from viewanu;
-                """);
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.vw_produk_detail
+                  WHERE status_produk = 'pending_inspeksi'
+                  ORDER BY id_produk DESC;");
         }
 
-        public static DataTable GetProdukPetani(int idPetani)
+        public static DataTable AmbilRiwayatInspeksi(
+            int idInspektor)
         {
-            return GetDataTable(
-                """
-                SELECT
-                p.nama_produk AS "Produk",
-                    jk.nama_jenis AS "Jenis Kopi",
-                    p.berat_kg AS "Berat Kg",
-                    p.harga_pengajuan AS "Harga Pengajuan",
-                    p.status_produk AS "Status",
-                    COALESCE(i.grade, '-') AS "Grade"
-                FROM kapten.produk_kopi p
-                JOIN kapten.jenis_kopi jk ON jk.id_jenis = p.id_jenis
-                LEFT JOIN kapten.inspeksi i ON i.id_produk = p.id_produk
-                WHERE p.id_petani = @id_petani
-                ORDER BY p.id_produk DESC;
-                """,
-                new NpgsqlParameter("id_petani", NpgsqlDbType.Integer) { Value = idPetani });
+            return DbExecutor.QueryTable(
+                @"SELECT *
+                  FROM kapten.vw_produk_detail
+                  WHERE id_inspektor = @idInspektor
+                  ORDER BY tgl_inspeksi DESC;",
+
+                new NpgsqlParameter(
+                    "idInspektor",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idInspektor
+                });
         }
 
-        public static DataTable GetLelangPembeli()
+        // =====================================================
+        // LAPORAN ADMIN
+        // =====================================================
+
+        public static DataTable AmbilLaporanGroupBy()
         {
-            return GetDataTable(
-                """
-                SELECT
-                    p.nama_produk AS "Produk",
-                    jk.nama_jenis AS "Jenis Kopi",
-                    COALESCE(i.grade, '-') AS "Grade",
-                    l.bid_minimum AS "Bid Minimum",
-                    l.lokasi_lelang AS "Lokasi",
-                    l.status_lelang AS "Status"
-                FROM kapten.lelang l
-                JOIN kapten.produk_kopi p ON p.id_produk = l.id_produk
-                JOIN kapten.jenis_kopi jk ON jk.id_jenis = p.id_jenis
-                LEFT JOIN kapten.inspeksi i ON i.id_produk = p.id_produk
-                ORDER BY l.tgl_mulai DESC;
-                """);
+            return DbExecutor.QueryTable(
+                "SELECT * FROM kapten.vw_groupby_produk;");
         }
 
-        public static DataTable GetProdukPendingInspeksi()
+        public static DataTable AmbilLaporanPerformaPetani()
         {
-            return GetDataTable(
-                """
-                SELECT
-                    p.nama_produk AS "Produk",
-                    u.nama_lengkap AS "Petani",
-                    jk.nama_jenis AS "Jenis Kopi",
-                    p.berat_kg AS "Berat Kg",
-                    p.harga_pengajuan AS "Harga Pengajuan",
-                    p.status_produk AS "Status"
-                FROM kapten.produk_kopi p
-                JOIN kapten.users u ON u.id_user = p.id_petani
-                JOIN kapten.jenis_kopi jk ON jk.id_jenis = p.id_jenis
-                WHERE p.status_produk = 'pending_inspeksi'
-                ORDER BY p.id_produk DESC;
-                """);
+            return DbExecutor.QueryTable(
+                "SELECT * FROM kapten.vw_groupby_performa_petani;");
+        }
+
+        public static DataTable AmbilLaporanRollup()
+        {
+            return DbExecutor.QueryTable(
+                "SELECT * FROM kapten.vw_rollup_produk;");
+        }
+
+        public static DataTable AmbilLaporanCube()
+        {
+            return DbExecutor.QueryTable(
+                "SELECT * FROM kapten.vw_cube_produk;");
+        }
+
+        public static DataTable AmbilLaporanGroupingSets()
+        {
+            return DbExecutor.QueryTable(
+                "SELECT * FROM kapten.vw_grouping_sets_transaksi;");
         }
     }
 }

@@ -69,6 +69,11 @@ namespace WinFormsApp1.Forms.PetaniForm
             Controls.Add(dgvProduk);
         }
 
+        private void InitializeComponent()
+        {
+
+        }
+
         private void LoadProduk()
         {
             try
