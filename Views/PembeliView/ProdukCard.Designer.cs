@@ -34,7 +34,7 @@ namespace WinFormsApp1.Views.PembeliView
             // pgGambar
             // 
             pgGambar.BackgroundImageLayout = ImageLayout.Stretch;
-            pgGambar.Image = Properties.Resources.coffee_placeholder1;
+            pgGambar.Image = Properties.Resources.coffee_placeholder;
             pgGambar.Location = new Point(28, 32);
             pgGambar.Margin = new Padding(6);
             pgGambar.Name = "pgGambar";

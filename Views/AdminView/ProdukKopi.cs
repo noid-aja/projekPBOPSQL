@@ -20,6 +20,11 @@ namespace WinFormsApp1.Views.AdminView
             _roleAktif = roleAktif?.ToLower() ?? "admin";
             InitializeComponent();
             SetupFlowLayoutPanel();
+            if (_roleAktif == "inspektor")
+            {
+                lblFilter.Visible = false;
+                cmbFilter.Visible = false;
+            }
             LoadProduk();
         }
 
@@ -44,7 +49,15 @@ namespace WinFormsApp1.Views.AdminView
         {
             try
             {
-                var dt = Models.ProdukKopiContext.AmbilSemuaProdukDetail();
+                DataTable dt;
+                if (_roleAktif == "inspektor")
+                {
+                    dt = Models.ProdukKopiContext.AmbilSemuaProdukDetail("pending_inspeksi");
+                }
+                else
+                {
+                    dt = Models.ProdukKopiContext.AmbilSemuaProdukDetail();
+                }
                 RenderCards(dt);
                 lblTotal.Text = $"Total: {dt.Rows.Count} produk";
             }

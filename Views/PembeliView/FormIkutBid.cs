@@ -32,6 +32,7 @@ namespace WinFormsApp1.Views.PembeliView
             try
             {
                 flpLelang.Controls.Clear();
+                TransaksiContext.SinkronkanStatusLelang();
                 var dt = LelangContext.AmbilLelangAktifPembeli(_idPembeli);
 
                 lblJumlahLelang.Text = $"{dt.Rows.Count} lelang aktif saat ini";

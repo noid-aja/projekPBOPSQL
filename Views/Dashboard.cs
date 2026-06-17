@@ -80,6 +80,8 @@ namespace WinFormsApp1.Views
                 return;
             }
 
+            TransaksiContext.SinkronkanStatusLelang();
+
             var oopRoles = UserContext.CurrentUser!.GetOopRoles();
             var roleObj = oopRoles.Find(r =>
                 r.NamaRole.Equals(role, StringComparison.OrdinalIgnoreCase));

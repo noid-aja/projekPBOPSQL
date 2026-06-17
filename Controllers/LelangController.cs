@@ -18,7 +18,7 @@ namespace WinFormsApp1.Controllers
             return LelangContext.CariLelangByLokasi(namaLokasi);
         }
 
-        public bool ProsesBukaLelang(int idProduk, string? lokasiLelang)
+        public bool ProsesBukaLelang(int idProduk, string? lokasiLelang, string statusLelang, int durasiMenit)
         {
             if (!UserContext.IsLoggedIn())
             {
@@ -36,7 +36,7 @@ namespace WinFormsApp1.Controllers
 
             try
             {
-                return LelangContext.EksekusiBukaLelang(idProduk, lokasiLelang);
+                return LelangContext.EksekusiBukaLelang(idProduk, lokasiLelang, statusLelang, durasiMenit);
             }
             catch (Exception ex)
             {

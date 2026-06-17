@@ -21,7 +21,6 @@ namespace WinFormsApp1.Models.Roles
             return new List<string>
             {
                 "Lihat Lelang",
-                "Lihat Riwayat Bid",
                 "Lihat Transaksi",
                 "Hasil Lelang"
             };

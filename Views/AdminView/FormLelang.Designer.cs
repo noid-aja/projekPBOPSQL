@@ -14,8 +14,8 @@ namespace WinFormsApp1.Views.AdminView
             lblJudul = new Label();
             lblPilihProduk = new Label();
             cmbProduk = new ComboBox();
-            lblLokasi = new Label();
-            tbLokasi = new TextBox();
+            lblFilterStatus = new Label();
+            cmbFilterStatus = new ComboBox();
             btnBukaLelang = new Button();
             btnTutupLelang = new Button();
             btnRefresh = new Button();
@@ -23,6 +23,8 @@ namespace WinFormsApp1.Views.AdminView
             dgvLelang = new DataGridView();
             btnLihatPeserta = new Button();
             panelAksi = new Panel();
+            lblStatusBuka = new Label();
+            cmbStatusBuka = new ComboBox();
             panel2 = new Panel();
             ((System.ComponentModel.ISupportInitialize)dgvLelang).BeginInit();
             panelAksi.SuspendLayout();
@@ -60,26 +62,27 @@ namespace WinFormsApp1.Views.AdminView
             cmbProduk.Size = new Size(419, 53);
             cmbProduk.TabIndex = 1;
             // 
-            // lblLokasi
+            // lblFilterStatus
             // 
-            lblLokasi.Font = new Font("Yu Gothic UI", 12F);
-            lblLokasi.ForeColor = Color.White;
-            lblLokasi.Location = new Point(15, 111);
-            lblLokasi.Margin = new Padding(4, 0, 4, 0);
-            lblLokasi.Name = "lblLokasi";
-            lblLokasi.Size = new Size(181, 43);
-            lblLokasi.TabIndex = 2;
-            lblLokasi.Text = "Lokasi:";
-            lblLokasi.TextAlign = ContentAlignment.MiddleLeft;
+            lblFilterStatus.Font = new Font("Yu Gothic UI", 12F);
+            lblFilterStatus.ForeColor = Color.White;
+            lblFilterStatus.Location = new Point(15, 111);
+            lblFilterStatus.Margin = new Padding(4, 0, 4, 0);
+            lblFilterStatus.Name = "lblFilterStatus";
+            lblFilterStatus.Size = new Size(318, 43);
+            lblFilterStatus.TabIndex = 2;
+            lblFilterStatus.Text = "Filter Status Lelang:";
+            lblFilterStatus.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // tbLokasi
+            // cmbFilterStatus
             // 
-            tbLokasi.Location = new Point(334, 111);
-            tbLokasi.Margin = new Padding(4, 6, 4, 6);
-            tbLokasi.Name = "tbLokasi";
-            tbLokasi.PlaceholderText = "Opsional...";
-            tbLokasi.Size = new Size(419, 50);
-            tbLokasi.TabIndex = 3;
+            cmbFilterStatus.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbFilterStatus.Location = new Point(334, 111);
+            cmbFilterStatus.Margin = new Padding(4, 6, 4, 6);
+            cmbFilterStatus.Name = "cmbFilterStatus";
+            cmbFilterStatus.Size = new Size(419, 53);
+            cmbFilterStatus.TabIndex = 3;
+            cmbFilterStatus.SelectedIndexChanged += cmbFilterStatus_SelectedIndexChanged;
             // 
             // btnBukaLelang
             // 
@@ -87,10 +90,10 @@ namespace WinFormsApp1.Views.AdminView
             btnBukaLelang.FlatAppearance.BorderSize = 0;
             btnBukaLelang.FlatStyle = FlatStyle.Flat;
             btnBukaLelang.ForeColor = Color.White;
-            btnBukaLelang.Location = new Point(802, 37);
+            btnBukaLelang.Location = new Point(1210, 37);
             btnBukaLelang.Margin = new Padding(4, 6, 4, 6);
             btnBukaLelang.Name = "btnBukaLelang";
-            btnBukaLelang.Size = new Size(264, 52);
+            btnBukaLelang.Size = new Size(220, 52);
             btnBukaLelang.TabIndex = 4;
             btnBukaLelang.Text = "✅ Buka Lelang";
             btnBukaLelang.UseVisualStyleBackColor = false;
@@ -102,14 +105,35 @@ namespace WinFormsApp1.Views.AdminView
             btnTutupLelang.FlatAppearance.BorderSize = 0;
             btnTutupLelang.FlatStyle = FlatStyle.Flat;
             btnTutupLelang.ForeColor = Color.White;
-            btnTutupLelang.Location = new Point(802, 106);
+            btnTutupLelang.Location = new Point(1210, 106);
             btnTutupLelang.Margin = new Padding(4, 6, 4, 6);
             btnTutupLelang.Name = "btnTutupLelang";
-            btnTutupLelang.Size = new Size(264, 52);
+            btnTutupLelang.Size = new Size(220, 52);
             btnTutupLelang.TabIndex = 5;
             btnTutupLelang.Text = "❌ Tutup Lelang";
             btnTutupLelang.UseVisualStyleBackColor = false;
             btnTutupLelang.Click += btnTutupLelang_Click;
+            // 
+            // lblStatusBuka
+            // 
+            lblStatusBuka.Font = new Font("Yu Gothic UI", 12F);
+            lblStatusBuka.ForeColor = Color.White;
+            lblStatusBuka.Location = new Point(780, 35);
+            lblStatusBuka.Margin = new Padding(4, 0, 4, 0);
+            lblStatusBuka.Name = "lblStatusBuka";
+            lblStatusBuka.Size = new Size(180, 43);
+            lblStatusBuka.TabIndex = 8;
+            lblStatusBuka.Text = "Status Awal:";
+            lblStatusBuka.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // cmbStatusBuka
+            // 
+            cmbStatusBuka.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbStatusBuka.Location = new Point(970, 36);
+            cmbStatusBuka.Margin = new Padding(4, 6, 4, 6);
+            cmbStatusBuka.Name = "cmbStatusBuka";
+            cmbStatusBuka.Size = new Size(220, 53);
+            cmbStatusBuka.TabIndex = 9;
             // 
             // btnRefresh
             // 
@@ -156,7 +180,7 @@ namespace WinFormsApp1.Views.AdminView
             btnLihatPeserta.FlatAppearance.BorderSize = 0;
             btnLihatPeserta.FlatStyle = FlatStyle.Flat;
             btnLihatPeserta.ForeColor = Color.White;
-            btnLihatPeserta.Location = new Point(1093, 35);
+            btnLihatPeserta.Location = new Point(1450, 35);
             btnLihatPeserta.Margin = new Padding(4, 6, 4, 6);
             btnLihatPeserta.Name = "btnLihatPeserta";
             btnLihatPeserta.Size = new Size(160, 123);
@@ -173,11 +197,13 @@ namespace WinFormsApp1.Views.AdminView
             panelAksi.Controls.Add(lblPilihProduk);
             panelAksi.Controls.Add(btnLihatPeserta);
             panelAksi.Controls.Add(cmbProduk);
-            panelAksi.Controls.Add(lblLokasi);
-            panelAksi.Controls.Add(tbLokasi);
+            panelAksi.Controls.Add(lblFilterStatus);
+            panelAksi.Controls.Add(cmbFilterStatus);
             panelAksi.Controls.Add(btnBukaLelang);
             panelAksi.Controls.Add(btnTutupLelang);
             panelAksi.Controls.Add(btnRefresh);
+            panelAksi.Controls.Add(lblStatusBuka);
+            panelAksi.Controls.Add(cmbStatusBuka);
             panelAksi.ForeColor = Color.White;
             panelAksi.Location = new Point(3, 96);
             panelAksi.Margin = new Padding(4, 6, 4, 6);
@@ -219,8 +245,8 @@ namespace WinFormsApp1.Views.AdminView
         private System.Windows.Forms.Label lblJudul;
         private System.Windows.Forms.Label lblPilihProduk;
         private System.Windows.Forms.ComboBox cmbProduk;
-        private System.Windows.Forms.Label lblLokasi;
-        private System.Windows.Forms.TextBox tbLokasi;
+        private System.Windows.Forms.Label lblFilterStatus;
+        private System.Windows.Forms.ComboBox cmbFilterStatus;
         private System.Windows.Forms.Button btnBukaLelang;
         private System.Windows.Forms.Button btnTutupLelang;
         private System.Windows.Forms.Button btnRefresh;
@@ -229,5 +255,7 @@ namespace WinFormsApp1.Views.AdminView
         private System.Windows.Forms.Panel panelAksi;
         private Panel panel2;
         private System.Windows.Forms.Button btnLihatPeserta;
+        private System.Windows.Forms.Label lblStatusBuka;
+        private System.Windows.Forms.ComboBox cmbStatusBuka;
     }
 }

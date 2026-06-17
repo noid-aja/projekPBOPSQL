@@ -264,23 +264,13 @@ INSERT INTO kapten.roles (id_role, nama_role) VALUES
 INSERT INTO kapten.users
 (id_user, nama_lengkap, username, password, no_telp, is_aktif)
 VALUES
-(1, 'Admin', 'admin', 'admin123', '081111111111', TRUE),
-(2, 'Pak Budi', 'budi', 'budi123', '082222222222', TRUE),
-(3, 'Bu Sari', 'sari', 'sari123', '083333333333', TRUE),
-(4, 'Pak Joko', 'joko', 'joko123', '084444444444', TRUE),
-(5, 'CV Kopi Makmur', 'makmur', 'makmur123', '085555555555', TRUE),
-(6, 'Rina QC', 'rinaqc', 'rina123', '086666666666', TRUE);
+(1, 'Admin', 'admin', 'admin123', '081111111111', TRUE);
 
 -- =========================================================
 -- SEED DATA: user_roles
 -- =========================================================
 INSERT INTO kapten.user_roles (id_user, id_role) VALUES
-(1, 1), -- Admin = admin
-(2, 2), -- Pak Budi = petani
-(3, 2), -- Bu Sari = petani
-(4, 3), -- Pak Joko = pembeli
-(5, 3), -- CV Kopi Makmur = pembeli
-(6, 4); -- Rina QC = inspektor
+(1, 1); -- Admin = admin
 
 -- =========================================================
 -- SEED DATA: jenis_kopi
@@ -293,19 +283,6 @@ VALUES
 (3, 'Liberika', 'Jenis kopi liberika');
 
 -- =========================================================
--- SEED DATA: produk_kopi
--- Produk masih pending inspeksi.
--- Belum masuk lelang.
--- =========================================================
-INSERT INTO kapten.produk_kopi
-(id_produk, id_petani, id_jenis, nama_produk, berat_kg, harga_pengajuan, deskripsi, status_produk)
-VALUES
-(1, 2, 1, 'Kopi Arabika Gayo', 25.00, 1200000, 'Kopi arabika dari petani Pak Budi', 'pending_inspeksi'),
-(2, 2, 2, 'Kopi Robusta Lampung', 40.00, 1600000, 'Kopi robusta hasil panen terbaru', 'pending_inspeksi'),
-(3, 3, 1, 'Kopi Arabika Kintamani', 30.00, 1500000, 'Kopi arabika dari petani Bu Sari', 'pending_inspeksi'),
-(4, 3, 3, 'Kopi Liberika Riau', 20.00, 900000, 'Kopi liberika kualitas lokal', 'pending_inspeksi');
-
--- =========================================================
 -- CEK DATA
 -- =========================================================
 SELECT * FROM kapten.users;
@@ -316,4 +293,4 @@ SELECT * FROM kapten.produk_kopi;
 SELECT * FROM kapten.inspeksi;
 SELECT * FROM kapten.lelang;
 SELECT * FROM kapten.bid;
-SELECT * FROM kapten.pemenang_lelang;
+SELECT * FROM kapten.pemenang_lelang;

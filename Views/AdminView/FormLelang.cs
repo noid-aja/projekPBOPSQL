@@ -14,15 +14,43 @@ namespace WinFormsApp1.Views.AdminView
         public FormLelang()
         {
             InitializeComponent();
+            SetupFilterStatus();
+            SetupStatusBuka();
             LoadLelang();
             LoadProdukSiapLelang();
+        }
+
+        private void SetupFilterStatus()
+        {
+            cmbFilterStatus.Items.Clear();
+            cmbFilterStatus.Items.Add("Semua");
+            cmbFilterStatus.Items.Add("Dijadwalkan");
+            cmbFilterStatus.Items.Add("Berlangsung");
+            cmbFilterStatus.Items.Add("Selesai");
+            cmbFilterStatus.Items.Add("Dibatalkan");
+            cmbFilterStatus.SelectedIndex = 0;
+        }
+
+        private void SetupStatusBuka()
+        {
+            cmbStatusBuka.Items.Clear();
+            cmbStatusBuka.Items.Add("Berlangsung (2 Menit)");
+            cmbStatusBuka.Items.Add("Dijadwalkan (3 Menit)");
+            cmbStatusBuka.SelectedIndex = 0;
+        }
+
+        private void cmbFilterStatus_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            LoadLelang();
         }
 
         private void LoadLelang()
         {
             try
             {
-                var dt = LelangContext.AmbilSemuaLelangDataTable();
+                TransaksiContext.SinkronkanStatusLelang();
+                string status = cmbFilterStatus?.SelectedItem?.ToString() ?? "Semua";
+                var dt = LelangContext.AmbilSemuaLelangDataTable(status);
                 dgvLelang.DataSource = dt;
                 if (dgvLelang.Columns.Count > 0)
                     dgvLelang.Columns[dgvLelang.Columns.Count - 1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -58,15 +86,29 @@ namespace WinFormsApp1.Views.AdminView
                 MessageBox.Show("Pilih produk yang akan dilelang!", "Validasi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-            string? lokasi = string.IsNullOrWhiteSpace(tbLokasi.Text) ? null : tbLokasi.Text.Trim();
 
-            bool ok = _lelangController.ProsesBukaLelang(item.IdProduk, lokasi);
+            string statusBuka = "berlangsung";
+            int durasi = 2;
+
+            if (cmbStatusBuka.SelectedItem != null)
+            {
+                string selected = cmbStatusBuka.SelectedItem.ToString()!.ToLower();
+                if (selected.Contains("jadwal"))
+                {
+                    statusBuka = "dijadwalkan";
+                    durasi = 3;
+                }
+            }
+
+            bool ok = _lelangController.ProsesBukaLelang(item.IdProduk, null, statusBuka, durasi);
             if (ok)
             {
-                MessageBox.Show("Lelang berhasil dibuka! Durasi 3 menit.", "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                string msg = statusBuka == "dijadwalkan" 
+                    ? "Lelang berhasil dijadwalkan! Durasi 3 menit." 
+                    : "Lelang berhasil dibuka! Durasi 2 menit.";
+                MessageBox.Show(msg, "Sukses", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadLelang();
                 LoadProdukSiapLelang();
-                tbLokasi.Clear();
             }
         }
 

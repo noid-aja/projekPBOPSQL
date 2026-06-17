@@ -134,6 +134,33 @@ namespace WinFormsApp1.Models
                 });
         }
 
+        public static bool PembeliBayar(
+            int idTransaksi,
+            string metodePembayaran)
+        {
+            DbExecutor.ExecuteCall(
+                @"CALL kapten.sp_pembeli_bayar(
+                    @idTransaksi,
+                    @metodePembayaran
+                );",
+
+                new NpgsqlParameter(
+                    "idTransaksi",
+                    NpgsqlDbType.Integer)
+                {
+                    Value = idTransaksi
+                },
+
+                new NpgsqlParameter(
+                    "metodePembayaran",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = metodePembayaran
+                });
+
+            return true;
+        }
+
         public static DataTable AmbilTransaksiUntukGrid(string role, int idUser)
         {
             string query = role.ToLower() switch
@@ -141,20 +168,20 @@ namespace WinFormsApp1.Models
                 "admin" => @"
                     select id_transaksi, nama_produk,
                            nama_pembeli as pembeli, nama_petani as petani,
-                           total_bayar as harga_final, tgl_transaksi, status_bayar as status_pembayaran, 'Transfer' as metode_pembayaran
+                           total_bayar as harga_final, tgl_transaksi, status_bayar as status_pembayaran, metode_pembayaran
                     from kapten.vw_transaksi_detail
                     order by id_transaksi desc",
                 "petani" => @"
                     select id_transaksi, nama_produk,
                            nama_pembeli as pembeli,
-                           total_bayar as harga_final, tgl_transaksi, status_bayar as status_pembayaran, 'Transfer' as metode_pembayaran
+                           total_bayar as harga_final, tgl_transaksi, status_bayar as status_pembayaran, metode_pembayaran
                     from kapten.vw_transaksi_detail
                     where id_petani = @idUser
                     order by id_transaksi desc",
                 "pembeli" => @"
                     select id_transaksi, nama_produk,
                            nama_petani as petani,
-                           total_bayar as harga_final, tgl_transaksi, status_bayar as status_pembayaran, 'Transfer' as metode_pembayaran
+                           total_bayar as harga_final, tgl_transaksi, status_bayar as status_pembayaran, metode_pembayaran
                     from kapten.vw_transaksi_detail
                     where id_pembeli = @idUser
                     order by id_transaksi desc",
@@ -168,31 +195,44 @@ namespace WinFormsApp1.Models
             return DbExecutor.QueryTable(query);
         }
 
-        public static void CekDanTutupLelangExpired()
+        public static void SinkronkanStatusLelang()
         {
-            DataTable lelangExpired =
-                DbExecutor.QueryTable(@"
-                    SELECT id_lelang
-                    FROM kapten.lelang
-                    WHERE status_lelang = 'berlangsung'
-                      AND tgl_akhir <= CURRENT_TIMESTAMP
-                    ORDER BY id_lelang;");
-
-            foreach (DataRow row in lelangExpired.Rows)
+            try
             {
-                int idLelang =
-                    Convert.ToInt32(row["id_lelang"]);
+                // 1. Auto-start scheduled auctions whose start time has arrived
+                DbExecutor.ExecuteCall(@"
+                    UPDATE kapten.lelang
+                    SET status_lelang = 'berlangsung'
+                    WHERE status_lelang = 'dijadwalkan'
+                      AND tgl_mulai <= LOCALTIMESTAMP;");
 
-                try
+                // 2. Query and close expired auctions
+                DataTable lelangExpired =
+                    DbExecutor.QueryTable(@"
+                        SELECT id_lelang
+                        FROM kapten.lelang
+                        WHERE status_lelang = 'berlangsung'
+                          AND tgl_akhir <= LOCALTIMESTAMP
+                        ORDER BY id_lelang;");
+
+                foreach (DataRow row in lelangExpired.Rows)
                 {
-                    TutupLelang(idLelang);
+                    int idLelang = Convert.ToInt32(row["id_lelang"]);
+                    try
+                    {
+                        TutupLelang(idLelang);
+                    }
+                    catch (PostgresException ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine(
+                            $"Gagal menutup lelang {idLelang}: " +
+                            ex.MessageText);
+                    }
                 }
-                catch (PostgresException ex)
-                {
-                    System.Diagnostics.Debug.WriteLine(
-                        $"Gagal menutup lelang {idLelang}: " +
-                        ex.MessageText);
-                }
+            }
+            catch (System.Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error SinkronkanStatusLelang: {ex.Message}");
             }
         }
     }

@@ -26,7 +26,7 @@ namespace WinFormsApp1.Views.PembeliView
             _produkKopi = produk;
             _waktuSelesaiLelang = lelang.TglAkhir;
 
-            pgGambar.Image = Properties.Resources.jenis_kopi;
+            pgGambar.Image = Properties.Resources.coffee_placeholder;
 
             lblNamaKopi.Text = produk.NamaProduk;
             lblBeratAtauGrade.Text = $"Berat: {produk.BeratKg} Kg | Grade: {grade}";

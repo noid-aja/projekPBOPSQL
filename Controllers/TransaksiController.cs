@@ -122,5 +122,55 @@ namespace WinFormsApp1.Controllers
                 return false;
             }
         }
+
+        public bool PembeliBayar(int idTransaksi, string metodePembayaran)
+        {
+            if (!UserContext.IsLoggedIn())
+            {
+                MessageBox.Show(
+                    "Login terlebih dahulu.",
+                    "Akses Ditolak",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return false;
+            }
+
+            if (idTransaksi <= 0)
+            {
+                MessageBox.Show(
+                    "Pilih transaksi terlebih dahulu.",
+                    "Validasi",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return false;
+            }
+
+            try
+            {
+                return TransaksiContext.PembeliBayar(idTransaksi, metodePembayaran);
+            }
+            catch (PostgresException ex)
+            {
+                MessageBox.Show(
+                    ex.MessageText,
+                    "Gagal Pembayaran",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Gagal memproses pembayaran: " + ex.Message,
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+
+                return false;
+            }
+        }
     }
 }

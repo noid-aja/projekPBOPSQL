@@ -33,7 +33,7 @@ namespace WinFormsApp1.Views.AdminView
             _roleAktif = roleAktif;
             _onRefreshRequired = onRefreshRequired;
 
-            pgGambar.Image = Properties.Resources.jenis_kopi;
+            pgGambar.Image = Properties.Resources.coffee_placeholder;
 
             lblNamaKopi.Text = namaProduk;
             lblPetani.Text = $"Petani: {petani}";

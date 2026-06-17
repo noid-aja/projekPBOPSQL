@@ -225,6 +225,7 @@ CREATE TABLE kapten.transaksi (
     biaya_komisi NUMERIC(12,2) NOT NULL,
     total_diterima_petani NUMERIC(12,2) NOT NULL,
     status_bayar VARCHAR(30) DEFAULT 'belum_bayar',
+    metode_pembayaran VARCHAR(50) DEFAULT 'Transfer',
 
     CONSTRAINT fk_transaksi_pemenang
         FOREIGN KEY (id_pemenang)
@@ -246,6 +247,7 @@ CREATE TABLE kapten.transaksi (
     CONSTRAINT chk_status_bayar
         CHECK (status_bayar IN (
             'belum_bayar',
+            'menunggu_konfirmasi',
             'lunas',
             'dibatalkan'
         ))

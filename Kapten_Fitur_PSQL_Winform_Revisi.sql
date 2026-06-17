@@ -172,7 +172,7 @@ AS $$
     JOIN kapten.users u ON u.id_user = p.id_petani
     JOIN kapten.jenis_kopi jk ON jk.id_jenis = p.id_jenis
     WHERE l.status_lelang = 'berlangsung'
-      AND CURRENT_TIMESTAMP BETWEEN l.tgl_mulai AND l.tgl_akhir
+      AND LOCALTIMESTAMP BETWEEN l.tgl_mulai AND l.tgl_akhir
       AND p.id_petani <> p_id_pembeli
     ORDER BY l.tgl_akhir, l.id_lelang;
 $$;
@@ -287,151 +287,12 @@ AS $$
     JOIN kapten.jenis_kopi j ON j.id_jenis = p.id_jenis
     LEFT JOIN kapten.inspeksi i ON i.id_produk = p.id_produk
     WHERE l.status_lelang = 'berlangsung'
-      AND CURRENT_TIMESTAMP BETWEEN l.tgl_mulai AND l.tgl_akhir
+      AND LOCALTIMESTAMP BETWEEN l.tgl_mulai AND l.tgl_akhir
       AND p.id_petani <> p_id_pembeli
     ORDER BY l.tgl_akhir ASC;
 $$;
 
-CREATE OR REPLACE PROCEDURE kapten.sp_register_user(
-    p_nama_lengkap VARCHAR,
-    p_username VARCHAR,
-    p_password VARCHAR,
-    p_no_telp VARCHAR,
-    p_nama_role VARCHAR[]
-)
-LANGUAGE plpgsql
-AS $$
-DECLARE
-    v_id_user INT;
-    v_id_role INT;
-    v_role VARCHAR(30);
-	i int;
-BEGIN
-	 IF p_nama_roles IS NULL OR array_length(p_nama_roles, 1) IS NULL THEN
-        RAISE EXCEPTION 'Minimal pilih satu role.';
-    END IF;
 
-    FOR i IN 1..array_length(p_nama_roles, 1) LOOP
-        v_role := LOWER(TRIM(p_nama_roles[i]));
-        IF v_role NOT IN ('petani', 'pembeli', 'inspektor') THEN
-            RAISE EXCEPTION
-                'Role hanya boleh petani, pembeli, atau inspektor.';
-        END IF;
-    END LOOP;
-
-    -- Validasi data user
-    IF NULLIF(TRIM(p_nama_lengkap), '') IS NULL THEN
-        RAISE EXCEPTION
-            'Nama lengkap tidak boleh kosong.';
-    END IF;
-
-    IF NULLIF(TRIM(p_username), '') IS NULL THEN
-        RAISE EXCEPTION
-            'Username tidak boleh kosong.';
-    END IF;
-
-    IF NULLIF(p_password, '') IS NULL THEN
-        RAISE EXCEPTION
-            'Password tidak boleh kosong.';
-    END IF;
-
-    IF p_nama_role IS NULL
-       OR CARDINALITY(p_nama_role) = 0 THEN
-        RAISE EXCEPTION
-            'Minimal pilih satu role.';
-    END IF;
-
-    IF EXISTS (
-        SELECT 1
-        FROM kapten.users
-        WHERE LOWER(username) =
-              LOWER(TRIM(p_username))
-    ) THEN
-        RAISE EXCEPTION
-            'Username % sudah digunakan.',
-            p_username;
-    END IF;
-
-    IF NULLIF(TRIM(p_no_telp), '') IS NOT NULL
-       AND EXISTS (
-           SELECT 1
-           FROM kapten.users
-           WHERE no_telp = TRIM(p_no_telp)
-       ) THEN
-        RAISE EXCEPTION
-            'Nomor telepon sudah digunakan.';
-    END IF;
-
-    -- Validasi semua role sebelum user dibuat
-    FOREACH v_role IN ARRAY p_nama_role
-    LOOP
-        v_role := LOWER(TRIM(v_role));
-
-        IF v_role NOT IN (
-            'petani',
-            'pembeli',
-            'inspektor'
-        ) THEN
-            RAISE EXCEPTION
-                'Role % tidak diperbolehkan.',
-                v_role;
-        END IF;
-
-        IF NOT EXISTS (
-            SELECT 1
-            FROM kapten.roles
-            WHERE LOWER(nama_role) = v_role
-        ) THEN
-            RAISE EXCEPTION
-                'Role % tidak ditemukan.',
-                v_role;
-        END IF;
-    END LOOP;
-
-    -- Buat user satu kali
-    INSERT INTO kapten.users (
-        nama_lengkap,
-        username,
-        password,
-        no_telp,
-        is_aktif
-    )
-    VALUES (
-        TRIM(p_nama_lengkap),
-        TRIM(p_username),
-        p_password,
-        NULLIF(TRIM(p_no_telp), ''),
-        TRUE
-    )
-    RETURNING id_user
-    INTO v_id_user;
-
-    -- Masukkan seluruh role
-    FOREACH v_role IN ARRAY p_nama_role
-    LOOP
-        v_role := LOWER(TRIM(v_role));
-
-        SELECT id_role
-        INTO v_id_role
-        FROM kapten.roles
-        WHERE LOWER(nama_role) = v_role;
-
-        INSERT INTO kapten.user_roles (
-            id_user,
-            id_role,
-            is_role_aktif
-        )
-        VALUES (
-            v_id_user,
-            v_id_role,
-            TRUE
-        )
-        ON CONFLICT (id_user, id_role)
-        DO UPDATE SET
-            is_role_aktif = TRUE;
-    END LOOP;
-END;
-$$;
 
 CREATE OR REPLACE PROCEDURE kapten.sp_register_user(
     p_nama_lengkap VARCHAR,
@@ -548,10 +409,6 @@ BEGIN
 END;
 $$;
 
-select * from kapten.user_roles
-
-DROP PROCEDURE kapten.sp_register_user
-
 -- update profile
 CREATE OR REPLACE PROCEDURE kapten.sp_update_profile(
     p_id_user INT,
@@ -593,7 +450,7 @@ BEGIN
         RAISE EXCEPTION 'User ID % tidak ditemukan.', p_id_user;
     END IF;
 END;
-$$;''
+$$;
 
 -- update profile
 CREATE OR REPLACE PROCEDURE kapten.sp_update_profile(
@@ -783,10 +640,7 @@ BEGIN
     RETURN NEW;
 END;
 $$;
-
-select * from kapten.users
-select * from kapten.user_roles
-
+-- trigger definitions
 DROP TRIGGER IF EXISTS before_lelang_validasi_produk ON kapten.lelang;
 CREATE TRIGGER before_lelang_validasi_produk
 BEFORE INSERT OR UPDATE OF id_produk
@@ -818,6 +672,33 @@ ON kapten.lelang
 FOR EACH ROW
 EXECUTE FUNCTION kapten.trg_sinkron_produk_setelah_lelang();
 
+CREATE OR REPLACE FUNCTION kapten.trg_sinkron_produk_setelah_lelang_update()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    IF NEW.status_lelang <> OLD.status_lelang THEN
+        UPDATE kapten.produk_kopi
+        SET status_produk = CASE
+            WHEN NEW.status_lelang = 'berlangsung' THEN 'berlangsung'
+            WHEN NEW.status_lelang = 'dijadwalkan' THEN 'dijadwalkan_lelang'
+            WHEN NEW.status_lelang = 'selesai' THEN 'terjual'
+            WHEN NEW.status_lelang = 'dibatalkan' THEN 'dibatalkan'
+            ELSE status_produk
+        END
+        WHERE id_produk = NEW.id_produk;
+    END IF;
+    RETURN NEW;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS after_lelang_update_sinkron_produk ON kapten.lelang;
+CREATE TRIGGER after_lelang_update_sinkron_produk
+AFTER UPDATE OF status_lelang
+ON kapten.lelang
+FOR EACH ROW
+EXECUTE FUNCTION kapten.trg_sinkron_produk_setelah_lelang_update();
+
 -- Validasi setiap bid.
 CREATE OR REPLACE FUNCTION kapten.trg_validasi_bid()
 RETURNS TRIGGER
@@ -843,7 +724,7 @@ BEGIN
     END IF;
 
     IF v_status_lelang <> 'berlangsung'
-       OR CURRENT_TIMESTAMP NOT BETWEEN v_tgl_mulai AND v_tgl_akhir THEN
+       OR LOCALTIMESTAMP NOT BETWEEN v_tgl_mulai AND v_tgl_akhir THEN
         RAISE EXCEPTION 'Bid hanya bisa dilakukan saat lelang sedang berlangsung.';
     END IF;
 
@@ -1058,7 +939,8 @@ $$;
 CREATE OR REPLACE PROCEDURE kapten.sp_buka_lelang(
     p_id_produk INT,
     p_lokasi VARCHAR DEFAULT NULL,
-    p_durasi_menit INT DEFAULT 3
+    p_durasi_menit INT DEFAULT 3,
+    p_status VARCHAR DEFAULT 'berlangsung'
 )
 LANGUAGE plpgsql
 AS $$
@@ -1141,10 +1023,10 @@ BEGIN
         v_tgl_mulai,
         v_tgl_akhir,
         NULLIF(TRIM(p_lokasi), ''),
-        'berlangsung'
+        p_status
     );
 
-    -- Status produk menjadi 'berlangsung'
+    -- Status produk menjadi 'berlangsung' atau 'dijadwalkan_lelang'
     -- melalui trigger after_lelang_sinkron_produk.
 END;
 $$;
@@ -1182,8 +1064,8 @@ BEGIN
     UPDATE kapten.lelang
     SET tgl_akhir = tgl_akhir + INTERVAL '10 seconds'
     WHERE id_lelang = p_id_lelang
-      AND tgl_akhir > CURRENT_TIMESTAMP
-      AND tgl_akhir - CURRENT_TIMESTAMP <= INTERVAL '1 minute';
+      AND tgl_akhir > LOCALTIMESTAMP
+      AND tgl_akhir - LOCALTIMESTAMP <= INTERVAL '1 minute';
 END;
 $$;
 
@@ -1230,8 +1112,8 @@ BEGIN
     IF NOT FOUND THEN
         UPDATE kapten.lelang
         SET status_lelang = 'dibatalkan',
-            tgl_akhir = CASE WHEN CURRENT_TIMESTAMP > tgl_mulai
-                             THEN LEAST(tgl_akhir, CURRENT_TIMESTAMP)
+            tgl_akhir = CASE WHEN LOCALTIMESTAMP > tgl_mulai
+                             THEN LEAST(tgl_akhir, LOCALTIMESTAMP)
                              ELSE tgl_akhir END
         WHERE id_lelang = p_id_lelang;
 
@@ -1255,8 +1137,8 @@ BEGIN
 
     UPDATE kapten.lelang
     SET status_lelang = 'selesai',
-        tgl_akhir = CASE WHEN CURRENT_TIMESTAMP > tgl_mulai
-                         THEN LEAST(tgl_akhir, CURRENT_TIMESTAMP)
+        tgl_akhir = CASE WHEN LOCALTIMESTAMP > tgl_mulai
+                         THEN LEAST(tgl_akhir, LOCALTIMESTAMP)
                          ELSE tgl_akhir END
     WHERE id_lelang = p_id_lelang;
 
@@ -1299,6 +1181,20 @@ BEGIN
     UPDATE kapten.produk_kopi
     SET status_produk = CASE WHEN v_status = 'lunas' THEN 'terjual' ELSE 'dibatalkan' END
     WHERE id_produk = v_id_produk;
+END;
+$$;
+
+CREATE OR REPLACE PROCEDURE kapten.sp_pembeli_bayar(
+    p_id_transaksi INT,
+    p_metode_pembayaran VARCHAR
+)
+LANGUAGE plpgsql
+AS $$
+BEGIN
+    UPDATE kapten.transaksi
+    SET status_bayar = 'menunggu_konfirmasi',
+        metode_pembayaran = p_metode_pembayaran
+    WHERE id_transaksi = p_id_transaksi;
 END;
 $$;
 
@@ -1393,8 +1289,8 @@ BEGIN
     UPDATE kapten.lelang
     SET tgl_akhir = tgl_akhir + INTERVAL '10 seconds'
     WHERE id_lelang = p_id_lelang
-      AND tgl_akhir > CURRENT_TIMESTAMP
-      AND tgl_akhir - CURRENT_TIMESTAMP <= INTERVAL '1 minute';
+      AND tgl_akhir > LOCALTIMESTAMP
+      AND tgl_akhir - LOCALTIMESTAMP <= INTERVAL '1 minute';
 END;
 $$;
 
@@ -1548,6 +1444,7 @@ SELECT
     t.persentase_komisi,
     t.biaya_komisi,
     t.total_diterima_petani,
+    t.metode_pembayaran,
     l.id_lelang,
     p.id_produk,
     p.nama_produk,

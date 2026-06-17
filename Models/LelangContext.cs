@@ -44,13 +44,16 @@ namespace WinFormsApp1.Models
 
         public static bool EksekusiBukaLelang(
             int idProduk,
-            string? lokasiLelang)
+            string? lokasiLelang,
+            string statusLelang,
+            int durasiMenit)
         {
             DbExecutor.ExecuteCall(
                 @"CALL kapten.sp_buka_lelang(
                     @idProduk,
                     @lokasi,
-                    @durasiMenit
+                    @durasiMenit,
+                    @statusLelang
                 );",
 
                 new NpgsqlParameter(
@@ -73,7 +76,14 @@ namespace WinFormsApp1.Models
                     "durasiMenit",
                     NpgsqlDbType.Integer)
                 {
-                    Value = 3
+                    Value = durasiMenit
+                },
+
+                new NpgsqlParameter(
+                    "statusLelang",
+                    NpgsqlDbType.Varchar)
+                {
+                    Value = statusLelang
                 });
 
             return true;
@@ -197,13 +207,31 @@ namespace WinFormsApp1.Models
 
         public static DataTable AmbilSemuaLelangDataTable()
         {
+            return AmbilSemuaLelangDataTable("Semua");
+        }
+
+        public static DataTable AmbilSemuaLelangDataTable(string status)
+        {
+            if (string.IsNullOrEmpty(status) || status.Equals("Semua", StringComparison.OrdinalIgnoreCase))
+            {
+                return DbExecutor.QueryTable(@"
+                    SELECT id_lelang, nama_produk, bid_minimum,
+                           tgl_mulai, tgl_akhir, lokasi_lelang, status_lelang AS status,
+                           COALESCE(bid_tertinggi, 0) AS bid_tertinggi,
+                           jumlah_bid
+                    FROM kapten.vw_lelang_detail
+                    ORDER BY id_lelang DESC;");
+            }
+
             return DbExecutor.QueryTable(@"
                 SELECT id_lelang, nama_produk, bid_minimum,
                        tgl_mulai, tgl_akhir, lokasi_lelang, status_lelang AS status,
                        COALESCE(bid_tertinggi, 0) AS bid_tertinggi,
                        jumlah_bid
                 FROM kapten.vw_lelang_detail
-                ORDER BY id_lelang DESC;");
+                WHERE status_lelang = @status
+                ORDER BY id_lelang DESC;",
+                new NpgsqlParameter("status", NpgsqlDbType.Varchar) { Value = status.ToLower().Trim() });
         }
     }
 }

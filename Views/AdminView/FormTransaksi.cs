@@ -28,18 +28,29 @@ namespace WinFormsApp1.Views.AdminView
                     lblJudul.Text = "💳 Semua Transaksi";
                     btnBayar.Text = "✅ Konfirmasi Lunas";
                     btnBayar.Visible = true;
+                    lblMetode.Visible = false;
+                    cmbMetode.Visible = false;
                     break;
                 case "petani":
                     lblJudul.Text = "💳 Transaksi Produk Saya";
                     btnBayar.Visible = false;
+                    lblMetode.Visible = false;
+                    cmbMetode.Visible = false;
                     break;
                 case "pembeli":
                     lblJudul.Text = "💳 Transaksi Saya";
-                    btnBayar.Visible = false;
+                    btnBayar.Text = "💳 Bayar Sekarang";
+                    btnBayar.Visible = true;
+                    lblMetode.Visible = true;
+                    cmbMetode.Visible = true;
+                    if (cmbMetode.Items.Count > 0)
+                        cmbMetode.SelectedIndex = 0;
                     break;
                 default:
                     lblJudul.Text = "💳 Transaksi";
                     btnBayar.Visible = false;
+                    lblMetode.Visible = false;
+                    cmbMetode.Visible = false;
                     break;
             }
         }
@@ -70,16 +81,47 @@ namespace WinFormsApp1.Views.AdminView
                 return;
             }
 
+            int idTransaksi = Convert.ToInt32(dgvTransaksi.SelectedRows[0].Cells["id_transaksi"].Value);
             string statusBayar = dgvTransaksi.SelectedRows[0].Cells["status_pembayaran"].Value?.ToString() ?? "";
             string statusNormalized = statusBayar.ToLower().Replace("_", "");
 
-            if (statusNormalized != "belumbayar")
+            if (_role == "pembeli")
+            {
+                if (statusNormalized != "belumbayar")
+                {
+                    MessageBox.Show("Transaksi ini sudah dibayar atau sedang diproses.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                string metode = cmbMetode.SelectedItem?.ToString() ?? "Transfer";
+
+                try
+                {
+                    var controller = new WinFormsApp1.Controllers.TransaksiController();
+                    bool sukses = controller.PembeliBayar(idTransaksi, metode);
+                    if (sukses)
+                    {
+                        MessageBox.Show(
+                            $"Permintaan pembayaran menggunakan metode {metode} berhasil dikirim! Menunggu konfirmasi admin.",
+                            "Sukses",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
+                        LoadTransaksi();
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Gagal memproses pembayaran: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                return;
+            }
+
+            // Code for admin below
+            if (statusNormalized != "belumbayar" && statusNormalized != "menunggukonfirmasi")
             {
                 MessageBox.Show("Transaksi ini sudah dibayar atau tidak valid.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-
-            int idTransaksi = Convert.ToInt32(dgvTransaksi.SelectedRows[0].Cells["id_transaksi"].Value);
 
             try
             {
