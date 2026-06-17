@@ -51,9 +51,10 @@
             linkregister.Cursor = Cursors.Hand;
             linkregister.Font = new Font("Segoe UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             linkregister.LinkColor = Color.White;
-            linkregister.Location = new Point(213, 302);
+            linkregister.Location = new Point(396, 644);
+            linkregister.Margin = new Padding(6, 0, 6, 0);
             linkregister.Name = "linkregister";
-            linkregister.Size = new Size(116, 20);
+            linkregister.Size = new Size(221, 40);
             linkregister.TabIndex = 6;
             linkregister.TabStop = true;
             linkregister.Text = "Daftar Sekarang";
@@ -66,11 +67,11 @@
             tbusr.BorderStyle = BorderStyle.None;
             tbusr.Font = new Font("Segoe UI", 10.8F);
             tbusr.ForeColor = Color.WhiteSmoke;
-            tbusr.Location = new Point(51, 106);
-            tbusr.Margin = new Padding(4, 3, 4, 3);
+            tbusr.Location = new Point(95, 226);
+            tbusr.Margin = new Padding(7, 6, 7, 6);
             tbusr.Name = "tbusr";
             tbusr.PlaceholderText = "Masukan Username";
-            tbusr.Size = new Size(309, 20);
+            tbusr.Size = new Size(574, 39);
             tbusr.TabIndex = 0;
             tbusr.TextChanged += tbusr_TextChanged;
             // 
@@ -83,10 +84,10 @@
             btnlogin.FlatStyle = FlatStyle.Flat;
             btnlogin.Font = new Font("Yu Gothic UI Semibold", 15F, FontStyle.Bold);
             btnlogin.ForeColor = Color.FromArgb(17, 37, 0);
-            btnlogin.Location = new Point(48, 262);
-            btnlogin.Margin = new Padding(4, 3, 4, 3);
+            btnlogin.Location = new Point(89, 559);
+            btnlogin.Margin = new Padding(7, 6, 7, 6);
             btnlogin.Name = "btnlogin";
-            btnlogin.Size = new Size(313, 35);
+            btnlogin.Size = new Size(581, 75);
             btnlogin.TabIndex = 0;
             btnlogin.Text = "Login";
             btnlogin.UseVisualStyleBackColor = false;
@@ -99,12 +100,12 @@
             tbpw.BorderStyle = BorderStyle.None;
             tbpw.Font = new Font("Segoe UI", 10.8F);
             tbpw.ForeColor = Color.WhiteSmoke;
-            tbpw.Location = new Point(48, 165);
-            tbpw.Margin = new Padding(4, 3, 4, 3);
+            tbpw.Location = new Point(89, 352);
+            tbpw.Margin = new Padding(7, 6, 7, 6);
             tbpw.Name = "tbpw";
             tbpw.PasswordChar = '*';
             tbpw.PlaceholderText = "Masukan Password";
-            tbpw.Size = new Size(309, 20);
+            tbpw.Size = new Size(574, 39);
             tbpw.TabIndex = 1;
             tbpw.UseSystemPasswordChar = true;
             tbpw.TextChanged += tbpw_TextChanged;
@@ -126,12 +127,12 @@
             panel1.Controls.Add(linkregister);
             panel1.Controls.Add(tbusr);
             panel1.ForeColor = Color.MintCream;
-            panel1.Location = new Point(352, 118);
-            panel1.Margin = new Padding(3, 2, 3, 2);
-            panel1.MaximumSize = new Size(400, 365);
-            panel1.MinimumSize = new Size(400, 365);
+            panel1.Location = new Point(419, 114);
+            panel1.Margin = new Padding(6, 4, 6, 4);
+            panel1.MaximumSize = new Size(743, 779);
+            panel1.MinimumSize = new Size(743, 779);
             panel1.Name = "panel1";
-            panel1.Size = new Size(400, 365);
+            panel1.Size = new Size(743, 779);
             panel1.TabIndex = 7;
             panel1.Paint += panel1_Paint;
             // 
@@ -141,9 +142,10 @@
             label6.AutoSize = true;
             label6.Font = new Font("Yu Gothic UI", 10.8F, FontStyle.Regular, GraphicsUnit.Point, 0);
             label6.ForeColor = Color.White;
-            label6.Location = new Point(68, 302);
+            label6.Location = new Point(126, 644);
+            label6.Margin = new Padding(6, 0, 6, 0);
             label6.Name = "label6";
-            label6.Size = new Size(138, 20);
+            label6.Size = new Size(268, 40);
             label6.TabIndex = 12;
             label6.Text = "Belum Punya Akun?";
             label6.Click += label6_Click;
@@ -153,9 +155,10 @@
             label5.AutoSize = true;
             label5.Font = new Font("Yu Gothic UI", 12F);
             label5.ForeColor = Color.White;
-            label5.Location = new Point(44, 141);
+            label5.Location = new Point(82, 301);
+            label5.Margin = new Padding(6, 0, 6, 0);
             label5.Name = "label5";
-            label5.Size = new Size(77, 21);
+            label5.Size = new Size(153, 45);
             label5.TabIndex = 11;
             label5.Text = "Password";
             label5.Click += label5_Click;
@@ -165,26 +168,29 @@
             label4.AutoSize = true;
             label4.Font = new Font("Yu Gothic UI", 12F);
             label4.ForeColor = Color.White;
-            label4.Location = new Point(44, 82);
+            label4.Location = new Point(82, 175);
+            label4.Margin = new Padding(6, 0, 6, 0);
             label4.Name = "label4";
-            label4.Size = new Size(81, 21);
+            label4.Size = new Size(163, 45);
             label4.TabIndex = 10;
             label4.Text = "Username";
             // 
             // label3
             // 
             label3.BackColor = Color.White;
-            label3.Location = new Point(44, 191);
+            label3.Location = new Point(82, 407);
+            label3.Margin = new Padding(6, 0, 6, 0);
             label3.Name = "label3";
-            label3.Size = new Size(319, 1);
+            label3.Size = new Size(592, 2);
             label3.TabIndex = 9;
             // 
             // label2
             // 
             label2.BackColor = Color.White;
-            label2.Location = new Point(44, 131);
+            label2.Location = new Point(82, 279);
+            label2.Margin = new Padding(6, 0, 6, 0);
             label2.Name = "label2";
-            label2.Size = new Size(319, 1);
+            label2.Size = new Size(592, 2);
             label2.TabIndex = 8;
             label2.Click += label2_Click_1;
             // 
@@ -194,23 +200,24 @@
             label1.AutoSize = true;
             label1.Font = new Font("Yu Gothic UI Semibold", 20F, FontStyle.Bold);
             label1.ForeColor = Color.FromArgb(180, 197, 166);
-            label1.Location = new Point(130, 20);
+            label1.Location = new Point(241, 43);
+            label1.Margin = new Padding(6, 0, 6, 0);
             label1.Name = "label1";
-            label1.Size = new Size(123, 37);
+            label1.Size = new Size(241, 72);
             label1.TabIndex = 7;
             label1.Text = "👤Login";
             // 
             // FormLogin
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackgroundImage = Properties.Resources.bg_register_login;
             BackgroundImageLayout = ImageLayout.Stretch;
-            ClientSize = new Size(846, 464);
+            ClientSize = new Size(1571, 990);
             Controls.Add(panel1);
             DoubleBuffered = true;
             ForeColor = Color.White;
-            Margin = new Padding(4, 3, 4, 3);
+            Margin = new Padding(7, 6, 7, 6);
             Name = "FormLogin";
             Text = "Form1";
             WindowState = FormWindowState.Maximized;

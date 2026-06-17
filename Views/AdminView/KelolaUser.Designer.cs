@@ -58,13 +58,13 @@ namespace WinFormsApp1.Views.AdminView
             dgvUsers.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             dgvUsers.BackgroundColor = SystemColors.Control;
             dgvUsers.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvUsers.Location = new Point(18, 579);
+            dgvUsers.Location = new Point(18, 564);
             dgvUsers.Margin = new Padding(5);
             dgvUsers.Name = "dgvUsers";
             dgvUsers.ReadOnly = true;
             dgvUsers.RowHeadersWidth = 51;
             dgvUsers.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvUsers.Size = new Size(2036, 862);
+            dgvUsers.Size = new Size(1437, 700);
             dgvUsers.TabIndex = 0;
             dgvUsers.CellClick += dgvUsers_CellClick;
             dgvUsers.CellContentClick += dgvUsers_CellContentClick;
@@ -79,7 +79,7 @@ namespace WinFormsApp1.Views.AdminView
             tbNoTelp.Margin = new Padding(5);
             tbNoTelp.Name = "tbNoTelp";
             tbNoTelp.PlaceholderText = "No. Telp";
-            tbNoTelp.Size = new Size(1094, 40);
+            tbNoTelp.Size = new Size(495, 40);
             tbNoTelp.TabIndex = 10;
             // 
             // btnEnable
@@ -89,7 +89,7 @@ namespace WinFormsApp1.Views.AdminView
             btnEnable.FlatAppearance.BorderSize = 0;
             btnEnable.FlatStyle = FlatStyle.Flat;
             btnEnable.Font = new Font("Segoe UI Semibold", 19.8000011F, FontStyle.Bold);
-            btnEnable.Location = new Point(1425, 322);
+            btnEnable.Location = new Point(826, 322);
             btnEnable.Margin = new Padding(5);
             btnEnable.Name = "btnEnable";
             btnEnable.Size = new Size(304, 98);
@@ -105,7 +105,7 @@ namespace WinFormsApp1.Views.AdminView
             btnRefresh.FlatAppearance.BorderSize = 0;
             btnRefresh.FlatStyle = FlatStyle.Flat;
             btnRefresh.Font = new Font("Segoe UI Semibold", 19F, FontStyle.Bold);
-            btnRefresh.Location = new Point(1425, 179);
+            btnRefresh.Location = new Point(826, 179);
             btnRefresh.Margin = new Padding(5);
             btnRefresh.Name = "btnRefresh";
             btnRefresh.Size = new Size(177, 133);
@@ -124,7 +124,7 @@ namespace WinFormsApp1.Views.AdminView
             tbUsername.Margin = new Padding(5);
             tbUsername.Name = "tbUsername";
             tbUsername.PlaceholderText = "Username";
-            tbUsername.Size = new Size(1094, 40);
+            tbUsername.Size = new Size(495, 40);
             tbUsername.TabIndex = 1;
             tbUsername.TextChanged += tbUsername_TextChanged;
             // 
@@ -135,7 +135,7 @@ namespace WinFormsApp1.Views.AdminView
             btnDisable.FlatAppearance.BorderSize = 0;
             btnDisable.FlatStyle = FlatStyle.Flat;
             btnDisable.Font = new Font("Segoe UI Semibold", 19.8000011F, FontStyle.Bold);
-            btnDisable.Location = new Point(1737, 322);
+            btnDisable.Location = new Point(1138, 322);
             btnDisable.Margin = new Padding(5);
             btnDisable.Name = "btnDisable";
             btnDisable.Size = new Size(304, 98);
@@ -151,7 +151,7 @@ namespace WinFormsApp1.Views.AdminView
             btnEdit.FlatAppearance.BorderSize = 0;
             btnEdit.FlatStyle = FlatStyle.Flat;
             btnEdit.Font = new Font("Segoe UI Semibold", 19.8000011F, FontStyle.Bold);
-            btnEdit.Location = new Point(1612, 179);
+            btnEdit.Location = new Point(1013, 179);
             btnEdit.Margin = new Padding(5);
             btnEdit.Name = "btnEdit";
             btnEdit.Size = new Size(431, 133);
@@ -167,7 +167,7 @@ namespace WinFormsApp1.Views.AdminView
             btnAdd.FlatAppearance.BorderSize = 0;
             btnAdd.FlatStyle = FlatStyle.Flat;
             btnAdd.Font = new Font("Segoe UI Semibold", 19.8000011F, FontStyle.Bold);
-            btnAdd.Location = new Point(1425, 35);
+            btnAdd.Location = new Point(826, 35);
             btnAdd.Margin = new Padding(5);
             btnAdd.Name = "btnAdd";
             btnAdd.Size = new Size(618, 134);
@@ -186,7 +186,7 @@ namespace WinFormsApp1.Views.AdminView
             cbRole.Location = new Point(275, 352);
             cbRole.Margin = new Padding(5);
             cbRole.Name = "cbRole";
-            cbRole.Size = new Size(1092, 48);
+            cbRole.Size = new Size(493, 48);
             cbRole.TabIndex = 4;
             cbRole.Text = "Role";
             cbRole.SelectedIndexChanged += cbRole_SelectedIndexChanged;
@@ -201,7 +201,7 @@ namespace WinFormsApp1.Views.AdminView
             tbPassword.Margin = new Padding(5);
             tbPassword.Name = "tbPassword";
             tbPassword.PlaceholderText = "Password";
-            tbPassword.Size = new Size(1094, 40);
+            tbPassword.Size = new Size(495, 40);
             tbPassword.TabIndex = 3;
             tbPassword.UseSystemPasswordChar = true;
             tbPassword.TextChanged += tbPassword_TextChanged;
@@ -216,7 +216,7 @@ namespace WinFormsApp1.Views.AdminView
             tbFullName.Margin = new Padding(5);
             tbFullName.Name = "tbFullName";
             tbFullName.PlaceholderText = "Full name";
-            tbFullName.Size = new Size(1094, 40);
+            tbFullName.Size = new Size(495, 40);
             tbFullName.TabIndex = 2;
             tbFullName.TextChanged += tbFullName_TextChanged;
             // 
@@ -228,7 +228,7 @@ namespace WinFormsApp1.Views.AdminView
             panel2.Location = new Point(-5, 0);
             panel2.Margin = new Padding(5);
             panel2.Name = "panel2";
-            panel2.Size = new Size(2210, 100);
+            panel2.Size = new Size(1478, 100);
             panel2.TabIndex = 12;
             panel2.Paint += panel2_Paint;
             // 
@@ -266,7 +266,7 @@ namespace WinFormsApp1.Views.AdminView
             panel1.Location = new Point(-5, 93);
             panel1.Margin = new Padding(5);
             panel1.Name = "panel1";
-            panel1.Size = new Size(2077, 454);
+            panel1.Size = new Size(1478, 450);
             panel1.TabIndex = 13;
             // 
             // label5
@@ -335,7 +335,7 @@ namespace WinFormsApp1.Views.AdminView
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(2074, 1501);
+            ClientSize = new Size(1475, 1324);
             Controls.Add(panel2);
             Controls.Add(dgvUsers);
             Controls.Add(panel1);

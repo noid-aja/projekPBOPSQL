@@ -50,7 +50,7 @@ namespace WinFormsApp1.Views.AdminView
             tbNama.BackColor = Color.White;
             tbNama.BorderStyle = BorderStyle.None;
             tbNama.Location = new Point(268, 46);
-            tbNama.Margin = new Padding(5, 5, 5, 5);
+            tbNama.Margin = new Padding(5);
             tbNama.Name = "tbNama";
             tbNama.Size = new Size(964, 32);
             tbNama.TabIndex = 6;
@@ -62,7 +62,7 @@ namespace WinFormsApp1.Views.AdminView
             tbDeskripsi.BackColor = Color.White;
             tbDeskripsi.BorderStyle = BorderStyle.None;
             tbDeskripsi.Location = new Point(268, 112);
-            tbDeskripsi.Margin = new Padding(5, 5, 5, 5);
+            tbDeskripsi.Margin = new Padding(5);
             tbDeskripsi.Multiline = true;
             tbDeskripsi.Name = "tbDeskripsi";
             tbDeskripsi.Size = new Size(964, 208);
@@ -72,13 +72,13 @@ namespace WinFormsApp1.Views.AdminView
             // btnTambah
             // 
             btnTambah.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnTambah.BackColor = Color.FromArgb(29, 217, 0);
+            btnTambah.BackColor = Color.GreenYellow;
             btnTambah.FlatAppearance.BorderSize = 0;
             btnTambah.FlatStyle = FlatStyle.Flat;
             btnTambah.Font = new Font("Segoe UI Semibold", 19.8000011F, FontStyle.Bold);
             btnTambah.ForeColor = Color.Black;
             btnTambah.Location = new Point(1260, 35);
-            btnTambah.Margin = new Padding(5, 5, 5, 5);
+            btnTambah.Margin = new Padding(5);
             btnTambah.Name = "btnTambah";
             btnTambah.Size = new Size(436, 158);
             btnTambah.TabIndex = 3;
@@ -97,7 +97,7 @@ namespace WinFormsApp1.Views.AdminView
             btnEdit.Font = new Font("Segoe UI Semibold", 19.8000011F, FontStyle.Bold);
             btnEdit.ForeColor = Color.Black;
             btnEdit.Location = new Point(1260, 211);
-            btnEdit.Margin = new Padding(5, 5, 5, 5);
+            btnEdit.Margin = new Padding(5);
             btnEdit.Name = "btnEdit";
             btnEdit.Size = new Size(275, 109);
             btnEdit.TabIndex = 2;
@@ -116,7 +116,7 @@ namespace WinFormsApp1.Views.AdminView
             btnHapus.Font = new Font("Segoe UI", 18F);
             btnHapus.ForeColor = Color.Black;
             btnHapus.Location = new Point(1555, 213);
-            btnHapus.Margin = new Padding(5, 5, 5, 5);
+            btnHapus.Margin = new Padding(5);
             btnHapus.Name = "btnHapus";
             btnHapus.Size = new Size(141, 109);
             btnHapus.TabIndex = 1;
@@ -130,7 +130,7 @@ namespace WinFormsApp1.Views.AdminView
             dgvJenis.BackgroundColor = SystemColors.Control;
             dgvJenis.ColumnHeadersHeight = 29;
             dgvJenis.Location = new Point(20, 467);
-            dgvJenis.Margin = new Padding(5, 5, 5, 5);
+            dgvJenis.Margin = new Padding(5);
             dgvJenis.Name = "dgvJenis";
             dgvJenis.ReadOnly = true;
             dgvJenis.RowHeadersWidth = 51;
@@ -153,7 +153,7 @@ namespace WinFormsApp1.Views.AdminView
             panel1.Controls.Add(tbNama);
             panel1.Controls.Add(btnEdit);
             panel1.Location = new Point(-8, 90);
-            panel1.Margin = new Padding(5, 5, 5, 5);
+            panel1.Margin = new Padding(5);
             panel1.Name = "panel1";
             panel1.Size = new Size(1727, 357);
             panel1.TabIndex = 7;
@@ -189,7 +189,7 @@ namespace WinFormsApp1.Views.AdminView
             panel2.BackColor = Color.FromArgb(232, 255, 214);
             panel2.Controls.Add(lblJudul);
             panel2.Location = new Point(-8, -3);
-            panel2.Margin = new Padding(5, 5, 5, 5);
+            panel2.Margin = new Padding(5);
             panel2.Name = "panel2";
             panel2.Size = new Size(1727, 102);
             panel2.TabIndex = 8;
@@ -218,7 +218,7 @@ namespace WinFormsApp1.Views.AdminView
             Controls.Add(dgvJenis);
             Controls.Add(panel1);
             DoubleBuffered = true;
-            Margin = new Padding(5, 5, 5, 5);
+            Margin = new Padding(5);
             Name = "jeniskopi";
             Text = "Jenis Kopi";
             Load += jeniskopi_Load;

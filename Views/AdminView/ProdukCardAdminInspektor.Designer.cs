@@ -15,106 +15,116 @@ namespace WinFormsApp1.Views.AdminView
 
         private void InitializeComponent()
         {
-            this.pgGambar = new System.Windows.Forms.PictureBox();
-            this.lblNamaKopi = new System.Windows.Forms.Label();
-            this.lblPetani = new System.Windows.Forms.Label();
-            this.lblJenis = new System.Windows.Forms.Label();
-            this.lblHargaPengajuan = new System.Windows.Forms.Label();
-            this.lblStatus = new System.Windows.Forms.Label();
-            this.btnUbahStatus = new System.Windows.Forms.Button();
-            ((System.ComponentModel.ISupportInitialize)(this.pgGambar)).BeginInit();
-            this.SuspendLayout();
+            pgGambar = new PictureBox();
+            lblNamaKopi = new Label();
+            lblPetani = new Label();
+            lblJenis = new Label();
+            lblHargaPengajuan = new Label();
+            lblStatus = new Label();
+            btnUbahStatus = new Button();
+            ((System.ComponentModel.ISupportInitialize)pgGambar).BeginInit();
+            SuspendLayout();
             // 
             // pgGambar
             // 
-            this.pgGambar.Location = new System.Drawing.Point(15, 15);
-            this.pgGambar.Name = "pgGambar";
-            this.pgGambar.Size = new System.Drawing.Size(267, 120);
-            this.pgGambar.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pgGambar.TabIndex = 0;
-            this.pgGambar.TabStop = false;
+            pgGambar.BackgroundImageLayout = ImageLayout.Stretch;
+            pgGambar.Image = Properties.Resources.coffee_placeholder;
+            pgGambar.Location = new Point(28, 32);
+            pgGambar.Margin = new Padding(6, 6, 6, 6);
+            pgGambar.Name = "pgGambar";
+            pgGambar.Size = new Size(496, 256);
+            pgGambar.SizeMode = PictureBoxSizeMode.StretchImage;
+            pgGambar.TabIndex = 0;
+            pgGambar.TabStop = false;
             // 
             // lblNamaKopi
             // 
-            this.lblNamaKopi.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.lblNamaKopi.Location = new System.Drawing.Point(15, 145);
-            this.lblNamaKopi.Name = "lblNamaKopi";
-            this.lblNamaKopi.Size = new System.Drawing.Size(267, 25);
-            this.lblNamaKopi.TabIndex = 1;
-            this.lblNamaKopi.Text = "Nama Produk Kopi";
+            lblNamaKopi.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            lblNamaKopi.Location = new Point(28, 309);
+            lblNamaKopi.Margin = new Padding(6, 0, 6, 0);
+            lblNamaKopi.Name = "lblNamaKopi";
+            lblNamaKopi.Size = new Size(496, 53);
+            lblNamaKopi.TabIndex = 1;
+            lblNamaKopi.Text = "Nama Produk Kopi";
             // 
             // lblPetani
             // 
-            this.lblPetani.AutoSize = true;
-            this.lblPetani.ForeColor = System.Drawing.Color.DimGray;
-            this.lblPetani.Location = new System.Drawing.Point(15, 175);
-            this.lblPetani.Name = "lblPetani";
-            this.lblPetani.Size = new System.Drawing.Size(43, 15);
-            this.lblPetani.TabIndex = 2;
-            this.lblPetani.Text = "Petani: -";
+            lblPetani.AutoSize = true;
+            lblPetani.ForeColor = Color.DimGray;
+            lblPetani.Location = new Point(28, 373);
+            lblPetani.Margin = new Padding(6, 0, 6, 0);
+            lblPetani.Name = "lblPetani";
+            lblPetani.Size = new Size(101, 32);
+            lblPetani.TabIndex = 2;
+            lblPetani.Text = "Petani: -";
             // 
             // lblJenis
             // 
-            this.lblJenis.AutoSize = true;
-            this.lblJenis.ForeColor = System.Drawing.Color.DimGray;
-            this.lblJenis.Location = new System.Drawing.Point(15, 195);
-            this.lblJenis.Name = "lblJenis";
-            this.lblJenis.Size = new System.Drawing.Size(35, 15);
-            this.lblJenis.TabIndex = 3;
-            this.lblJenis.Text = "Jenis: -";
+            lblJenis.AutoSize = true;
+            lblJenis.ForeColor = Color.DimGray;
+            lblJenis.Location = new Point(28, 416);
+            lblJenis.Margin = new Padding(6, 0, 6, 0);
+            lblJenis.Name = "lblJenis";
+            lblJenis.Size = new Size(88, 32);
+            lblJenis.TabIndex = 3;
+            lblJenis.Text = "Jenis: -";
             // 
             // lblHargaPengajuan
             // 
-            this.lblHargaPengajuan.AutoSize = true;
-            this.lblHargaPengajuan.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblHargaPengajuan.ForeColor = System.Drawing.Color.DarkGoldenrod;
-            this.lblHargaPengajuan.Location = new System.Drawing.Point(15, 215);
-            this.lblHargaPengajuan.Name = "lblHargaPengajuan";
-            this.lblHargaPengajuan.Size = new System.Drawing.Size(125, 15);
-            this.lblHargaPengajuan.TabIndex = 4;
-            this.lblHargaPengajuan.Text = "Harga Pengajuan: Rp0";
+            lblHargaPengajuan.AutoSize = true;
+            lblHargaPengajuan.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblHargaPengajuan.ForeColor = Color.DarkGoldenrod;
+            lblHargaPengajuan.Location = new Point(28, 459);
+            lblHargaPengajuan.Margin = new Padding(6, 0, 6, 0);
+            lblHargaPengajuan.Name = "lblHargaPengajuan";
+            lblHargaPengajuan.Size = new Size(269, 32);
+            lblHargaPengajuan.TabIndex = 4;
+            lblHargaPengajuan.Text = "Harga Pengajuan: Rp0";
             // 
             // lblStatus
             // 
-            this.lblStatus.BackColor = System.Drawing.Color.LightGray;
-            this.lblStatus.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.lblStatus.Location = new System.Drawing.Point(15, 238);
-            this.lblStatus.Name = "lblStatus";
-            this.lblStatus.Size = new System.Drawing.Size(267, 23);
-            this.lblStatus.TabIndex = 5;
-            this.lblStatus.Text = "STATUS";
-            this.lblStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            lblStatus.BackColor = Color.LightGray;
+            lblStatus.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            lblStatus.Location = new Point(28, 508);
+            lblStatus.Margin = new Padding(6, 0, 6, 0);
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(496, 49);
+            lblStatus.TabIndex = 5;
+            lblStatus.Text = "STATUS";
+            lblStatus.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // btnUbahStatus
             // 
-            this.btnUbahStatus.BackColor = System.Drawing.Color.FromArgb(17, 37, 0);
-            this.btnUbahStatus.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
-            this.btnUbahStatus.ForeColor = System.Drawing.Color.White;
-            this.btnUbahStatus.Location = new System.Drawing.Point(15, 269);
-            this.btnUbahStatus.Name = "btnUbahStatus";
-            this.btnUbahStatus.Size = new System.Drawing.Size(267, 30);
-            this.btnUbahStatus.TabIndex = 6;
-            this.btnUbahStatus.Text = "Ubah Status QC";
-            this.btnUbahStatus.UseVisualStyleBackColor = false;
-            this.btnUbahStatus.Click += new System.EventHandler(this.btnUbahStatus_Click);
+            btnUbahStatus.BackColor = Color.FromArgb(17, 37, 0);
+            btnUbahStatus.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btnUbahStatus.ForeColor = Color.White;
+            btnUbahStatus.Location = new Point(28, 574);
+            btnUbahStatus.Margin = new Padding(6, 6, 6, 6);
+            btnUbahStatus.Name = "btnUbahStatus";
+            btnUbahStatus.Size = new Size(496, 64);
+            btnUbahStatus.TabIndex = 6;
+            btnUbahStatus.Text = "Ubah Status QC";
+            btnUbahStatus.UseVisualStyleBackColor = false;
+            btnUbahStatus.Click += btnUbahStatus_Click;
             // 
             // ProdukCardAdminInspektor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.Controls.Add(this.btnUbahStatus);
-            this.Controls.Add(this.lblStatus);
-            this.Controls.Add(this.lblHargaPengajuan);
-            this.Controls.Add(this.lblJenis);
-            this.Controls.Add(this.lblPetani);
-            this.Controls.Add(this.lblNamaKopi);
-            this.Controls.Add(this.pgGambar);
-            this.Name = "ProdukCardAdminInspektor";
-            this.Size = new System.Drawing.Size(295, 312);
-            ((System.ComponentModel.ISupportInitialize)(this.pgGambar)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new SizeF(13F, 32F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BorderStyle = BorderStyle.FixedSingle;
+            Controls.Add(btnUbahStatus);
+            Controls.Add(lblStatus);
+            Controls.Add(lblHargaPengajuan);
+            Controls.Add(lblJenis);
+            Controls.Add(lblPetani);
+            Controls.Add(lblNamaKopi);
+            Controls.Add(pgGambar);
+            Margin = new Padding(6, 6, 6, 6);
+            Name = "ProdukCardAdminInspektor";
+            Size = new Size(548, 666);
+            ((System.ComponentModel.ISupportInitialize)pgGambar).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         private System.Windows.Forms.PictureBox pgGambar;

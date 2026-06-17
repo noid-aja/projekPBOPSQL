@@ -32,7 +32,7 @@ namespace WinFormsApp1.Views
             panelHeader.Dock = DockStyle.Top;
             panelHeader.Location = new Point(0, 0);
             panelHeader.Name = "panelHeader";
-            panelHeader.Size = new Size(400, 60);
+            panelHeader.Size = new Size(395, 87);
             panelHeader.TabIndex = 0;
             // 
             // lblTitle
@@ -42,7 +42,7 @@ namespace WinFormsApp1.Views
             lblTitle.ForeColor = Color.White;
             lblTitle.Location = new Point(12, 16);
             lblTitle.Name = "lblTitle";
-            lblTitle.Size = new Size(376, 28);
+            lblTitle.Size = new Size(371, 54);
             lblTitle.TabIndex = 0;
             lblTitle.Text = "🔑 Pilih Role Sesi Ini";
             lblTitle.TextAlign = ContentAlignment.MiddleCenter;
@@ -52,9 +52,9 @@ namespace WinFormsApp1.Views
             cmbRoles.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbRoles.Font = new Font("Segoe UI", 11F);
             cmbRoles.FormattingEnabled = true;
-            cmbRoles.Location = new Point(50, 90);
+            cmbRoles.Location = new Point(50, 112);
             cmbRoles.Name = "cmbRoles";
-            cmbRoles.Size = new Size(300, 33);
+            cmbRoles.Size = new Size(300, 48);
             cmbRoles.TabIndex = 1;
             // 
             // btnPilih
@@ -64,9 +64,9 @@ namespace WinFormsApp1.Views
             btnPilih.FlatStyle = FlatStyle.Flat;
             btnPilih.Font = new Font("Yu Gothic UI Semibold", 10.5F, FontStyle.Bold);
             btnPilih.ForeColor = Color.FromArgb(17, 37, 0);
-            btnPilih.Location = new Point(50, 150);
+            btnPilih.Location = new Point(50, 188);
             btnPilih.Name = "btnPilih";
-            btnPilih.Size = new Size(130, 38);
+            btnPilih.Size = new Size(130, 57);
             btnPilih.TabIndex = 2;
             btnPilih.Text = "Masuk";
             btnPilih.UseVisualStyleBackColor = false;
@@ -78,9 +78,9 @@ namespace WinFormsApp1.Views
             btnBatal.FlatAppearance.BorderSize = 0;
             btnBatal.FlatStyle = FlatStyle.Flat;
             btnBatal.Font = new Font("Yu Gothic UI Semibold", 10.5F, FontStyle.Bold);
-            btnBatal.Location = new Point(220, 150);
+            btnBatal.Location = new Point(220, 188);
             btnBatal.Name = "btnBatal";
-            btnBatal.Size = new Size(130, 38);
+            btnBatal.Size = new Size(130, 57);
             btnBatal.TabIndex = 3;
             btnBatal.Text = "Batal";
             btnBatal.UseVisualStyleBackColor = false;
@@ -88,10 +88,10 @@ namespace WinFormsApp1.Views
             // 
             // FormPilihRole
             // 
-            AutoScaleDimensions = new SizeF(8F, 20F);
+            AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(400, 220);
+            ClientSize = new Size(395, 275);
             Controls.Add(btnBatal);
             Controls.Add(btnPilih);
             Controls.Add(cmbRoles);

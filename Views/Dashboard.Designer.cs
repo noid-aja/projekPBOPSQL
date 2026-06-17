@@ -79,7 +79,7 @@ namespace WinFormsApp1.Views
             lblSidebarTitle.AutoSize = true;
             lblSidebarTitle.Font = new Font("Segoe UI", 12F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
             lblSidebarTitle.ForeColor = Color.White;
-            lblSidebarTitle.Location = new Point(59, 297);
+            lblSidebarTitle.Location = new Point(50, 297);
             lblSidebarTitle.Margin = new Padding(4, 0, 4, 0);
             lblSidebarTitle.Name = "lblSidebarTitle";
             lblSidebarTitle.Size = new Size(293, 45);
@@ -95,7 +95,7 @@ namespace WinFormsApp1.Views
             panel4.Location = new Point(17, 17);
             panel4.Margin = new Padding(17);
             panel4.Name = "panel4";
-            panel4.Size = new Size(315, 288);
+            panel4.Size = new Size(260, 288);
             panel4.TabIndex = 4;
             panel4.Paint += panel4_Paint;
             // 
@@ -132,10 +132,10 @@ namespace WinFormsApp1.Views
             panel5.Controls.Add(lblCardValue2);
             panel5.Controls.Add(lblCardTitle2);
             panel5.Dock = DockStyle.Fill;
-            panel5.Location = new Point(366, 17);
+            panel5.Location = new Point(311, 17);
             panel5.Margin = new Padding(17);
             panel5.Name = "panel5";
-            panel5.Size = new Size(315, 288);
+            panel5.Size = new Size(260, 288);
             panel5.TabIndex = 5;
             panel5.Paint += panel5_Paint;
             // 
@@ -169,10 +169,10 @@ namespace WinFormsApp1.Views
             panel6.Controls.Add(lblCardValue3);
             panel6.Controls.Add(lblCardTitle3);
             panel6.Dock = DockStyle.Fill;
-            panel6.Location = new Point(715, 17);
+            panel6.Location = new Point(605, 17);
             panel6.Margin = new Padding(17);
             panel6.Name = "panel6";
-            panel6.Size = new Size(315, 288);
+            panel6.Size = new Size(260, 288);
             panel6.TabIndex = 5;
             panel6.Paint += panel6_Paint;
             // 
@@ -206,10 +206,10 @@ namespace WinFormsApp1.Views
             panel7.Controls.Add(lblCardValue4);
             panel7.Controls.Add(lblCardTitle4);
             panel7.Dock = DockStyle.Fill;
-            panel7.Location = new Point(1064, 17);
+            panel7.Location = new Point(899, 17);
             panel7.Margin = new Padding(17);
             panel7.Name = "panel7";
-            panel7.Size = new Size(316, 288);
+            panel7.Size = new Size(261, 288);
             panel7.TabIndex = 5;
             // 
             // lblCardValue4
@@ -261,7 +261,7 @@ namespace WinFormsApp1.Views
             dgvDashboard.ReadOnly = true;
             dgvDashboard.RowHeadersWidth = 82;
             dgvDashboard.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            dgvDashboard.Size = new Size(1372, 262);
+            dgvDashboard.Size = new Size(1162, 620);
             dgvDashboard.TabIndex = 1;
             dgvDashboard.CellContentClick += dgvDashboard_CellContentClick;
             // 
@@ -271,10 +271,10 @@ namespace WinFormsApp1.Views
             panel8.BackColor = Color.White;
             panel8.Controls.Add(dgvDashboard);
             panel8.Controls.Add(lblTableTitle);
-            panel8.Location = new Point(433, 723);
+            panel8.Location = new Point(428, 708);
             panel8.Margin = new Padding(4);
             panel8.Name = "panel8";
-            panel8.Size = new Size(1372, 294);
+            panel8.Size = new Size(1162, 652);
             panel8.TabIndex = 6;
             panel8.Paint += panel8_Paint;
             // 
@@ -285,7 +285,7 @@ namespace WinFormsApp1.Views
             btnMenu1.FlatStyle = FlatStyle.Flat;
             btnMenu1.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu1.ForeColor = Color.White;
-            btnMenu1.Location = new Point(50, 382);
+            btnMenu1.Location = new Point(50, 433);
             btnMenu1.Margin = new Padding(4);
             btnMenu1.Name = "btnMenu1";
             btnMenu1.Size = new Size(316, 68);
@@ -301,7 +301,7 @@ namespace WinFormsApp1.Views
             btnMenu2.FlatStyle = FlatStyle.Flat;
             btnMenu2.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu2.ForeColor = Color.White;
-            btnMenu2.Location = new Point(50, 452);
+            btnMenu2.Location = new Point(50, 503);
             btnMenu2.Margin = new Padding(4);
             btnMenu2.Name = "btnMenu2";
             btnMenu2.Size = new Size(316, 68);
@@ -316,7 +316,7 @@ namespace WinFormsApp1.Views
             btnMenu3.FlatStyle = FlatStyle.Flat;
             btnMenu3.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu3.ForeColor = Color.White;
-            btnMenu3.Location = new Point(50, 525);
+            btnMenu3.Location = new Point(50, 573);
             btnMenu3.Margin = new Padding(4);
             btnMenu3.Name = "btnMenu3";
             btnMenu3.Size = new Size(316, 68);
@@ -331,7 +331,7 @@ namespace WinFormsApp1.Views
             btnMenu4.FlatStyle = FlatStyle.Flat;
             btnMenu4.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu4.ForeColor = Color.White;
-            btnMenu4.Location = new Point(50, 597);
+            btnMenu4.Location = new Point(50, 643);
             btnMenu4.Margin = new Padding(4);
             btnMenu4.Name = "btnMenu4";
             btnMenu4.Size = new Size(316, 68);
@@ -346,7 +346,7 @@ namespace WinFormsApp1.Views
             btnMenu5.FlatStyle = FlatStyle.Flat;
             btnMenu5.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu5.ForeColor = Color.White;
-            btnMenu5.Location = new Point(50, 670);
+            btnMenu5.Location = new Point(50, 713);
             btnMenu5.Margin = new Padding(4);
             btnMenu5.Name = "btnMenu5";
             btnMenu5.Size = new Size(316, 68);
@@ -362,10 +362,10 @@ namespace WinFormsApp1.Views
             btnLogout.FlatStyle = FlatStyle.Flat;
             btnLogout.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnLogout.ForeColor = Color.White;
-            btnLogout.Location = new Point(50, 661);
+            btnLogout.Location = new Point(50, 1004);
             btnLogout.Margin = new Padding(4);
             btnLogout.Name = "btnLogout";
-            btnLogout.Size = new Size(306, 75);
+            btnLogout.Size = new Size(316, 75);
             btnLogout.TabIndex = 8;
             btnLogout.Text = "↩️ Logout";
             btnLogout.UseVisualStyleBackColor = false;
@@ -378,7 +378,7 @@ namespace WinFormsApp1.Views
             btnMenu6.FlatStyle = FlatStyle.Flat;
             btnMenu6.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu6.ForeColor = Color.White;
-            btnMenu6.Location = new Point(50, 740);
+            btnMenu6.Location = new Point(50, 783);
             btnMenu6.Margin = new Padding(4);
             btnMenu6.Name = "btnMenu6";
             btnMenu6.Size = new Size(316, 68);
@@ -393,7 +393,7 @@ namespace WinFormsApp1.Views
             btnMenu7.FlatStyle = FlatStyle.Flat;
             btnMenu7.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu7.ForeColor = Color.White;
-            btnMenu7.Location = new Point(50, 813);
+            btnMenu7.Location = new Point(50, 853);
             btnMenu7.Margin = new Padding(4);
             btnMenu7.Name = "btnMenu7";
             btnMenu7.Size = new Size(316, 68);
@@ -408,7 +408,7 @@ namespace WinFormsApp1.Views
             btnMenu8.FlatStyle = FlatStyle.Flat;
             btnMenu8.Font = new Font("Segoe UI Black", 10.125F, FontStyle.Bold, GraphicsUnit.Point, 0);
             btnMenu8.ForeColor = Color.White;
-            btnMenu8.Location = new Point(50, 885);
+            btnMenu8.Location = new Point(50, 923);
             btnMenu8.Margin = new Padding(4);
             btnMenu8.Name = "btnMenu8";
             btnMenu8.Size = new Size(316, 68);
@@ -435,14 +435,14 @@ namespace WinFormsApp1.Views
             panel2.Location = new Point(0, 0);
             panel2.Margin = new Padding(4);
             panel2.Name = "panel2";
-            panel2.Size = new Size(425, 749);
+            panel2.Size = new Size(425, 1092);
             panel2.TabIndex = 1;
             // 
             // pictureBox1
             // 
             pictureBox1.BackgroundImageLayout = ImageLayout.Stretch;
             pictureBox1.Image = Properties.Resources.Gemini_Generated_Image_kab6fikab6fikab6_1__1__1;
-            pictureBox1.Location = new Point(95, 43);
+            pictureBox1.Location = new Point(79, 43);
             pictureBox1.Margin = new Padding(6, 4, 6, 4);
             pictureBox1.Name = "pictureBox1";
             pictureBox1.Size = new Size(258, 250);
@@ -456,10 +456,10 @@ namespace WinFormsApp1.Views
             btnKeDashboard.FlatStyle = FlatStyle.Flat;
             btnKeDashboard.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
             btnKeDashboard.ForeColor = Color.White;
-            btnKeDashboard.Location = new Point(50, 341);
+            btnKeDashboard.Location = new Point(50, 367);
             btnKeDashboard.Margin = new Padding(4, 2, 4, 2);
             btnKeDashboard.Name = "btnKeDashboard";
-            btnKeDashboard.Size = new Size(316, 34);
+            btnKeDashboard.Size = new Size(316, 64);
             btnKeDashboard.TabIndex = 12;
             btnKeDashboard.Text = "🏠 Kembali ke Beranda";
             btnKeDashboard.UseVisualStyleBackColor = true;
@@ -473,7 +473,7 @@ namespace WinFormsApp1.Views
             panel1.Location = new Point(422, 0);
             panel1.Margin = new Padding(6, 4, 6, 4);
             panel1.Name = "panel1";
-            panel1.Size = new Size(1400, 1018);
+            panel1.Size = new Size(1179, 1361);
             panel1.TabIndex = 7;
             panel1.Paint += panel1_Paint;
             // 
@@ -490,14 +490,14 @@ namespace WinFormsApp1.Views
             tableLayoutPanel1.Controls.Add(panel5, 1, 0);
             tableLayoutPanel1.Controls.Add(panel7, 3, 0);
             tableLayoutPanel1.Controls.Add(panel6, 2, 0);
-            tableLayoutPanel1.Location = new Point(6, 382);
+            tableLayoutPanel1.Location = new Point(2, 382);
             tableLayoutPanel1.Margin = new Padding(6, 4, 6, 4);
             tableLayoutPanel1.MinimumSize = new Size(0, 320);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 1;
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
             tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 322F));
-            tableLayoutPanel1.Size = new Size(1397, 322);
+            tableLayoutPanel1.Size = new Size(1177, 322);
             tableLayoutPanel1.TabIndex = 1;
             // 
             // panel3
@@ -509,7 +509,7 @@ namespace WinFormsApp1.Views
             panel3.Location = new Point(0, 0);
             panel3.Margin = new Padding(4, 2, 4, 2);
             panel3.Name = "panel3";
-            panel3.Size = new Size(1400, 382);
+            panel3.Size = new Size(1179, 382);
             panel3.TabIndex = 2;
             // 
             // label1
@@ -530,7 +530,7 @@ namespace WinFormsApp1.Views
             AutoScaleDimensions = new SizeF(13F, 32F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(235, 235, 235);
-            ClientSize = new Size(1371, 749);
+            ClientSize = new Size(1603, 1092);
             Controls.Add(panel2);
             Controls.Add(panel8);
             Controls.Add(panel1);

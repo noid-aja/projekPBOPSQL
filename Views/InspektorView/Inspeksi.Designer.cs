@@ -124,8 +124,9 @@ namespace WinFormsApp1.Views.InspektorView
             // btnSubmit
             // 
             btnSubmit.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnSubmit.BackColor = Color.FromArgb(39, 174, 96);
+            btnSubmit.BackColor = Color.GreenYellow;
             btnSubmit.FlatAppearance.BorderSize = 0;
+            btnSubmit.FlatStyle = FlatStyle.Flat;
             btnSubmit.Font = new Font("Yu Gothic UI", 12F);
             btnSubmit.Location = new Point(1270, 27);
             btnSubmit.Margin = new Padding(5);
@@ -140,10 +141,10 @@ namespace WinFormsApp1.Views.InspektorView
             // 
             btnRefresh.Anchor = AnchorStyles.Right;
             btnRefresh.Font = new Font("Yu Gothic UI", 12F);
-            btnRefresh.Location = new Point(1351, 120);
+            btnRefresh.Location = new Point(1339, 120);
             btnRefresh.Margin = new Padding(5);
             btnRefresh.Name = "btnRefresh";
-            btnRefresh.Size = new Size(153, 46);
+            btnRefresh.Size = new Size(165, 74);
             btnRefresh.TabIndex = 10;
             btnRefresh.Text = "Refresh";
             btnRefresh.UseVisualStyleBackColor = true;

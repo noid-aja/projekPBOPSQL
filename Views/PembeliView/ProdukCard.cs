@@ -95,5 +95,10 @@ namespace WinFormsApp1.Views.PembeliView
                 UpdateCountdownTampilan();
             }
         }
+
+        private void pgGambar_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
