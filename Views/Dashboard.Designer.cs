@@ -441,7 +441,7 @@ namespace WinFormsApp1.Views
             // pictureBox1
             // 
             pictureBox1.BackgroundImageLayout = ImageLayout.Stretch;
-            pictureBox1.Image = Properties.Resources.Gemini_Generated_Image_kab6fikab6fikab6_1__1__1;
+            pictureBox1.Image = Properties.Resources.image_logo;
             pictureBox1.Location = new Point(79, 43);
             pictureBox1.Margin = new Padding(6, 4, 6, 4);
             pictureBox1.Name = "pictureBox1";
